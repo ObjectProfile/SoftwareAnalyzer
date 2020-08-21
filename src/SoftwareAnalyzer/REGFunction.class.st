@@ -7,7 +7,7 @@ Class {
 		'incomingFunctions',
 		'outgoingFunctions'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #accessing }

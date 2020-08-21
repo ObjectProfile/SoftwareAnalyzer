@@ -6,7 +6,7 @@ Class {
 		'superclass',
 		'functions'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #accessing }

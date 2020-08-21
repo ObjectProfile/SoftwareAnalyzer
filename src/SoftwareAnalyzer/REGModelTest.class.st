@@ -1,7 +1,7 @@
 Class {
 	#name : #REGModelTest,
 	#superclass : #REGTest,
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #'as yet unclassified' }

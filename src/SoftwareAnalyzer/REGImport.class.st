@@ -6,7 +6,7 @@ Class {
 		'toUnit',
 		'name'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #accessing }

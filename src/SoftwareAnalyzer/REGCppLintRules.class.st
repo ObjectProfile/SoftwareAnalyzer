@@ -7,7 +7,7 @@ Class {
 		'description',
 		'rules'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #accessing }

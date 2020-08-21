@@ -5,7 +5,7 @@ Class {
 		'modules',
 		'headers'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #public }

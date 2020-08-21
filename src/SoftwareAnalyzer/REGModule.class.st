@@ -5,7 +5,7 @@ Class {
 		'functions',
 		'classes'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #adding }

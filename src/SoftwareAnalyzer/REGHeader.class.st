@@ -4,5 +4,5 @@ Class {
 	#instVars : [
 		'module'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }

@@ -5,7 +5,7 @@ Class {
 		'includes',
 		'filename'
 	],
-	#category : #SoftwareAnalyzer
+	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #adding }
