@@ -3,7 +3,8 @@ Class {
 	#superclass : #SAJObject,
 	#instVars : [
 		'name',
-		'methods'
+		'methods',
+		'loc'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -16,6 +17,16 @@ SAJUnit >> isClass [
 { #category : #testing }
 SAJUnit >> isInterface [
 	^ false
+]
+
+{ #category : #accessing }
+SAJUnit >> loc [
+	^ loc
+]
+
+{ #category : #accessing }
+SAJUnit >> loc: anObject [
+	loc := anObject
 ]
 
 { #category : #accessing }
@@ -36,4 +47,12 @@ SAJUnit >> name [
 { #category : #accessing }
 SAJUnit >> name: anObject [
 	name := anObject
+]
+
+{ #category : #printing }
+SAJUnit >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	str nextPutAll: self name.
+	str nextPut: $>.
 ]

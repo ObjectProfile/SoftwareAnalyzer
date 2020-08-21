@@ -2,7 +2,8 @@ Class {
 	#name : #SAJModel,
 	#superclass : #Object,
 	#instVars : [
-		'units'
+		'units',
+		'features'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -12,30 +13,28 @@ SAJModel >> addClassAsXML: xml [
 	| classname aClass hasSuperclass superclassName |
 	classname := ((xml elementAt: 'class') elementAt: 'name') nodes first asString.
 
-	
-"	hasSuperclass := ((((xml elementAt: 'class') elementAt: 'super_list') elementAt: 'extends') 
-								elementAt: 'super') nodes first nodes first asString.
-"	
 	hasSuperclass := xml @ { 'class' . 'super_list' . 'extends' . 'super' }.
 
 	hasSuperclass notNil ifTrue: [ 
-		superclassName := ((((xml elementAt: 'class') elementAt: 'super_list') elementAt: 'extends') 
-									elementAt: 'super') nodes first nodes first asString ].
+		superclassName :=  (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes first asString.
+		 ].
 	
 	
 	aClass := SAJClass new
 					name: classname;
 					superclassName: superclassName.
-	units add: aClass
+	units add: aClass.
+	^ aClass
 ]
 
 { #category : #adding }
 SAJModel >> addInterfaceAsXML: xml [
-	| interfaceName aClass |
+	| interfaceName anInterface |
 	interfaceName := ((xml elementAt: 'interface') elementAt: 'name') nodes first asString.
-	aClass := SAJInterface new
+	anInterface := SAJInterface new
 					name: interfaceName.
-	units add: aClass
+	units add: anInterface.
+	^ anInterface
 ]
 
 { #category : #adding }
@@ -54,8 +53,13 @@ SAJModel >> addSrcMLXML: xml [
 
 { #category : #adding }
 SAJModel >> addUnitAsXML: xml [
-	(xml elementAt: 'class') ifNotNil: [ ^ self addClassAsXML: xml ].
-	(xml elementAt: 'interface') ifNotNil: [ ^ self addInterfaceAsXML: xml ].
+	| u |
+	(xml elementAt: 'class') ifNotNil: [ u := self addClassAsXML: xml ].
+	(xml elementAt: 'interface') ifNotNil: [ u := self addInterfaceAsXML: xml ].
+	
+	"Could be enum"
+	u ifNil: [ ^ self ].
+	u loc: xml asString lines size
 ]
 
 { #category : #accessing }
@@ -74,10 +78,19 @@ SAJModel >> classes [
 	^ units select: #isClass
 ]
 
+{ #category : #visualization }
+SAJModel >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'View';
+		initializeCanvas: [ self visualize ]
+]
+
 { #category : #initialization }
 SAJModel >> initialize [
 	super initialize.
-	units := OrderedCollection new
+	units := OrderedCollection new.
+	features := OrderedCollection new
 ]
 
 { #category : #accessing }
@@ -108,4 +121,40 @@ SAJModel >> resolveBindings [
 	self classes do: [ :cls |
 		cls superclassName ifNotNil: [ 
 			cls superclass: (self classNamed: cls superclassName ifNone: [ nil ]) ]  ]
+]
+
+{ #category : #visualization }
+SAJModel >> visualize [
+	| c classes eb connectedShapes nonConnectedShapes |
+	c := RSCanvas new.
+	
+	classes := self classes collect: [ :cls | RSBox new model: cls ] as: RSGroup.
+	c addAll: classes.
+	RSNormalizer size
+		shapes: classes;
+		normalize: #loc.
+	
+
+	eb := RSEdgeBuilder orthoVertical.
+	eb withVerticalAttachPoint.
+	eb canvas: c.
+	eb shapes: classes.
+	eb connectFrom: #superclass.
+
+	classes @ RSPopup @ RSDraggable.
+	
+	connectedShapes := classes select: #hasEdges.
+	nonConnectedShapes := classes reject: #hasEdges.
+	
+	RSTreeLayout on: connectedShapes.
+	RSGridLayout on: nonConnectedShapes.
+	RSLocation new
+		left;
+		outer;
+		offset: -50;
+		move: connectedShapes on: nonConnectedShapes.
+	RSAlignment new shapes: { connectedShapes . nonConnectedShapes }; top.
+	
+	 classes.
+	^ c @ RSCanvasController
 ]
