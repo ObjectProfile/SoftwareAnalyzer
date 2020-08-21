@@ -68,9 +68,49 @@ SAJTest >> testBasic [
 	m addSrcMLXML: self sourceCodeExampleXML.
 	self assert: m numberOfClasses equals: 4.
 	self assert: m numberOfInterfaces equals: 1.
+
+	self assert: ((m classes collect: #name) includesAll:
+			 #( 'Box' 'Circle' 'Canvas' 'ColoredCircle' )).
+
+	self assert: ((m interfaces collect: #name) includesAll:
+			 #( 'Shape' )).
 ]
 
 { #category : #'as yet unclassified' }
 SAJTest >> testEmpty [
 	self assert: m numberOfClasses equals: 0
+]
+
+{ #category : #'as yet unclassified' }
+SAJTest >> testInterfacesNamed [
+
+	| cls |
+	m addSrcMLXML: self sourceCodeExampleXML.
+	
+	cls := m interfaceNamed: 'Shape'.
+	self assert: cls notNil.
+	self should: [ m interfaceNamed: 'NotExisting' ] raise: Error
+]
+
+{ #category : #'as yet unclassified' }
+SAJTest >> testSuperclasses [
+
+	| cls |
+	m addSrcMLXML: self sourceCodeExampleXML.
+	
+	cls := m classNamed: 'ColoredCircle'.
+	self assert: cls superclassName equals: 'Circle'.
+	self assert: cls superclass isNil.
+	
+	m resolveBindings.
+	
+	self assert: cls superclass equals: (m classNamed: 'Circle').
+	self assert: cls hasSuperclass.
+	self assert: (m classNamed: 'Circle') superclass isNil.
+	
+	self assert: (m classNamed: 'Canvas') superclass isNil.
+	self deny: (m classNamed: 'Canvas') hasSuperclass.
+	
+	
+	self should: [ m classNamed: 'NotExisting' ] raise: Error
 ]

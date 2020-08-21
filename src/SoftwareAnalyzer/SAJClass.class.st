@@ -10,6 +10,11 @@ Class {
 	#category : #'SoftwareAnalyzer-Java'
 }
 
+{ #category : #testing }
+SAJClass >> hasSuperclass [
+	^ superclass notNil
+]
+
 { #category : #accessing }
 SAJClass >> interfaceNames [
 	^ interfaceNames
