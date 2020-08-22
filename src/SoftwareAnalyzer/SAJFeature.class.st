@@ -2,22 +2,20 @@ Class {
 	#name : #SAJFeature,
 	#superclass : #SAJObject,
 	#instVars : [
-		'fileName',
-		'lineRange',
 		'featureName',
-		'annotationGranularity'
+		'annotations'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
 
-{ #category : #accessing }
-SAJFeature >> annotationGranularity [
-	^ annotationGranularity
+{ #category : #initialization }
+SAJFeature >> addAnnotation: aFeatureAnnotation [
+	annotations add: aFeatureAnnotation
 ]
 
 { #category : #accessing }
-SAJFeature >> annotationGranularity: anObject [
-	annotationGranularity := anObject
+SAJFeature >> annotations [
+	^ annotations
 ]
 
 { #category : #accessing }
@@ -30,22 +28,13 @@ SAJFeature >> featureName: anObject [
 	featureName := anObject
 ]
 
-{ #category : #accessing }
-SAJFeature >> fileName [
-	^ fileName
+{ #category : #initialization }
+SAJFeature >> initialize [
+	super initialize.
+	annotations := OrderedCollection new
 ]
 
-{ #category : #accessing }
-SAJFeature >> fileName: anObject [
-	fileName := anObject
-]
-
-{ #category : #accessing }
-SAJFeature >> lineRange [
-	^ lineRange
-]
-
-{ #category : #accessing }
-SAJFeature >> lineRange: anObject [
-	lineRange := anObject
+{ #category : #'as yet unclassified' }
+SAJFeature >> numberOfAnnotations [
+	^ annotations size
 ]

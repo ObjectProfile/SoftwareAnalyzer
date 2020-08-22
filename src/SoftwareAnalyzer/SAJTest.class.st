@@ -928,6 +928,22 @@ SAJTest >> testEmpty [
 	self assert: empty numberOfInterfaces equals: 0
 ]
 
+{ #category : #tests }
+SAJTest >> testFeatures [
+
+	| configurationFeature |
+	self assert: m numberOfFeatures equals: 0.
+	m importFeaturesAsCSV: self featureAnnotations.
+	self assert: m numberOfFeatures equals: 63.
+	
+	configurationFeature := m featureNamed: 'Denomination'.
+	self assert: configurationFeature featureName equals: 'Denomination'.
+	
+	self assert: configurationFeature numberOfAnnotations equals: 20.
+	self assert: configurationFeature annotations size equals: 20.
+	self assert: (configurationFeature annotations allSatisfy: [ :a | a feature == configurationFeature ])
+]
+
 { #category : #'as yet unclassified' }
 SAJTest >> testInterfacesNamed [
 
@@ -956,4 +972,11 @@ SAJTest >> testSuperclasses [
 	
 	
 	self should: [ m classNamed: 'NotExisting' ] raise: Error
+]
+
+{ #category : #'as yet unclassified' }
+SAJTest >> testUnitNamed [
+
+	self assert: (m unitNamed: 'ColoredCircle') equals: (m classNamed: 'ColoredCircle').
+	self assert: (m unitNamed: 'Shape') equals: (m interfaceNamed: 'Shape').
 ]

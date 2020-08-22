@@ -78,12 +78,50 @@ SAJModel >> classes [
 	^ units select: #isClass
 ]
 
+{ #category : #'public - features' }
+SAJModel >> featureNamed: aName [
+	^ features detect: [ :f | f featureName = aName ]
+]
+
+{ #category : #'public - features' }
+SAJModel >> getOrCreateFeatureNamed: aName [
+	| doesExist |
+	doesExist := features anySatisfy: [ :f | f featureName = aName ].
+	doesExist ifFalse: [ features add: (SAJFeature new featureName: aName) ].
+	^ features detect: [ :f | f featureName = aName ].
+]
+
 { #category : #visualization }
 SAJModel >> gtInspectorViewIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
 		title: 'View';
 		initializeCanvas: [ self visualize ]
+]
+
+{ #category : #'public - features' }
+SAJModel >> importFeaturesAsCSV: csvAsString [
+
+	| lines ss unitName from to featureName annotationGranularity feat annotation |
+	lines := csvAsString lines allButFirst.
+	lines do: [ :l |
+		ss := l substrings: '.,-'.
+		unitName := (ss first substrings: '\') last.
+		from := ss third asInteger.
+		to := ss fourth asInteger.
+		featureName := ss fifth.
+		annotationGranularity := ss sixth.
+		
+		feat := self getOrCreateFeatureNamed: featureName.
+		
+		annotation := SAJFeatureAnnotations new.
+		annotation annotationGranularity: annotationGranularity.
+		annotation from: from.
+		annotation to: to.
+		annotation unit: (self unitNamed: unitName ifNone: [ nil ]).
+		annotation feature: feat.
+		feat addAnnotation: annotation.
+	]
 ]
 
 { #category : #initialization }
@@ -110,6 +148,11 @@ SAJModel >> numberOfClasses [
 	^ self classes size
 ]
 
+{ #category : #'as yet unclassified' }
+SAJModel >> numberOfFeatures [
+	^ features size
+]
+
 { #category : #'public - metrics' }
 SAJModel >> numberOfInterfaces [
 
@@ -121,6 +164,16 @@ SAJModel >> resolveBindings [
 	self classes do: [ :cls |
 		cls superclassName ifNotNil: [ 
 			cls superclass: (self classNamed: cls superclassName ifNone: [ nil ]) ]  ]
+]
+
+{ #category : #'as yet unclassified' }
+SAJModel >> unitNamed: aName [
+	^ units detect: [ :u | u name = aName ]
+]
+
+{ #category : #'as yet unclassified' }
+SAJModel >> unitNamed: aName ifNone: block [
+	^ units detect: [ :u | u name = aName ] ifNone: block
 ]
 
 { #category : #visualization }
