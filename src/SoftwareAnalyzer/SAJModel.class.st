@@ -97,11 +97,27 @@ SAJModel >> getOrCreateFeatureNamed: aName [
 ]
 
 { #category : #visualization }
+SAJModel >> gtInspectorViewAnnotationsIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'AnnoOnCode';
+		initializeCanvas: [ self visualizeAnnotations ]
+]
+
+{ #category : #visualization }
+SAJModel >> gtInspectorViewFeatureIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'AnnoOnCode';
+		initializeCanvas: [ self visualizeFeatures ]
+]
+
+{ #category : #visualization }
 SAJModel >> gtInspectorViewIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
-		title: 'View';
-		initializeCanvas: [ self visualize ]
+		title: 'ViewRaw';
+		initializeCanvas: [ self visualizeRaw ]
 ]
 
 { #category : #'public - features' }
@@ -203,7 +219,12 @@ SAJModel >> visualize [
 
 	classes @ RSPopup @ RSDraggable.
 	
-	connectedShapes := classes select: #hasEdges.
+	RSConditionalLayout new
+		ifConnectedThen: RSTreeLayout new;
+		else: RSGridLayout new;
+		on: classes.
+	
+	"connectedShapes := classes select: #hasEdges.
 	nonConnectedShapes := classes reject: #hasEdges.
 	
 	RSTreeLayout on: connectedShapes.
@@ -213,8 +234,108 @@ SAJModel >> visualize [
 		outer;
 		offset: -50;
 		move: connectedShapes on: nonConnectedShapes.
-	RSAlignment new shapes: { connectedShapes . nonConnectedShapes }; top.
+	RSAlignment new shapes: { connectedShapes . nonConnectedShapes }; top."
+
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeAnnotations [
+	| c classes eb |
+	c := RSCanvas new.
 	
-	 classes.
+	classes := self classes collect: [ :cls | RSBox new model: cls ] as: RSGroup.
+	c addAll: classes.
+	RSNormalizer size
+		shapes: classes;
+		normalize: #loc.
+	
+
+	eb := RSEdgeBuilder orthoVertical.
+	eb withVerticalAttachPoint.
+	eb canvas: c.
+	eb shapes: classes.
+	eb connectFrom: #superclass.
+
+	classes @ RSPopup @ RSDraggable.
+	
+	RSConditionalLayout new
+		ifConnectedThen: RSTreeLayout new;
+		else: RSGridLayout new;
+		on: classes.
+
+	RSNormalizer color
+		shapes: classes;
+		from: Color gray;
+		to: Color red;
+		normalize: #numberOfAnnotations.
+
+	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeatures [
+	| c classes eb featureColors featureShapes |
+	c := RSCanvas new.
+	
+	featureShapes := OrderedCollection new.
+	featureColors := NSScale category20c.
+	
+	"classes := self classes collect: [ :cls | RSBox new model: cls ] as: RSGroup."
+	classes := self classes collect: [ :cls |
+		| g |
+		g := cls features collect: [ :f | RSBox new model: f; size: 8; color: (featureColors scale: f) ] as: RSGroup.
+		g @ RSPopup.
+		featureShapes addAll: g.
+		RSGridLayout on: g.
+		(g asShapeFor: cls) padding: 5; yourself; color: Color lightGray.
+		 ] as: RSGroup. 
+	c addAll: classes.
+	
+
+	eb := RSEdgeBuilder orthoVertical.
+	eb withVerticalAttachPoint.
+	eb canvas: c.
+	eb shapes: classes.
+	eb connectFrom: #superclass.
+
+	classes @ RSPopup @ RSDraggable.
+	
+	RSConditionalLayout new
+		ifConnectedThen: RSTreeLayout new;
+		else: RSGridLayout new;
+		on: classes.
+
+
+	featureShapes do: [ :fs |
+		fs @ (RSHighlightable new highlightColor: Color red; highlightShapes: [ :ss | featureShapes select: [ :sss | (sss model == fs model) and: [ sss ~~ fs ]  ] ]) ].
+
+	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeRaw [
+	| c classes eb |
+	c := RSCanvas new.
+	
+	classes := self classes collect: [ :cls | RSBox new model: cls ] as: RSGroup.
+	c addAll: classes.
+	RSNormalizer size
+		shapes: classes;
+		normalize: #loc.
+
+	eb := RSEdgeBuilder orthoVertical.
+	eb withVerticalAttachPoint.
+	eb canvas: c.
+	eb shapes: classes.
+	eb connectFrom: #superclass.
+
+	classes @ RSPopup @ RSDraggable.
+	
+	RSConditionalLayout new
+		ifConnectedThen: RSTreeLayout new;
+		else: RSGridLayout new;
+		on: classes.
+
 	^ c @ RSCanvasController
 ]

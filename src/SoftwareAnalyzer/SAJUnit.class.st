@@ -72,6 +72,11 @@ SAJUnit >> name: anObject [
 ]
 
 { #category : #'as yet unclassified' }
+SAJUnit >> numberOfAnnotations [
+	^ (self features flatCollect: #annotations) size
+]
+
+{ #category : #'as yet unclassified' }
 SAJUnit >> numberOfFeatures [
 	^ self features size
 ]

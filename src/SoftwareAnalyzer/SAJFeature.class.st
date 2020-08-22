@@ -38,3 +38,11 @@ SAJFeature >> initialize [
 SAJFeature >> numberOfAnnotations [
 	^ annotations size
 ]
+
+{ #category : #printing }
+SAJFeature >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	str nextPutAll: self featureName.
+	str nextPut: $>.
+]
