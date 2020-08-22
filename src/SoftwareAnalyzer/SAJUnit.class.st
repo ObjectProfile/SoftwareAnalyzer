@@ -4,10 +4,32 @@ Class {
 	#instVars : [
 		'name',
 		'methods',
-		'loc'
+		'loc',
+		'annotations'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
+
+{ #category : #adding }
+SAJUnit >> addAnnotation: ann [
+	annotations add: ann
+]
+
+{ #category : #'as yet unclassified' }
+SAJUnit >> annotations [
+	^ annotations
+]
+
+{ #category : #'as yet unclassified' }
+SAJUnit >> features [
+	^ (annotations collect: #feature as: Set) asSortedCollection: [ :f1 :f2 | f1 featureName < f2 featureName ]
+]
+
+{ #category : #initialization }
+SAJUnit >> initialize [
+	super initialize.
+	annotations := OrderedCollection new
+]
 
 { #category : #testing }
 SAJUnit >> isClass [
@@ -47,6 +69,11 @@ SAJUnit >> name [
 { #category : #accessing }
 SAJUnit >> name: anObject [
 	name := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SAJUnit >> numberOfFeatures [
+	^ self features size
 ]
 
 { #category : #printing }

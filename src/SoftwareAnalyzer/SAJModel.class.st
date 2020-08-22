@@ -83,6 +83,11 @@ SAJModel >> featureNamed: aName [
 	^ features detect: [ :f | f featureName = aName ]
 ]
 
+{ #category : #accessing }
+SAJModel >> features [
+	^ features
+]
+
 { #category : #'public - features' }
 SAJModel >> getOrCreateFeatureNamed: aName [
 	| doesExist |
@@ -102,7 +107,7 @@ SAJModel >> gtInspectorViewIn: composite [
 { #category : #'public - features' }
 SAJModel >> importFeaturesAsCSV: csvAsString [
 
-	| lines ss unitName from to featureName annotationGranularity feat annotation |
+	| lines ss unitName from to featureName annotationGranularity feat annotation unit |
 	lines := csvAsString lines allButFirst.
 	lines do: [ :l |
 		ss := l substrings: '.,-'.
@@ -113,12 +118,14 @@ SAJModel >> importFeaturesAsCSV: csvAsString [
 		annotationGranularity := ss sixth.
 		
 		feat := self getOrCreateFeatureNamed: featureName.
+		unit := self unitNamed: unitName ifNone: [ nil ].
 		
 		annotation := SAJFeatureAnnotations new.
 		annotation annotationGranularity: annotationGranularity.
 		annotation from: from.
 		annotation to: to.
-		annotation unit: (self unitNamed: unitName ifNone: [ nil ]).
+		annotation unit: unit.
+		unit ifNotNil: [ unit addAnnotation: annotation ].
 		annotation feature: feat.
 		feat addAnnotation: annotation.
 	]

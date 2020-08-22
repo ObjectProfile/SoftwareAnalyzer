@@ -944,6 +944,23 @@ SAJTest >> testFeatures [
 	self assert: (configurationFeature annotations allSatisfy: [ :a | a feature == configurationFeature ])
 ]
 
+{ #category : #tests }
+SAJTest >> testFeatures02 [
+
+	| annotations |
+	annotations := 'fileName,lineRange,featureName,annotationGranualarity
+Canvas.java,2-3,Feature1,FRAGMENT
+Canvas.java,6-7,Feature2,FRAGMENT
+Shape.java,6-7,Feature1,FRAGMENT
+'.
+	m importFeaturesAsCSV: annotations.
+	self assert: m numberOfFeatures equals: 2.
+	self assert: (m features flatCollect: #annotations) size equals: 3.
+
+	self assert: (m unitNamed: 'Canvas') numberOfFeatures equals: 2.
+	self assert: (m unitNamed: 'Canvas') features size equals: 2.
+]
+
 { #category : #'as yet unclassified' }
 SAJTest >> testInterfacesNamed [
 
