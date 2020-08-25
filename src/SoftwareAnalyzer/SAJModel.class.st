@@ -97,6 +97,14 @@ SAJModel >> getOrCreateFeatureNamed: aName [
 ]
 
 { #category : #visualization }
+SAJModel >> gtInspectorView2In: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'Features2';
+		initializeCanvas: [ self visualizeFeaturesOnly2 ]
+]
+
+{ #category : #visualization }
 SAJModel >> gtInspectorViewAnnotationsIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
@@ -116,8 +124,8 @@ SAJModel >> gtInspectorViewFeatureIn: composite [
 SAJModel >> gtInspectorViewIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
-		title: 'ViewRaw';
-		initializeCanvas: [ self visualizeRaw ]
+		title: 'Features';
+		initializeCanvas: [ self visualizeFeaturesOnly ]
 ]
 
 { #category : #'public - features' }
@@ -311,6 +319,62 @@ SAJModel >> visualizeFeatures [
 		fs @ (RSHighlightable new highlightColor: Color red; highlightShapes: [ :ss | featureShapes select: [ :sss | (sss model == fs model) and: [ sss ~~ fs ]  ] ]) ].
 
 	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeaturesOnly [
+	
+	| c shapes |
+	c := RSCanvas new.
+	
+	shapes := self features collect: [ :f | RSLabel new text: f featureName; model: f ] as: RSGroup.
+	c addAll: shapes.
+	
+	RSNormalizer fontSize
+		shapes: shapes;
+		normalize: #numberOfUnits.
+		
+	RSNormalizer color
+		shapes: shapes;
+		normalize: #numberOfAnnotations.
+	
+	RSRectanglePackLayout on: shapes.
+	
+	
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeaturesOnly2 [
+	
+	| c shapes eb |
+	c := RSCanvas new.
+	
+	shapes := self features collect: [ :f | RSLabel new text: f featureName; model: f ] as: RSGroup.
+	c addAll: shapes.
+	shapes @ RSDraggable.
+	
+	RSNormalizer fontSize
+		shapes: shapes;
+		normalize: #numberOfUnits.
+		
+	RSNormalizer color
+		shapes: shapes;
+		normalize: #numberOfAnnotations.
+	
+	eb := RSEdgeBuilder line.
+	eb shape color: Color veryLightGray.
+	eb canvas: c.
+	eb moveBehind.
+	eb shapes: shapes.
+	eb connectToAll: #interactingFeatures.
+	
+	RSForceBasedLayout new charge: -700; length: 300; on: shapes.
+	shapes @ (RSHighlightable new highlightColor: Color blue; highlightShapes: [ :s | 
+		shapes select: [ :ss | s model interactingFeatures includes: ss model  ]
+		 ]).
+	
+	^ c @ RSCanvasController
 ]
 
 { #category : #visualization }

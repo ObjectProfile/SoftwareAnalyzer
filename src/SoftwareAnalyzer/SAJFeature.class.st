@@ -35,8 +35,19 @@ SAJFeature >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
+SAJFeature >> interactingFeatures [
+	^ (self units flatCollect: #features) asSet
+]
+
+{ #category : #'as yet unclassified' }
 SAJFeature >> numberOfAnnotations [
 	^ annotations size
+]
+
+{ #category : #'as yet unclassified' }
+SAJFeature >> numberOfUnits [
+
+	^ self units asSet size
 ]
 
 { #category : #printing }
@@ -45,4 +56,10 @@ SAJFeature >> printOn: str [
 	str nextPut: $<.
 	str nextPutAll: self featureName.
 	str nextPut: $>.
+]
+
+{ #category : #'as yet unclassified' }
+SAJFeature >> units [
+
+	^ (annotations collect: #unit) select: #notNil
 ]
