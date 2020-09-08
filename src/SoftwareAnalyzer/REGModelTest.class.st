@@ -168,7 +168,6 @@ REGModelTest >> testAddExampleAndBuildArchitecture [
 	
 	m buildArchitecture.
 	self assert: m numberOfLayers equals: 2.
-	self halt.
 ]
 
 { #category : #tests }

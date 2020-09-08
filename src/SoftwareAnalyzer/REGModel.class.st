@@ -159,6 +159,14 @@ REGModel >> getAndCreateIfNecessaryLayerNamed: aName [
 ]
 
 { #category : #visualization }
+REGModel >> gtInspectorLayersIn: composite [
+	<gtInspectorPresentationOrder: -25>
+	composite roassal3
+		title: 'Layers';
+		initializeCanvas: [ self visualizeLayers ]
+]
+
+{ #category : #visualization }
 REGModel >> gtInspectorMissingIncludesIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite text
@@ -167,11 +175,19 @@ REGModel >> gtInspectorMissingIncludesIn: composite [
 ]
 
 { #category : #visualization }
-REGModel >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -10>
+REGModel >> gtInspectorModulesIn: composite [
+	<gtInspectorPresentationOrder: -20>
 	composite roassal3
-		title: 'View';
-		initializeCanvas: [ self visualize ]
+		title: 'Modules';
+		initializeCanvas: [ self visualizeModules ]
+]
+
+{ #category : #visualization }
+REGModel >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -20>
+	composite roassal3
+		title: 'Modules';
+		initializeCanvas: [ self visualizeModules ]
 ]
 
 { #category : #accessing }
@@ -285,6 +301,67 @@ REGModel >> visualize [
 
 	"units @ (RSLabeled new text: [ :m | m filename ]; highlightable) @ RSDraggable."
 	units @ (RSLabeled new text: [ :m | m filename ]) @ RSDraggable.
+	units @ (RSHighlightable new withEdges; highlightColor: Color red).
+	c addAll: units.
+	
+	"RSGridLayout on: units."
+	RSForceBasedLayout new charge: -800; on: units.
+	c @ RSCanvasController.
+	^ c
+]
+
+{ #category : #visualization }
+REGModel >> visualizeLayers [
+
+	| c g ls |
+	c := RSCanvas new.
+	
+	layers do: [ :l |
+		g := RSGroup new.
+		l modules do: [ :u |
+			g add: (RSBox new color: Color gray; model: u; size: 10).
+		 ].
+		RSGridLayout on: g.
+		ls := g asShapeFor: l.
+		ls @ RSPopup @ RSDraggable.
+		ls padding: 5.
+		ls color: Color lightGray.
+		ls @ RSLabeled.
+		c add: ls.
+		ls adjustToChildren.
+	].
+	"RSRectanglePackLayout"
+	RSGridLayout on: c shapes.
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+REGModel >> visualizeModules [
+
+	| c units eb |
+	c := RSCanvas new.
+	
+	units := RSGroup new.
+	self modules do: [ :m |
+		units add: (RSBox new model: m).
+	].
+
+	self headers do: [ :m |
+		units add: (RSBox new model: m; color: Color pink lighter lighter lighter).
+	].
+
+	RSNormalizer size
+		shapes: units;
+		from: 10; to: 50;
+		normalize: #numberOfLinesOfCode.
+
+	eb := RSEdgeBuilder arrowedLineWithOffset: 0.2.
+	eb canvas: c.
+	eb shapes: units.
+	eb connectToAll: #outgoingUnits.
+
+	"units @ (RSLabeled new text: [ :m | m filename ]; highlightable) @ RSDraggable."
+	units "@ (RSLabeled new text: [ :m | m filename ]) "@ RSDraggable.
 	units @ (RSHighlightable new withEdges; highlightColor: Color red).
 	c addAll: units.
 	
