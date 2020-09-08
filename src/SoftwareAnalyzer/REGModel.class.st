@@ -313,13 +313,17 @@ REGModel >> visualize [
 { #category : #visualization }
 REGModel >> visualizeLayers [
 
-	| c g ls layerShapes ll |
+	| c g ls layerShapes ll lb maxDep color |
 	c := RSCanvas new.
 	
+	maxDep := (modules detectMax: #numberOfIncludes) numberOfIncludes.
+	color := NSScale linear
+					range: { Color gray . Color red };
+					domain: { 0 . maxDep }. 
 	layerShapes := layers collect: [ :l |
 		g := RSGroup new.
 		l modules do: [ :u |
-			g add: (RSBox new color: Color gray; model: u; height:  u numberOfLinesOfCode / 5 + 5; width: u numberOfFunctions * 3 + 5).
+			g add: (RSBox new color: (color scale: u numberOfIncludes); model: u; height: u numberOfLinesOfCode / 5 + 5; width: u numberOfFunctions * 3 + 5).
 		 ].
 		g @ RSPopup.
 		RSGridLayout on: g.
@@ -339,6 +343,14 @@ REGModel >> visualizeLayers [
 	].
 	"RSRectanglePackLayout"
 	RSGridLayout on: layerShapes.
+	
+	lb := RSLegend new.
+	lb onDemand: 'Legend'.
+	lb container: c.
+	lb text: 'Visualizing the source code distribution over modules'.
+	lb polymetricWidth: '#Functions' height: '#Lines of code' box: '#Dependencies'.
+	lb build.
+	
 	^ c @ RSCanvasController
 ]
 

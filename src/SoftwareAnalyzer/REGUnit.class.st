@@ -46,6 +46,11 @@ REGUnit >> includes: anObject [
 	includes := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+REGUnit >> incomingUnits [
+	^ self includes collect: #fromUnit
+]
+
 { #category : #initialization }
 REGUnit >> initialize [
 	super initialize.
