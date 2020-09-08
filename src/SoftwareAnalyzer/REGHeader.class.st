@@ -6,3 +6,8 @@ Class {
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
+
+{ #category : #testing }
+REGHeader >> isHeader [
+	^ true
+]

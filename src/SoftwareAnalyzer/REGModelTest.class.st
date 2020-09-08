@@ -104,6 +104,40 @@ int main() {
 ]
 
 { #category : #examples }
+REGModelTest >> codeModuleA [
+
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="1.0.0" language="C" filename="a/moduleA.c"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;moduleB.h&gt;</cpp:file></cpp:include>
+
+<function><type><name>void</name></type> <name>main</name><parameter_list>()</parameter_list> <block>{<block_content>
+</block_content>}</block></function>
+</unit>
+'
+]
+
+{ #category : #examples }
+REGModelTest >> codeModuleB [
+
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="1.0.0" language="C" filename="b/moduleB.c"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;moduleB.h&gt;</cpp:file></cpp:include>
+
+<function><type><name>void</name></type> <name>foo</name><parameter_list>()</parameter_list> <block>{<block_content>
+  <expr_stmt><expr><call><name>zork</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+</block_content>}</block></function>
+</unit>
+'
+]
+
+{ #category : #examples }
+REGModelTest >> codeModuleB_h [
+
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C" filename="b/moduleB.h"><comment type="line">// Header moduleB.h</comment>
+</unit>
+'
+]
+
+{ #category : #examples }
 REGModelTest >> codeMyOtherModule [
 
 ^ '#ifndef MYOTHERMODULE_H
@@ -156,18 +190,46 @@ REGModelTest >> testAddExample [
 ]
 
 { #category : #tests }
-REGModelTest >> testAddExampleAndBuildArchitecture [
+REGModelTest >> testAddExampleAndBuildArchitecture2 [
 
-	| m |
+	| m lA lB mA mB mBh |
 	m := REGModel new.
-	m addSrcMLXML: self codeExample.
+	m addSrcMLXML: self codeModuleA.
+	m addSrcMLXML: self codeModuleB.
+	m addSrcMLXML: self codeModuleB_h.
 	
 	self assert: m numberOfLayers equals: 0.
 	m resolve.
 	self assert: m numberOfLayers equals: 0.
 	
+	self assert: m numberOfUnits equals: 3.
+	
 	m buildArchitecture.
 	self assert: m numberOfLayers equals: 2.
+	
+	self assert: (m layers collect: #name as: Array) equals: { 'a' . 'b' }.
+	
+	lA := m layers first.
+	lB := m layers second.
+	
+	mA := lA modules first.
+	mB := lB modules first.
+	mBh := lB headers first.
+	
+	self assert: mA layer equals: lA.
+	self assert: mB layer equals: lB.
+	
+	self assert: mA numberOfIncludes equals: 1.
+	self assert: mA outgoingUnits size equals: 1.
+	self assert: (mA outgoingUnits includes: mBh).
+	
+
+	
+	self assert: lA outgoingLayers size equals: 1.
+	self assert: (lA outgoingLayers includes: lB).
+	
+	self assert: lB outgoingLayers size equals: 1.
+	self assert: (lB outgoingLayers includes: lB).
 ]
 
 { #category : #tests }

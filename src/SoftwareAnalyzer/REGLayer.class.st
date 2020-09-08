@@ -3,30 +3,30 @@ Class {
 	#superclass : #REGObject,
 	#instVars : [
 		'name',
-		'modules'
+		'units'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #adding }
-REGLayer >> addModule: aModule [
-	modules add: aModule
+REGLayer >> addUnit: aUnit [
+	units add: aUnit
+]
+
+{ #category : #accessing }
+REGLayer >> headers [
+	^ units select: #isHeader
 ]
 
 { #category : #initialization }
 REGLayer >> initialize [
 	super initialize.
-	modules := OrderedCollection new.
+	units := OrderedCollection new.
 ]
 
 { #category : #accessing }
 REGLayer >> modules [
-	^ modules
-]
-
-{ #category : #accessing }
-REGLayer >> modules: anObject [
-	modules := anObject
+	^ units select: #isModule
 ]
 
 { #category : #accessing }
@@ -39,10 +39,25 @@ REGLayer >> name: anObject [
 	name := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+REGLayer >> numberOfOutgoingUnitsToward: aLayer [
+	^ (((self modules flatCollect: #outgoingUnits) collect: #layer) collect: [ :ll | ll == aLayer ]) size
+]
+
+{ #category : #'as yet unclassified' }
+REGLayer >> outgoingLayers [
+	^ ((self modules flatCollect: #outgoingUnits as: Set) copyWithout: nil) collect: #layer
+]
+
 { #category : #printing }
 REGLayer >> printOn: str [
 	super printOn: str.
 	str nextPut: $<.
 	name ifNotNil: [ str nextPutAll: name ].
 	str nextPut: $>.
+]
+
+{ #category : #'as yet unclassified' }
+REGLayer >> units [
+	^ units
 ]

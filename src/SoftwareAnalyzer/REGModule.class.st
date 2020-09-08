@@ -33,6 +33,11 @@ REGModule >> initialize [
 	classes := OrderedCollection new
 ]
 
+{ #category : #testing }
+REGModule >> isModule [
+	^ true
+]
+
 { #category : #'public - metrics' }
 REGModule >> numberOfClasses [
 	^ classes size

@@ -32,8 +32,10 @@ REGModel >> addSrcMLXML: xml [
 { #category : #'private - XML' }
 REGModel >> addUnitAsXML: xml [
 	"Add a unit described using XML, and return a module"
-	| m |
-	m := REGModule new.
+	| m isModule |
+	isModule := #('.C' '.c' '.cpp' '.CPP') anySatisfy: [ :p | (xml attributeAt: 'filename') endsWith: p ].
+	 
+	m := isModule ifTrue: [ REGModule new ] ifFalse: [ REGHeader new ].
 	m filename: (xml attributeAt: 'filename').
 
 	(xml allElementsSelect: [ :x | x name = 'class' ]) do: [ :iXML |
@@ -68,10 +70,10 @@ REGModel >> allIncludes [
 { #category : #public }
 REGModel >> buildArchitecture [
 	| layerName l |
-	modules do: [ :u |
+	self units do: [ :u |
 		layerName := (u filename substrings: '/') first.
 		l := self getAndCreateIfNecessaryLayerNamed: layerName.
-		l addModule: u.
+		l addUnit: u.
 		u layer: l.
 	]
 		
@@ -257,21 +259,33 @@ REGModel >> numberOfModules [
 	^ modules size
 ]
 
+{ #category : #'public - metrics' }
+REGModel >> numberOfUnits [
+	^ self numberOfModules + self numberOfHeaders
+]
+
 { #category : #public }
 REGModel >> resolve [
 
 	| d |
 	d := Dictionary new.
 	modules, headers do: [ :unit | 
-		d at: unit filename put: unit ].
+		d at: unit basename put: unit ].
 	
 	modules, headers do: [ :unit | 
 		unit includes do: [ :i |
+			
 			i fromUnit: unit.
 			(d includesKey: i rawName) ifTrue: [ i toUnit: (d at: i rawName) ]
 		]
 	].
 
+
+]
+
+{ #category : #accessing }
+REGModel >> units [
+	^ self modules, self headers
 ]
 
 { #category : #visualization }
@@ -343,6 +357,17 @@ REGModel >> visualizeLayers [
 	].
 	"RSRectanglePackLayout"
 	RSGridLayout on: layerShapes.
+	
+	RSEdgeBuilder bimetricLine
+		canvas: c;
+		objects: layers;
+		noBorder;
+		widthFrom:[ :edge | (edge key numberOfOutgoingUnitsToward: edge value) sqrt * 4 ];
+		widthTo:[ :edge | (edge value numberOfOutgoingUnitsToward: edge key) sqrt * 4 ];
+		paint: Color blue translucent;
+		withBorderAttachPoint;
+		connectFrom: #yourself toAll: #outgoingLayers.
+	
 	
 	lb := RSLegend new.
 	lb onDemand: 'Legend'.

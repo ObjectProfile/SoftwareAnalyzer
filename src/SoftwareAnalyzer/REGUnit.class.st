@@ -57,6 +57,21 @@ REGUnit >> initialize [
 	includes := OrderedCollection new
 ]
 
+{ #category : #testing }
+REGUnit >> isHeader [
+	^ false
+]
+
+{ #category : #testing }
+REGUnit >> isModule [
+	^ false
+]
+
+{ #category : #accessing }
+REGUnit >> layer [
+	^ layer
+]
+
 { #category : #accessing }
 REGUnit >> layer: aLayer [
 	layer := aLayer
@@ -70,7 +85,12 @@ REGUnit >> numberOfIncludes [
 
 { #category : #'as yet unclassified' }
 REGUnit >> outgoingUnits [
-	^ self includes collect: #toUnit
+	^ (self includes collect: #toUnit)
+]
+
+{ #category : #'as yet unclassified' }
+REGUnit >> outgoingUnitsToward: unit [
+	^ self includes collect: [ :u | u toUnit == unit ]
 ]
 
 { #category : #accessing }
