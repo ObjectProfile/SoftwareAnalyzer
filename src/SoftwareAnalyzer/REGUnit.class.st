@@ -3,7 +3,8 @@ Class {
 	#superclass : #REGObject,
 	#instVars : [
 		'includes',
-		'filename'
+		'filename',
+		'layer'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
@@ -25,8 +26,9 @@ REGUnit >> filename [
 ]
 
 { #category : #accessing }
-REGUnit >> filename: anObject [
-	filename := anObject
+REGUnit >> filename: aString [
+	self assert: [ aString isByteString ] description: 'Wrong type'.
+	filename := aString
 ]
 
 { #category : #accessing }
@@ -43,6 +45,12 @@ REGUnit >> includes: anObject [
 REGUnit >> initialize [
 	super initialize.
 	includes := OrderedCollection new
+]
+
+{ #category : #accessing }
+REGUnit >> layer: aLayer [
+	layer := aLayer
+	
 ]
 
 { #category : #'as yet unclassified' }

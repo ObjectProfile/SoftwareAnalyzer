@@ -38,7 +38,7 @@ REGModule >> numberOfClasses [
 	^ classes size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - metrics' }
 REGModule >> numberOfFunctions [
 	functions ifNil: [ ^ 0 ].
 	^ functions size

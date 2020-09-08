@@ -4,7 +4,7 @@ Class {
 	#category : #'SoftwareAnalyzer-CPP'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 REGModelTest >> codeCPP [
 
 ^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -36,7 +36,7 @@ REGModelTest >> codeCPP [
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 REGModelTest >> codeCppLint [
 ^ 'Ignoring /Users/alexandrebergel/Dropbox/GitRepos/u-vent/Bambu_ventilator.ino; not a valid file name (cuh, cxx, cu, hpp, cc, c, hxx, hh, h++, cpp, h, c++)
 /Users/alexandrebergel/Dropbox/GitRepos/u-vent/DumbSpeedControl.cpp:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
@@ -46,7 +46,7 @@ REGModelTest >> codeCppLint [
 /Users/alexandrebergel/Dropbox/GitRepos/u-vent/DumbSpeedControl.cpp:10:  Use int16/int64/etc, rather than the C type long  [runtime/int] [4]'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 REGModelTest >> codeExample [
 
 ^'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -89,7 +89,7 @@ REGModelTest >> codeExample [
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 REGModelTest >> codeMain [
 
 ^ '#include <stdio.h>
@@ -103,7 +103,7 @@ int main() {
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 REGModelTest >> codeMyOtherModule [
 
 ^ '#ifndef MYOTHERMODULE_H
@@ -116,7 +116,7 @@ void foo(void);
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 REGModelTest >> codeMyOtherModuleC [
 
 ^ '#include <stdio.h>
@@ -153,6 +153,22 @@ REGModelTest >> testAddExample [
 	
 	self assert: m modules first numberOfLinesOfCode equals: 9.
 	self assert: m numberOfLinesOfCode equals: 30.
+]
+
+{ #category : #tests }
+REGModelTest >> testAddExampleAndBuildArchitecture [
+
+	| m |
+	m := REGModel new.
+	m addSrcMLXML: self codeExample.
+	
+	self assert: m numberOfLayers equals: 0.
+	m resolve.
+	self assert: m numberOfLayers equals: 0.
+	
+	m buildArchitecture.
+	self assert: m numberOfLayers equals: 2.
+	self halt.
 ]
 
 { #category : #tests }
@@ -211,4 +227,15 @@ REGModelTest >> testImport [
 	header := m headers first.
 	self assert: (moduleMain doesInclude: header)
 	
+]
+
+{ #category : #tests }
+REGModelTest >> testLayers [
+	| m l |
+	m := REGModel new.
+	self assert: m numberOfLayers equals: 0.
+	
+	l := m getAndCreateIfNecessaryLayerNamed: 'MyLayer'.
+	self assert: m numberOfLayers equals: 1.
+	self assert: l name equals: 'MyLayer'
 ]

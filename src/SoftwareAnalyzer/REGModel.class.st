@@ -3,28 +3,35 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'modules',
-		'headers'
+		'headers',
+		'layers'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
 
 { #category : #public }
 REGModel >> addSrcMLXML: xml [
-	"xml as string
+	"xml as string. Return the units contained in the files. Return the REG modules that are created
 	
-	Using:
+	Generating in a very simple way:
 	srcml *.{c,h} -o example.xml
+	
+
+	When folder may contain source code files
+	find . -type f \( -iname \*.c -o -iname \*.cpp -o -iname \*.h -o -iname \*.hpp \) -exec srcml {} -o {}.xml \;
+	find . -name ""*.xml"" -exec mv {} xml \;
 	"
 	| units |
 	units := (XMLDOMParser parse: xml) document
-		descendantNodesSelect: [ :x | (x class ~~ XMLString) and: [ x name = 'unit' and: [ x attributes includesKey: 'filename' ] ] ].
+		descendantNodesSelect: [ :x | ( ({ XMLPI . XMLString } includes: x class) not) and: [ x name = 'unit' and: [ x attributes includesKey: 'filename' ] ] ].
 		
-	units do: [ :u | self addUnitAsXML: u ]
+	^ units collect: [ :u | self addUnitAsXML: u ].
+	
 ]
 
 { #category : #'private - XML' }
 REGModel >> addUnitAsXML: xml [
-
+	"Add a unit described using XML, and return a module"
 	| m |
 	m := REGModule new.
 	m filename: (xml attributeAt: 'filename').
@@ -42,7 +49,8 @@ REGModel >> addUnitAsXML: xml [
 	
 	(#('.C' '.c' '.cpp' '.CPP') anySatisfy: [ :p | m filename endsWith: p ])
 		ifTrue: [ modules add: m ]
-		ifFalse: [ headers add: m ]
+		ifFalse: [ headers add: m ].
+	^ m
 	
 ]
 
@@ -55,6 +63,18 @@ REGModel >> allFunctions [
 { #category : #accessing }
 REGModel >> allIncludes [
 	^ self modules, self headers flatCollect: #includes
+]
+
+{ #category : #public }
+REGModel >> buildArchitecture [
+	| layerName l |
+	modules do: [ :u |
+		layerName := (u filename substrings: '/') first.
+		l := self getAndCreateIfNecessaryLayerNamed: layerName.
+		l addModule: u.
+		u layer: l.
+	]
+		
 ]
 
 { #category : #'private - XML' }
@@ -88,6 +108,22 @@ REGModel >> createIncludeFromXML: xml [
 ]
 
 { #category : #examples }
+REGModel >> exampleFPrime [
+	<script: 'self new exampleFPrime inspect'>
+
+	| fprimePath m |
+	fprimePath := '/Users/alexandrebergel/Dropbox/Workspace/NASA/fprime/xml'.
+	
+	m := REGModel new.
+	fprimePath asFileReference children do: [ :c |
+		[ m addSrcMLXML: c readStream contents ] on: ZnInvalidUTF8 do: [ :ex |  ].
+	].
+	m resolve.
+	m buildArchitecture.
+	^ m
+]
+
+{ #category : #examples }
 REGModel >> exampleSmall [
 	<script: 'self new exampleSmall inspect'>
 
@@ -109,6 +145,17 @@ REGModel >> exampleUVent [
 	m addSrcMLXML: uventPath asFileReference contents.
 	m resolve.
 	^ m
+]
+
+{ #category : #public }
+REGModel >> getAndCreateIfNecessaryLayerNamed: aName [
+	| l |
+	l := layers detect: [ :ll | ll name = aName ] ifNone: [ nil ].
+	l ifNil: [ 
+		l := REGLayer new name: aName.
+		layers add: l
+		 ].
+	^ l
 ]
 
 { #category : #visualization }
@@ -137,6 +184,12 @@ REGModel >> initialize [
 	super initialize.
 	modules := OrderedCollection new.
 	headers := OrderedCollection new.
+	layers := OrderedCollection new
+]
+
+{ #category : #accessing }
+REGModel >> layers [
+	^ layers
 ]
 
 { #category : #public }
@@ -168,6 +221,11 @@ REGModel >> numberOfFunctions [
 { #category : #'public - metrics' }
 REGModel >> numberOfHeaders [
 	^ headers size
+]
+
+{ #category : #'public - metrics' }
+REGModel >> numberOfLayers [
+	^ layers size
 ]
 
 { #category : #'public - metrics' }
