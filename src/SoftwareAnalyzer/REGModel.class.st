@@ -313,25 +313,32 @@ REGModel >> visualize [
 { #category : #visualization }
 REGModel >> visualizeLayers [
 
-	| c g ls |
+	| c g ls layerShapes ll |
 	c := RSCanvas new.
 	
-	layers do: [ :l |
+	layerShapes := layers collect: [ :l |
 		g := RSGroup new.
 		l modules do: [ :u |
-			g add: (RSBox new color: Color gray; model: u; size: 10).
+			g add: (RSBox new color: Color gray; model: u; height:  u numberOfLinesOfCode / 5 + 5; width: u numberOfFunctions * 3 + 5).
 		 ].
+		g @ RSPopup.
 		RSGridLayout on: g.
 		ls := g asShapeFor: l.
 		ls @ RSPopup @ RSDraggable.
+		ls adjustToChildren.
 		ls padding: 5.
 		ls color: Color lightGray.
-		ls @ RSLabeled.
+		
 		c add: ls.
-		ls adjustToChildren.
+		
+		ll := RSLabeled new.
+		ll shapeBuilder labelShape height: 30.
+		ll text: #name.
+		ls @ ll.
+		ls
 	].
 	"RSRectanglePackLayout"
-	RSGridLayout on: c shapes.
+	RSGridLayout on: layerShapes.
 	^ c @ RSCanvasController
 ]
 

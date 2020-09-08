@@ -14,6 +14,11 @@ REGUnit >> addInclude: anInclude [
 	includes add: anInclude
 ]
 
+{ #category : #accessing }
+REGUnit >> basename [
+	^ (filename substrings: '/') last
+]
+
 { #category : #'public - testing' }
 REGUnit >> doesInclude: aUnit [
 
@@ -61,4 +66,12 @@ REGUnit >> numberOfIncludes [
 { #category : #'as yet unclassified' }
 REGUnit >> outgoingUnits [
 	^ self includes collect: #toUnit
+]
+
+{ #category : #accessing }
+REGUnit >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	str nextPutAll: self basename.
+	str nextPut: $>.
 ]
