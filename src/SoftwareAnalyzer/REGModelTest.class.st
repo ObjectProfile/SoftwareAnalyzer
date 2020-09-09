@@ -230,6 +230,10 @@ REGModelTest >> testAddExampleAndBuildArchitecture2 [
 	
 	self assert: lB outgoingLayers size equals: 1.
 	self assert: (lB outgoingLayers includes: lB).
+	
+
+	self assert: (lA numberOfOutgoingUnitsToward: lB) equals: 1.
+	self assert: (lB numberOfOutgoingUnitsToward: lA) equals: 0.
 ]
 
 { #category : #tests }
