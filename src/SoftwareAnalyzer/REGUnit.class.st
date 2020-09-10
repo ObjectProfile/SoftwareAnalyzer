@@ -4,10 +4,24 @@ Class {
 	#instVars : [
 		'includes',
 		'filename',
-		'layer'
+		'layer',
+		'classes',
+		'functions'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
+
+{ #category : #adding }
+REGUnit >> addClass: aClass [
+	classes add: aClass
+]
+
+{ #category : #adding }
+REGUnit >> addFunction: aFunction [
+	self assert: [ aFunction class == REGFunction ].
+	functions add: aFunction.
+	aFunction module: self
+]
 
 { #category : #adding }
 REGUnit >> addInclude: anInclude [
@@ -37,6 +51,12 @@ REGUnit >> filename: aString [
 ]
 
 { #category : #accessing }
+REGUnit >> functions [
+	functions ifNil: [ ^ #() ].
+	^ functions
+]
+
+{ #category : #accessing }
 REGUnit >> includes [
 	^ includes
 ]
@@ -54,7 +74,9 @@ REGUnit >> incomingUnits [
 { #category : #initialization }
 REGUnit >> initialize [
 	super initialize.
-	includes := OrderedCollection new
+	includes := OrderedCollection new.
+	classes := OrderedCollection new.
+	functions := OrderedCollection new.
 ]
 
 { #category : #testing }
@@ -64,7 +86,7 @@ REGUnit >> isHeader [
 
 { #category : #testing }
 REGUnit >> isModule [
-	^ false
+	^ true
 ]
 
 { #category : #accessing }
@@ -78,6 +100,17 @@ REGUnit >> layer: aLayer [
 	
 ]
 
+{ #category : #'public - metrics' }
+REGUnit >> numberOfClasses [
+	^ classes size
+]
+
+{ #category : #'public - metrics' }
+REGUnit >> numberOfFunctions [
+	functions ifNil: [ ^ 0 ].
+	^ functions size
+]
+
 { #category : #'as yet unclassified' }
 REGUnit >> numberOfIncludes [
 	^ includes size
@@ -85,7 +118,7 @@ REGUnit >> numberOfIncludes [
 
 { #category : #'as yet unclassified' }
 REGUnit >> outgoingUnits [
-	^ (self includes collect: #toUnit)
+	^ (self includes collect: #toUnit) copyWithout: nil
 ]
 
 { #category : #'as yet unclassified' }

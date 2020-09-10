@@ -41,7 +41,7 @@ REGLayer >> name: anObject [
 
 { #category : #'as yet unclassified' }
 REGLayer >> numberOfOutgoingUnitsToward: aLayer [
-	^ (((self modules flatCollect: #outgoingUnits) collect: #layer) collect: [ :ll | ll == aLayer ]) size
+	^ (((self modules flatCollect: #outgoingUnits) collect: #layer) select: [ :ll | ll == aLayer ]) size
 ]
 
 { #category : #'as yet unclassified' }

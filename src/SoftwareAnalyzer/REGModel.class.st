@@ -22,6 +22,7 @@ REGModel >> addSrcMLXML: xml [
 	find . -name ""*.xml"" -exec mv {} xml \;
 	"
 	| units |
+	self assert: [ xml isByteString ] description: 'Wrong type'.
 	units := (XMLDOMParser parse: xml) document
 		descendantNodesSelect: [ :x | ( ({ XMLPI . XMLString } includes: x class) not) and: [ x name = 'unit' and: [ x attributes includesKey: 'filename' ] ] ].
 		
@@ -33,6 +34,7 @@ REGModel >> addSrcMLXML: xml [
 REGModel >> addUnitAsXML: xml [
 	"Add a unit described using XML, and return a module"
 	| m isModule |
+	self assert: [ xml class name beginsWith: 'XML' ] description: 'Wrong type'.
 	isModule := #('.C' '.c' '.cpp' '.CPP') anySatisfy: [ :p | (xml attributeAt: 'filename') endsWith: p ].
 	 
 	m := isModule ifTrue: [ REGModule new ] ifFalse: [ REGHeader new ].

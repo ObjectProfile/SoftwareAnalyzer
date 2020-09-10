@@ -304,3 +304,19 @@ REGModelTest >> testLayers [
 	self assert: m numberOfLayers equals: 1.
 	self assert: l name equals: 'MyLayer'
 ]
+
+{ #category : #tests }
+REGModelTest >> testLayersNotExisting [
+	| m l |
+	m := REGModel new.
+	m addSrcMLXML: self codeModuleA.
+	m buildArchitecture.
+	self assert: m numberOfLayers equals: 1.
+	
+	l := m getAndCreateIfNecessaryLayerNamed: 'a'.
+	self assert: m numberOfLayers equals: 1.
+	self assert: l name equals: 'a'.
+	
+	self assert: l outgoingLayers size equals: 0.
+	self assert: l modules first outgoingUnits size equals: 0.
+]
