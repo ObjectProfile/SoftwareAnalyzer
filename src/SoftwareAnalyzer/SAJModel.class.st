@@ -12,7 +12,7 @@ Class {
 { #category : #private }
 SAJModel >> addClassAsXML: xml [
 	"PRIVATE METHOD"
-	| classname aClass hasSuperclass superclassName |
+	| classname aClass hasSuperclass superclassName isGeneric |
 	classname := ((xml elementAt: 'class') elementAt: 'name') nodes first asString.
 
 	aClass := SAJClass new
@@ -20,7 +20,12 @@ SAJModel >> addClassAsXML: xml [
 					
 	hasSuperclass := xml @ { 'class' . 'super_list' . 'extends' . 'super' }.
 	hasSuperclass notNil ifTrue: [ 
-		superclassName :=  (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes first asString.
+		isGeneric := (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes size > 1.
+		isGeneric 
+			ifTrue: [ 
+				superclassName :=  (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes first nodes first asString ]
+			ifFalse: [
+				superclassName :=  (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes first asString ].
 		aClass superclassName: superclassName.
 		 ].	
 					
@@ -140,9 +145,9 @@ SAJModel >> gtInspectorView2In: composite [
 
 { #category : #visualization }
 SAJModel >> gtInspectorViewAnnotationsIn: composite [
-	<gtInspectorPresentationOrder: -10>
+	<gtInspectorPresentationOrder: -50>
 	composite roassal3
-		title: 'AnnoOnCode';
+		title: 'F';
 		initializeCanvas: [ self visualizeAnnotations ]
 ]
 
@@ -305,17 +310,14 @@ SAJModel >> visualize [
 
 { #category : #visualization }
 SAJModel >> visualizeAnnotations [
-	| c cont |
+	| c |
 	c := RSCanvas new.
 	
 	packages do: [ : p |
-		cont := RSComposite new.
-		self visualizeClasses: p classes inContainer: cont.
-		cont color: Color blue. 
-		cont padding: 10.
-		c add: cont.
+		p visualizeAnnotationsIn: c
 	].
-
+	RSGridLayout on: c shapes.
+	c shapes @ RSPopup @ RSDraggable.
 	 ^ c @ RSCanvasController
 ]
 

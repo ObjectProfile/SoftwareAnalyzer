@@ -17,12 +17,12 @@ SAJUnit >> addAnnotation: ann [
 	annotations add: ann
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJUnit >> annotations [
 	^ annotations
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJUnit >> features [
 	^ (annotations collect: #feature as: Set) asSortedCollection: [ :f1 :f2 | f1 featureName < f2 featureName ]
 ]
@@ -74,12 +74,12 @@ SAJUnit >> name: anObject [
 	name := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - metrics' }
 SAJUnit >> numberOfAnnotations [
 	^ (self features flatCollect: #annotations) size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - metrics' }
 SAJUnit >> numberOfFeatures [
 	^ self features size
 ]
@@ -112,4 +112,14 @@ SAJUnit >> printOn: str [
 	str nextPut: $<.
 	str nextPutAll: self name.
 	str nextPut: $>.
+]
+
+{ #category : #visualization }
+SAJUnit >> visualizeInContainer: compo [
+	self features do: [ :feat |
+		compo add: (RSBox new model: self; size: 10; model: feat).
+	].
+	RSGridLayout on: compo children.
+	
+
 ]
