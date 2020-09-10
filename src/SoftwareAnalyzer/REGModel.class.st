@@ -352,7 +352,7 @@ REGModel >> visualizeLayers [
 		c add: ls.
 		
 		ll := RSLabeled new.
-		ll shapeBuilder labelShape height: 30.
+		ll fontSize: 40.
 		ll text: #name.
 		ls @ ll.
 		ls
@@ -362,6 +362,7 @@ REGModel >> visualizeLayers [
 	
 	RSEdgeBuilder bimetricLine
 		canvas: c;
+		noBidirectional;
 		objects: layers;
 		noBorder;
 		widthFrom:[ :edge | (edge key numberOfOutgoingUnitsToward: edge value) sqrt * 4 ];
