@@ -13,10 +13,21 @@ SAJPackage >> addUnit: aUnit [
 	units add: aUnit
 ]
 
+{ #category : #accessing }
+SAJPackage >> classes [ 
+	^ self units select: #isClass
+]
+
 { #category : #initialization }
 SAJPackage >> initialize [
 	super initialize.
-	units := OrderedCollection new
+	units := OrderedCollection new.
+	name := 'default'
+]
+
+{ #category : #accessing }
+SAJPackage >> interfaces [ 
+	^ self units select: #isInterface
 ]
 
 { #category : #accessing }
@@ -25,8 +36,10 @@ SAJPackage >> name [
 ]
 
 { #category : #accessing }
-SAJPackage >> name: anObject [
-	name := anObject
+SAJPackage >> name: aString [
+	self assert: [ aString notNil ].
+	self assert: [ aString isByteString ].
+	name := aString
 ]
 
 { #category : #accessing }

@@ -951,7 +951,7 @@ public class D { }
 '
 ]
 
-{ #category : #'tests - coree' }
+{ #category : #'tests - core' }
 SAJTest >> testBasic [
 	self assert: m numberOfClasses equals: 4.
 	self assert: m numberOfInterfaces equals: 1.
@@ -965,7 +965,7 @@ SAJTest >> testBasic [
 	self assert: m numberOfPackages equals: 0.
 ]
 
-{ #category : #'tests - coree' }
+{ #category : #'tests - core' }
 SAJTest >> testEmpty [
 	self assert: empty numberOfClasses equals: 0.
 	self assert: empty numberOfInterfaces equals: 0
@@ -1004,7 +1004,7 @@ Shape.java,6-7,Feature1,FRAGMENT
 	self assert: (m unitNamed: 'Canvas') features size equals: 2.
 ]
 
-{ #category : #'tests - coree' }
+{ #category : #'tests - core' }
 SAJTest >> testInterfacesNamed [
 
 	| cls |
@@ -1055,7 +1055,7 @@ SAJTest >> testPackages [
 	self deny: (packages second units includes: firstClass).
 ]
 
-{ #category : #'tests - coree' }
+{ #category : #'tests - core' }
 SAJTest >> testSuperclasses [
 
 	| cls |
@@ -1076,7 +1076,7 @@ SAJTest >> testSuperclasses [
 	self should: [ m classNamed: 'NotExisting' ] raise: Error
 ]
 
-{ #category : #'tests - coree' }
+{ #category : #'tests - core' }
 SAJTest >> testUnitNamed [
 
 	self assert: (m unitNamed: 'ColoredCircle') equals: (m classNamed: 'ColoredCircle').

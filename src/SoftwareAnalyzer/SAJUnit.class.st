@@ -30,7 +30,8 @@ SAJUnit >> features [
 { #category : #initialization }
 SAJUnit >> initialize [
 	super initialize.
-	annotations := OrderedCollection new
+	annotations := OrderedCollection new.
+	packageName := 'default'
 ]
 
 { #category : #testing }

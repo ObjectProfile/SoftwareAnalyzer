@@ -351,9 +351,10 @@ SAJModel >> visualizeAnnotationsOLD [
 ]
 
 { #category : #visualization }
-SAJModel >> visualizeClasses: classes inContainer: aContainer [
-	| eb |
-	
+SAJModel >> visualizeClasses: someClasses inContainer: aContainer [
+	| eb classes |
+	classes := someClasses collect: [ :cls |
+		RSBox new model: cls; size: 10 ] as: RSGroup.
 	aContainer addAll: classes.
 	RSNormalizer size
 		shapes: classes;
