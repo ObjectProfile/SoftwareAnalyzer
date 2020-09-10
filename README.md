@@ -3,8 +3,8 @@
 
 
 ```Smalltalk
-Metacello new
+[ Metacello new
     baseline: 'SoftwareAnalyzer';
     repository: 'github://ObjectProfile/SoftwareAnalyzer';
-    load.
+    load. ] on: MCMergeOrLoadWarning do: [:warning | warning load ]
 ```
