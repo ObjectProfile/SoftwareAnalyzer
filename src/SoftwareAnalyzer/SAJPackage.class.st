@@ -8,6 +8,11 @@ Class {
 	#category : #'SoftwareAnalyzer-Java'
 }
 
+{ #category : #adding }
+SAJPackage >> addUnit: aUnit [
+	units add: aUnit
+]
+
 { #category : #initialization }
 SAJPackage >> initialize [
 	super initialize.

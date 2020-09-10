@@ -105,7 +105,8 @@ SAJModel >> createAndBindPackages [
 	].
 	packages addAll: d values.
 	units do: [ :u |
-		u package: (d at: u packageName) 
+		u package: (d at: u packageName).
+		(d at: u packageName) addUnit: u
 		 ]
 ]
 
@@ -302,6 +303,21 @@ SAJModel >> visualize [
 
 { #category : #visualization }
 SAJModel >> visualizeAnnotations [
+	| c cont |
+	c := RSCanvas new.
+	
+	packages do: [ : p |
+		cont := RSComposite new.
+		self visualizeClasses: p classes inContainer: cont.
+		cont color: Color blue. 
+		c add: cont.
+	].
+
+	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeAnnotationsOLD [
 	| c classes eb |
 	c := RSCanvas new.
 	
@@ -332,6 +348,38 @@ SAJModel >> visualizeAnnotations [
 		normalize: #numberOfAnnotations.
 
 	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeClasses: classes inContainer: aContainer [
+	| eb |
+	
+	aContainer addAll: classes.
+	RSNormalizer size
+		shapes: classes;
+		normalize: #loc.
+	
+
+	eb := RSEdgeBuilder orthoVertical.
+	eb withVerticalAttachPoint.
+	eb canvas: aContainer.
+	eb shapes: classes.
+	eb connectFrom: #superclass.
+
+	classes @ RSPopup @ RSDraggable.
+	
+	RSConditionalLayout new
+		ifConnectedThen: RSTreeLayout new;
+		else: RSGridLayout new;
+		on: classes.
+
+	RSNormalizer color
+		shapes: classes;
+		from: Color gray;
+		to: Color red;
+		normalize: #numberOfAnnotations.
+
+
 ]
 
 { #category : #'visualization - not interesting' }

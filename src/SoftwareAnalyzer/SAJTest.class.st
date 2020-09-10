@@ -1048,6 +1048,11 @@ SAJTest >> testPackages [
 	self assert: secondClass packageName equals: 'p2'.
 	self assert: secondClass package name equals: 'p2'.
 	self assert: secondClass package equals: packages second.
+	
+	self assert: (packages first units includes: firstClass).
+	self assert: (packages second units includes: secondClass).
+	self deny: (packages first units includes: secondClass).
+	self deny: (packages second units includes: firstClass).
 ]
 
 { #category : #'tests - coree' }
