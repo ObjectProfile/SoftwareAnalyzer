@@ -65,7 +65,9 @@ SAJPackage >> visualizeAnnotationsIn: container [
 	composite color: Color veryVeryLightGray.
 	composite padding: 10.
 	composite model: self.
-	container add: composite
+	container add: composite.
+	composite @ (RSLabeled new text: self name).
+	^ composite
 ]
 
 { #category : #visualization }

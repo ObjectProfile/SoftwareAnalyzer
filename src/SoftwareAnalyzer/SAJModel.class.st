@@ -310,14 +310,14 @@ SAJModel >> visualize [
 
 { #category : #visualization }
 SAJModel >> visualizeAnnotations [
-	| c |
+	| c pShapes |
 	c := RSCanvas new.
 	
-	packages do: [ : p |
+	pShapes := packages collect: [ : p |
 		p visualizeAnnotationsIn: c
-	].
-	RSGridLayout on: c shapes.
-	c shapes @ RSPopup @ RSDraggable.
+	] as: RSGroup.
+	RSGridLayout on: pShapes.
+	pShapes @ RSPopup @ RSDraggable.
 	 ^ c @ RSCanvasController
 ]
 
