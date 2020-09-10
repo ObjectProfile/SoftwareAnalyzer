@@ -56,6 +56,8 @@ SAJClass >> superclassName [
 ]
 
 { #category : #accessing }
-SAJClass >> superclassName: anObject [
-	superclassName := anObject
+SAJClass >> superclassName: aString [
+	self assert: [ aString isByteString ].
+	self assert: [ (aString includes: $<) not ].
+	superclassName := aString
 ]

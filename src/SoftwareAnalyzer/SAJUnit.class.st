@@ -102,6 +102,7 @@ SAJUnit >> packageName [
 { #category : #accessing }
 SAJUnit >> packageName: aString [
 	self assert: [ aString isByteString ].
+	self assert: [ (aString includes: $<) not ].
 	packageName := aString
 ]
 

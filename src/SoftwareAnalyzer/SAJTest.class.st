@@ -951,6 +951,48 @@ public class D { }
 '
 ]
 
+{ #category : #'code example' }
+SAJTest >> sourceCodeWithPackages2 [
+"
+package p1.foo.bar;
+
+class C {
+    public void foo() {
+    }
+}
+
+
+--------
+
+package p2;
+
+import p1.*;
+
+public class D { }
+
+"
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0">
+
+<unit revision="1.0.0" language="Java" filename="C.java" hash="f5e886e7d3173e959aa8d4f38c74c9d340062843"><package>package <name><name>p1</name><operator>.</operator><name>foo</name><operator>.</operator><name>bar</name></name>;</package>
+
+<class>class <name>C</name> <block>{
+    <function><type><specifier>public</specifier> <name>void</name></type> <name>foo</name><parameter_list>()</parameter_list> <block>{<block_content>
+    </block_content>}</block></function>
+}</block></class>
+</unit>
+
+<unit revision="1.0.0" language="Java" filename="D.java" hash="bf72cff3626f289315b7c94a102ac9f77bdc9923"><package>package <name>p2</name>;</package>
+
+<import>import <name><name>p1</name><operator>.</operator><name>*</name></name>;</import>
+
+<class><specifier>public</specifier> class <name>D</name> <block>{ }</block></class>
+</unit>
+
+</unit>
+'
+]
+
 { #category : #'tests - core' }
 SAJTest >> testBasic [
 	self assert: m numberOfClasses equals: 4.
@@ -1043,6 +1085,48 @@ SAJTest >> testPackages [
 	
 	self assert: firstClass packageName equals: 'p1'.
 	self assert: firstClass package name equals: 'p1'.
+	self assert: firstClass package equals: packages first.
+	
+	self assert: secondClass packageName equals: 'p2'.
+	self assert: secondClass package name equals: 'p2'.
+	self assert: secondClass package equals: packages second.
+	
+	self assert: (packages first units includes: firstClass).
+	self assert: (packages second units includes: secondClass).
+	self deny: (packages first units includes: secondClass).
+	self deny: (packages second units includes: firstClass).
+]
+
+{ #category : #'tests - packages' }
+SAJTest >> testPackages2 [
+
+	| packages firstClass secondClass |
+	m := SAJModel new.
+
+	m addSrcMLXML: self sourceCodeWithPackages2.
+	
+	self assert: m numberOfUnits equals: 2.
+	self assert: m units first isClass.
+	
+	firstClass := m units first.
+	self assert: firstClass name equals: 'C'.
+	self assert: firstClass packageName equals: 'p1.foo.bar'.
+	self assert: firstClass package isNil.
+	
+	
+	secondClass := m units second.
+	self assert: secondClass name equals: 'D'.
+	self assert: secondClass packageName equals: 'p2'.
+	self assert: secondClass package isNil.
+	
+	m build.
+	self assert: m numberOfPackages equals: 2.
+	
+	packages := m packages.
+	self assert: (packages collect: #name) asArray equals: #('p1.foo.bar' 'p2').
+	
+	self assert: firstClass packageName equals: 'p1.foo.bar'.
+	self assert: firstClass package name equals: 'p1.foo.bar'.
 	self assert: firstClass package equals: packages first.
 	
 	self assert: secondClass packageName equals: 'p2'.

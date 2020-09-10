@@ -15,16 +15,15 @@ SAJModel >> addClassAsXML: xml [
 	| classname aClass hasSuperclass superclassName |
 	classname := ((xml elementAt: 'class') elementAt: 'name') nodes first asString.
 
+	aClass := SAJClass new
+					name: classname.
+					
 	hasSuperclass := xml @ { 'class' . 'super_list' . 'extends' . 'super' }.
-
 	hasSuperclass notNil ifTrue: [ 
 		superclassName :=  (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes first asString.
-		 ].
-	
-	
-	aClass := SAJClass new
-					name: classname;
-					superclassName: superclassName.
+		aClass superclassName: superclassName.
+		 ].	
+					
 	units add: aClass.
 	^ aClass
 ]
@@ -69,7 +68,10 @@ SAJModel >> addUnitAsXML: xml [
 	hasPackageName := (xml @ { 'package' . 'name' }) notNil.
 	hasPackageName ifTrue: [
 		| packageName |
-		packageName := (xml @ { 'package' . 'name' }) nodes first asString.
+		((xml @ { 'package' . 'name' }) nodes size == 1) 
+			ifTrue: [ packageName := (xml @ { 'package' . 'name' }) nodes first asString ]
+			ifFalse: [ packageName := (xml @ { 'package' . 'name' }) nodes flatCollect: [ :n | n nodes first asString ] as: String].
+		
 		u packageName: packageName ].
 ]
 
@@ -310,6 +312,7 @@ SAJModel >> visualizeAnnotations [
 		cont := RSComposite new.
 		self visualizeClasses: p classes inContainer: cont.
 		cont color: Color blue. 
+		cont padding: 10.
 		c add: cont.
 	].
 

@@ -24,6 +24,7 @@ SAJExample >> exampleWallet [
 	fr readStream encoding: (ZnUTF8Encoder new).
 	m addSrcMLXML: fr contents.
 	m build.
+self halt.
 	m importFeaturesAsCSV: SAJTest new featureAnnotations.
 	^ m
 ]
