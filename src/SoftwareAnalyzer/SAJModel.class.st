@@ -3,13 +3,15 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'units',
-		'features'
+		'features',
+		'packages'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
 
-{ #category : #adding }
+{ #category : #private }
 SAJModel >> addClassAsXML: xml [
+	"PRIVATE METHOD"
 	| classname aClass hasSuperclass superclassName |
 	classname := ((xml elementAt: 'class') elementAt: 'name') nodes first asString.
 
@@ -27,8 +29,9 @@ SAJModel >> addClassAsXML: xml [
 	^ aClass
 ]
 
-{ #category : #adding }
+{ #category : #private }
 SAJModel >> addInterfaceAsXML: xml [
+	"PRIVATE METHOD"
 	| interfaceName anInterface |
 	interfaceName := ((xml elementAt: 'interface') elementAt: 'name') nodes first asString.
 	anInterface := SAJInterface new
@@ -37,29 +40,43 @@ SAJModel >> addInterfaceAsXML: xml [
 	^ anInterface
 ]
 
-{ #category : #adding }
-SAJModel >> addSrcMLXML: xml [
-	"xml as string
+{ #category : #public }
+SAJModel >> addSrcMLXML: xmlAsString [
+	"THIS IS A PUBLIC METHOD TO ADD THINGS IN A MODEL
+	xml is a string
 	
 	Using:
 	srcml *.java -o example.xml
 	"
 	| someClasses |
-	someClasses := (XMLDOMParser parse: xml) document
+	self assert: [ xmlAsString isByteString ] description: 'Wrong type'.
+	someClasses := (XMLDOMParser parse: xmlAsString) document
 		descendantNodesSelect: [ :x | (x class ~~ XMLString) and: [ x name = 'unit' and: [ x attributes includesKey: 'filename' ] ] ].
 		
 	someClasses do: [ :u | self addUnitAsXML: u ]
 ]
 
-{ #category : #adding }
+{ #category : #private }
 SAJModel >> addUnitAsXML: xml [
-	| u |
+	| u hasPackageName |
+	self assert: [ xml class name beginsWith: 'XML' ] description: 'Wrong type'.
 	(xml elementAt: 'class') ifNotNil: [ u := self addClassAsXML: xml ].
 	(xml elementAt: 'interface') ifNotNil: [ u := self addInterfaceAsXML: xml ].
-	
 	"Could be enum"
 	u ifNil: [ ^ self ].
-	u loc: xml asString lines size
+	u loc: xml asString lines size.
+	
+	hasPackageName := (xml @ { 'package' . 'name' }) notNil.
+	hasPackageName ifTrue: [
+		| packageName |
+		packageName := (xml @ { 'package' . 'name' }) nodes first asString.
+		u packageName: packageName ].
+]
+
+{ #category : #public }
+SAJModel >> build [
+	self resolveSuperclasses.
+	self createAndBindPackages	
 ]
 
 { #category : #accessing }
@@ -76,6 +93,20 @@ SAJModel >> classNamed: aClassName ifNone: block [
 SAJModel >> classes [
 
 	^ units select: #isClass
+]
+
+{ #category : #private }
+SAJModel >> createAndBindPackages [
+	| packageNames d |
+	packageNames := units collect: #packageName.
+	d := Dictionary new.
+	packageNames do: [ :pName |
+		d at: pName put: (SAJPackage new name: pName)	
+	].
+	packages addAll: d values.
+	units do: [ :u |
+		u package: (d at: u packageName) 
+		 ]
 ]
 
 { #category : #'public - features' }
@@ -96,7 +127,7 @@ SAJModel >> getOrCreateFeatureNamed: aName [
 	^ features detect: [ :f | f featureName = aName ].
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> gtInspectorView2In: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
@@ -112,7 +143,7 @@ SAJModel >> gtInspectorViewAnnotationsIn: composite [
 		initializeCanvas: [ self visualizeAnnotations ]
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> gtInspectorViewFeatureIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
@@ -120,7 +151,7 @@ SAJModel >> gtInspectorViewFeatureIn: composite [
 		initializeCanvas: [ self visualizeFeatures ]
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> gtInspectorViewIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
@@ -159,7 +190,8 @@ SAJModel >> importFeaturesAsCSV: csvAsString [
 SAJModel >> initialize [
 	super initialize.
 	units := OrderedCollection new.
-	features := OrderedCollection new
+	features := OrderedCollection new.
+	packages := OrderedCollection new
 ]
 
 { #category : #accessing }
@@ -179,7 +211,7 @@ SAJModel >> numberOfClasses [
 	^ self classes size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - metrics' }
 SAJModel >> numberOfFeatures [
 	^ features size
 ]
@@ -190,24 +222,45 @@ SAJModel >> numberOfInterfaces [
 	^ self interfaces size
 ]
 
-{ #category : #'as yet unclassified' }
-SAJModel >> resolveBindings [
+{ #category : #'public - metrics' }
+SAJModel >> numberOfPackages [
+	^ packages size
+]
+
+{ #category : #'public - metrics' }
+SAJModel >> numberOfUnits [
+	^ self numberOfClasses + self numberOfInterfaces
+]
+
+{ #category : #accessing }
+SAJModel >> packages [
+	^ packages
+]
+
+{ #category : #private }
+SAJModel >> resolveSuperclasses [
+	"This is a private method"
 	self classes do: [ :cls |
 		cls superclassName ifNotNil: [ 
 			cls superclass: (self classNamed: cls superclassName ifNone: [ nil ]) ]  ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJModel >> unitNamed: aName [
 	^ units detect: [ :u | u name = aName ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJModel >> unitNamed: aName ifNone: block [
 	^ units detect: [ :u | u name = aName ] ifNone: block
 ]
 
-{ #category : #visualization }
+{ #category : #accessing }
+SAJModel >> units [
+	^ units
+]
+
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualize [
 	| c classes eb connectedShapes nonConnectedShapes |
 	c := RSCanvas new.
@@ -281,7 +334,7 @@ SAJModel >> visualizeAnnotations [
 	 ^ c @ RSCanvasController
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualizeFeatures [
 	| c classes eb featureColors featureShapes |
 	c := RSCanvas new.
@@ -321,7 +374,7 @@ SAJModel >> visualizeFeatures [
 	 ^ c @ RSCanvasController
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualizeFeaturesOnly [
 	
 	| c shapes |
@@ -344,7 +397,7 @@ SAJModel >> visualizeFeaturesOnly [
 	^ c @ RSCanvasController
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualizeFeaturesOnly2 [
 	
 	| c shapes eb |
@@ -377,7 +430,7 @@ SAJModel >> visualizeFeaturesOnly2 [
 	^ c @ RSCanvasController
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualizeRaw [
 	| c classes eb |
 	c := RSCanvas new.

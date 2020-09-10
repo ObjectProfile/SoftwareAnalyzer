@@ -5,7 +5,9 @@ Class {
 		'name',
 		'methods',
 		'loc',
-		'annotations'
+		'annotations',
+		'package',
+		'packageName'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -79,6 +81,27 @@ SAJUnit >> numberOfAnnotations [
 { #category : #'as yet unclassified' }
 SAJUnit >> numberOfFeatures [
 	^ self features size
+]
+
+{ #category : #accessing }
+SAJUnit >> package [
+	^ package
+]
+
+{ #category : #accessing }
+SAJUnit >> package: aPackage [
+	package := aPackage
+]
+
+{ #category : #accessing }
+SAJUnit >> packageName [
+	^ packageName
+]
+
+{ #category : #accessing }
+SAJUnit >> packageName: aString [
+	self assert: [ aString isByteString ].
+	packageName := aString
 ]
 
 { #category : #printing }

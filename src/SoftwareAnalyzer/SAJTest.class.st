@@ -8,7 +8,7 @@ Class {
 	#category : #'SoftwareAnalyzer-Java'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'code example' }
 SAJTest >> featureAnnotations [
 	^ 'fileName,lineRange,featureName,annotationGranualarity
 src\de\schildbach\wallet\Configuration.java,47-47,Denomination,LINE
@@ -853,7 +853,7 @@ src\de\schildbach\wallet\util\WalletUtils.java,329-329,base58,LINE
 src\de\schildbach\wallet\util\WalletUtils.java,358-367,BackupWallet,FRAGMENT'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SAJTest >> setUp [
 	super setUp.
 
@@ -863,7 +863,7 @@ SAJTest >> setUp [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'code example' }
 SAJTest >> sourceCodeExampleXML [
 ^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0">
@@ -910,7 +910,48 @@ SAJTest >> sourceCodeExampleXML [
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'code example' }
+SAJTest >> sourceCodeWithPackages [
+"
+package p1;
+
+class C {
+    public void foo() {
+    }
+}
+
+--------
+
+package p2;
+
+import p1.*;
+
+public class D { }
+
+"
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0">
+
+<unit revision="1.0.0" language="Java" filename="C.java" hash="d9bc752ee4352206ed501a8ffd9a17117cf27328"><package>package <name>p1</name>;</package>
+
+<class>class <name>C</name> <block>{
+    <function><type><specifier>public</specifier> <name>void</name></type> <name>foo</name><parameter_list>()</parameter_list> <block>{<block_content>
+    </block_content>}</block></function>
+}</block></class>
+</unit>
+
+<unit revision="1.0.0" language="Java" filename="D.java" hash="bf72cff3626f289315b7c94a102ac9f77bdc9923"><package>package <name>p2</name>;</package>
+
+<import>import <name><name>p1</name><operator>.</operator><name>*</name></name>;</import>
+
+<class><specifier>public</specifier> class <name>D</name> <block>{ }</block></class>
+</unit>
+
+</unit>
+'
+]
+
+{ #category : #'tests - coree' }
 SAJTest >> testBasic [
 	self assert: m numberOfClasses equals: 4.
 	self assert: m numberOfInterfaces equals: 1.
@@ -920,15 +961,17 @@ SAJTest >> testBasic [
 
 	self assert: ((m interfaces collect: #name) includesAll:
 			 #( 'Shape' )).
+			
+	self assert: m numberOfPackages equals: 0.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'tests - coree' }
 SAJTest >> testEmpty [
 	self assert: empty numberOfClasses equals: 0.
 	self assert: empty numberOfInterfaces equals: 0
 ]
 
-{ #category : #tests }
+{ #category : #'tests - features' }
 SAJTest >> testFeatures [
 
 	| configurationFeature |
@@ -944,7 +987,7 @@ SAJTest >> testFeatures [
 	self assert: (configurationFeature annotations allSatisfy: [ :a | a feature == configurationFeature ])
 ]
 
-{ #category : #tests }
+{ #category : #'tests - features' }
 SAJTest >> testFeatures02 [
 
 	| annotations |
@@ -961,7 +1004,7 @@ Shape.java,6-7,Feature1,FRAGMENT
 	self assert: (m unitNamed: 'Canvas') features size equals: 2.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'tests - coree' }
 SAJTest >> testInterfacesNamed [
 
 	| cls |
@@ -970,7 +1013,44 @@ SAJTest >> testInterfacesNamed [
 	self should: [ m interfaceNamed: 'NotExisting' ] raise: Error
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'tests - packages' }
+SAJTest >> testPackages [
+
+	| packages firstClass secondClass |
+	m := SAJModel new.
+
+	m addSrcMLXML: self sourceCodeWithPackages.
+	
+	self assert: m numberOfUnits equals: 2.
+	self assert: m units first isClass.
+	
+	firstClass := m units first.
+	self assert: firstClass name equals: 'C'.
+	self assert: firstClass packageName equals: 'p1'.
+	self assert: firstClass package isNil.
+	
+	
+	secondClass := m units second.
+	self assert: secondClass name equals: 'D'.
+	self assert: secondClass packageName equals: 'p2'.
+	self assert: secondClass package isNil.
+	
+	m build.
+	self assert: m numberOfPackages equals: 2.
+	
+	packages := m packages.
+	self assert: (packages collect: #name) asArray equals: #('p1' 'p2').
+	
+	self assert: firstClass packageName equals: 'p1'.
+	self assert: firstClass package name equals: 'p1'.
+	self assert: firstClass package equals: packages first.
+	
+	self assert: secondClass packageName equals: 'p2'.
+	self assert: secondClass package name equals: 'p2'.
+	self assert: secondClass package equals: packages second.
+]
+
+{ #category : #'tests - coree' }
 SAJTest >> testSuperclasses [
 
 	| cls |
@@ -978,7 +1058,7 @@ SAJTest >> testSuperclasses [
 	self assert: cls superclassName equals: 'Circle'.
 	self assert: cls superclass isNil.
 	
-	m resolveBindings.
+	m build.
 	
 	self assert: cls superclass equals: (m classNamed: 'Circle').
 	self assert: cls hasSuperclass.
@@ -991,7 +1071,7 @@ SAJTest >> testSuperclasses [
 	self should: [ m classNamed: 'NotExisting' ] raise: Error
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'tests - coree' }
 SAJTest >> testUnitNamed [
 
 	self assert: (m unitNamed: 'ColoredCircle') equals: (m classNamed: 'ColoredCircle').

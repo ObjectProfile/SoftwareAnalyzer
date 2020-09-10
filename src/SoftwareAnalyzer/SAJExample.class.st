@@ -10,7 +10,7 @@ SAJExample >> exampleSimple [
 	| m |
 	m := SAJModel new.
 	m addSrcMLXML: SAJTest new sourceCodeExampleXML.
-	m resolveBindings.
+	m build.
 	^ m
 ]
 
@@ -23,7 +23,7 @@ SAJExample >> exampleWallet [
 	fr := '/Users/alexandrebergel/Dropbox/GitRepos/SoftwareAnalyzer/data/example.xml' asFileReference.
 	fr readStream encoding: (ZnUTF8Encoder new).
 	m addSrcMLXML: fr contents.
-	m resolveBindings.
+	m build.
 	m importFeaturesAsCSV: SAJTest new featureAnnotations.
 	^ m
 ]
