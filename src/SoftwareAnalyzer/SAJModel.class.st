@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'units',
 		'features',
-		'packages'
+		'packages',
+		'featureColorScale'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -69,6 +70,7 @@ SAJModel >> addUnitAsXML: xml [
 	"Could be enum"
 	u ifNil: [ ^ self ].
 	u loc: xml asString lines size.
+	u model: self.
 	
 	hasPackageName := (xml @ { 'package' . 'name' }) notNil.
 	hasPackageName ifTrue: [
@@ -108,13 +110,20 @@ SAJModel >> createAndBindPackages [
 	packageNames := units collect: #packageName.
 	d := Dictionary new.
 	packageNames do: [ :pName |
-		d at: pName put: (SAJPackage new name: pName)	
+		d at: pName put: (SAJPackage new name: pName; model: self)	
 	].
 	packages addAll: d values.
 	units do: [ :u |
 		u package: (d at: u packageName).
 		(d at: u packageName) addUnit: u
 		 ]
+]
+
+{ #category : #visualization }
+SAJModel >> createColorScaleForFeatures [
+	"Return a scale ready to be used to color feature"
+	^ NSScale ordinal range: (Color wheel: self numberOfFeatures).
+	
 ]
 
 { #category : #'public - features' }
@@ -253,6 +262,14 @@ SAJModel >> resolveSuperclasses [
 			cls superclass: (self classNamed: cls superclassName ifNone: [ nil ]) ]  ]
 ]
 
+{ #category : #visualization }
+SAJModel >> scaleForFeaturesColoring [
+	"Return a scale ready to be used to color feature"
+	featureColorScale ifNotNil: [ ^ featureColorScale ].
+	featureColorScale := NSScale ordinal range: (Color wheel: self numberOfFeatures).
+	^ featureColorScale
+]
+
 { #category : #accessing }
 SAJModel >> unitNamed: aName [
 	^ units detect: [ :u | u name = aName ]
@@ -313,6 +330,7 @@ SAJModel >> visualizeAnnotations [
 	| c pShapes |
 	c := RSCanvas new.
 	
+	"We render pacakges"
 	pShapes := packages collect: [ : p |
 		p visualizeAnnotationsIn: c
 	] as: RSGroup.
@@ -321,7 +339,7 @@ SAJModel >> visualizeAnnotations [
 	 ^ c @ RSCanvasController
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualizeAnnotationsOLD [
 	| c classes eb |
 	c := RSCanvas new.
@@ -353,39 +371,6 @@ SAJModel >> visualizeAnnotationsOLD [
 		normalize: #numberOfAnnotations.
 
 	 ^ c @ RSCanvasController
-]
-
-{ #category : #visualization }
-SAJModel >> visualizeClasses: someClasses inContainer: aContainer [
-	| eb classes |
-	classes := someClasses collect: [ :cls |
-		RSBox new model: cls; size: 10 ] as: RSGroup.
-	aContainer addAll: classes.
-	RSNormalizer size
-		shapes: classes;
-		normalize: #loc.
-	
-
-	eb := RSEdgeBuilder orthoVertical.
-	eb withVerticalAttachPoint.
-	eb canvas: aContainer.
-	eb shapes: classes.
-	eb connectFrom: #superclass.
-
-	classes @ RSPopup @ RSDraggable.
-	
-	RSConditionalLayout new
-		ifConnectedThen: RSTreeLayout new;
-		else: RSGridLayout new;
-		on: classes.
-
-	RSNormalizer color
-		shapes: classes;
-		from: Color gray;
-		to: Color red;
-		normalize: #numberOfAnnotations.
-
-
 ]
 
 { #category : #'visualization - not interesting' }

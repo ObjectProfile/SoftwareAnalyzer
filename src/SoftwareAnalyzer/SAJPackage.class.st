@@ -1,9 +1,8 @@
 Class {
 	#name : #SAJPackage,
-	#superclass : #Object,
+	#superclass : #SAJStructuralElement,
 	#instVars : [
-		'units',
-		'name'
+		'units'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -28,18 +27,6 @@ SAJPackage >> initialize [
 { #category : #accessing }
 SAJPackage >> interfaces [ 
 	^ self units select: #isInterface
-]
-
-{ #category : #accessing }
-SAJPackage >> name [
-	^ name
-]
-
-{ #category : #accessing }
-SAJPackage >> name: aString [
-	self assert: [ aString notNil ].
-	self assert: [ aString isByteString ].
-	name := aString
 ]
 
 { #category : #visualization }

@@ -1,8 +1,7 @@
 Class {
 	#name : #SAJUnit,
-	#superclass : #SAJObject,
+	#superclass : #SAJStructuralElement,
 	#instVars : [
-		'name',
 		'methods',
 		'loc',
 		'annotations',
@@ -65,11 +64,6 @@ SAJUnit >> methods: anObject [
 ]
 
 { #category : #accessing }
-SAJUnit >> name [
-	^ name
-]
-
-{ #category : #accessing }
 SAJUnit >> name: anObject [
 	name := anObject
 ]
@@ -117,7 +111,7 @@ SAJUnit >> printOn: str [
 { #category : #visualization }
 SAJUnit >> visualizeInContainer: compo [
 	self features do: [ :feat |
-		compo add: (RSBox new model: self; size: 10; model: feat).
+		compo add: (RSBox new model: self; size: 10; model: feat; color: (model scaleForFeaturesColoring scale: feat)).
 	].
 	RSGridLayout on: compo children.
 	
