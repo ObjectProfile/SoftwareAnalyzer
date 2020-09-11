@@ -327,7 +327,7 @@ SAJModel >> visualize [
 
 { #category : #visualization }
 SAJModel >> visualizeAnnotations [
-	| c pShapes |
+	| c pShapes featureShapes |
 	c := RSCanvas new.
 	
 	"We render pacakges"
@@ -335,6 +335,12 @@ SAJModel >> visualizeAnnotations [
 		p visualizeAnnotationsIn: c
 	] as: RSGroup.
 	RSGridLayout on: pShapes.
+	
+	featureShapes := c deepShapesFromModels: self features.
+	self assert: [ featureShapes notEmpty ].
+	featureShapes do: [ :fs |
+		fs @ (RSHighlightable new highlightBorder: (RSBorder new color: Color yellow; width: 5); highlightShapes: [ :ss | featureShapes select: [ :sss | (sss model == fs model) and: [ sss ~~ fs ]  ] ]) ].
+	
 	pShapes @ RSPopup @ RSDraggable.
 	 ^ c @ RSCanvasController
 ]

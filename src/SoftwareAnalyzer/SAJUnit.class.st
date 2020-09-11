@@ -113,6 +113,7 @@ SAJUnit >> visualizeInContainer: compo [
 	self features do: [ :feat |
 		compo add: (RSBox new model: self; size: 10; model: feat; color: (model scaleForFeaturesColoring scale: feat)).
 	].
+	compo children @ RSPopup.
 	RSGridLayout on: compo children.
 	
 
