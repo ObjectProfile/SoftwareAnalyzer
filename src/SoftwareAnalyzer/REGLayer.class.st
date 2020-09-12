@@ -13,6 +13,14 @@ REGLayer >> addUnit: aUnit [
 	units add: aUnit
 ]
 
+{ #category : #visualization }
+REGLayer >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'View';
+		initializeCanvas: [ self visualize ]
+]
+
 { #category : #accessing }
 REGLayer >> headers [
 	^ units select: #isHeader
@@ -60,4 +68,26 @@ REGLayer >> printOn: str [
 { #category : #'as yet unclassified' }
 REGLayer >> units [
 	^ units
+]
+
+{ #category : #visualization }
+REGLayer >> visualize [
+
+	| c color uShapes eb |
+	c := RSCanvas new.
+	
+	uShapes := self units collect: [ :u |
+		RSBox new "color: (color scale: u numberOfIncludes);" model: u; height: u numberOfLinesOfCode / 5 + 5; width: u numberOfFunctions * 3 + 5.	
+	] as: RSGroup.
+
+	c addAll: uShapes.
+	
+	eb := RSEdgeBuilder arrowedLineWithOffset: 0.2.
+	eb canvas: c.
+	eb shapes: uShapes.
+	eb connectToAll: #outgoingUnits.
+	
+	
+	RSForceBasedLayout on: uShapes.
+	^ c @ RSCanvasController
 ]

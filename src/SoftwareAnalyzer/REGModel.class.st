@@ -135,6 +135,7 @@ REGModel >> exampleSmall [
 	m := REGModel new.
 	m addSrcMLXML: REGModelTest new codeExample.
 	m resolve.
+	m buildArchitecture.
 	^ m
 ]
 
@@ -148,6 +149,7 @@ REGModel >> exampleUVent [
 	m := REGModel new.
 	m addSrcMLXML: uventPath asFileReference contents.
 	m resolve.
+	m buildArchitecture.
 	^ m
 ]
 
