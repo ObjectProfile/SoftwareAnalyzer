@@ -140,8 +140,19 @@ SAJModel >> features [
 SAJModel >> getOrCreateFeatureNamed: aName [
 	| doesExist |
 	doesExist := features anySatisfy: [ :f | f featureName = aName ].
-	doesExist ifFalse: [ features add: (SAJFeature new featureName: aName) ].
+	doesExist ifFalse: [ features add: (SAJFeature new featureName: aName; model: self) ].
 	^ features detect: [ :f | f featureName = aName ].
+]
+
+{ #category : #visualization }
+SAJModel >> gtInspectorFeatureListIn: composite [
+	<gtInspectorPresentationOrder: 30>
+	composite table
+		title: [ 'Features' translated ];
+		display: [ self features ];
+		column: 'Name' evaluated: [ :each | each featureName ];
+		column: '#Annotations' evaluated: [ :each | each numberOfAnnotations ];
+		column: '#Units' evaluated: [ :each | each numberOfUnits ]
 ]
 
 { #category : #'visualization - not interesting' }

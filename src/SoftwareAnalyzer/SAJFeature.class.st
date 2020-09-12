@@ -1,8 +1,7 @@
 Class {
 	#name : #SAJFeature,
-	#superclass : #SAJObject,
+	#superclass : #SAJStructuralElement,
 	#instVars : [
-		'featureName',
 		'annotations'
 	],
 	#category : #'SoftwareAnalyzer-Java'
@@ -25,12 +24,12 @@ SAJFeature >> classes [
 
 { #category : #accessing }
 SAJFeature >> featureName [
-	^ featureName
+	^ name
 ]
 
 { #category : #accessing }
 SAJFeature >> featureName: anObject [
-	featureName := anObject
+	name := anObject
 ]
 
 { #category : #visualization }
@@ -79,6 +78,16 @@ SAJFeature >> units [
 
 { #category : #visualization }
 SAJFeature >> visualize [
+	| c |
+	c := RSCanvas new.
+	SAJPackage new model: self model; visualizeClasses: self classes inContainer: c.
+	
+	RSRectanglePackLayout new on: c shapes.
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJFeature >> visualizeOLD [
 	| c shapes eb |
 	c := RSCanvas new.
 	shapes := self classes asSet collect: [ :u | RSBox new model: u ] as: RSGroup.
