@@ -285,7 +285,7 @@ REGModel >> resolve [
 		unit includes do: [ :i |
 			
 			i fromUnit: unit.
-			(d includesKey: i rawName) ifTrue: [ i toUnit: (d at: i rawName) ]
+			(d includesKey: i basename) ifTrue: [ i toUnit: (d at: i basename) ]
 		]
 	].
 
@@ -376,7 +376,7 @@ REGModel >> visualizeLayers [
 		ls
 	].
 	"RSRectanglePackLayout"
-	RSGridLayout on: layerShapes.
+	RSEquidistantCircleLayout new initialRadius: 900; on: layerShapes.
 	
 	RSEdgeBuilder bimetricLine
 		canvas: c;

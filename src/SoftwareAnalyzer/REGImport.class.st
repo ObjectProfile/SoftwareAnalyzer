@@ -10,6 +10,11 @@ Class {
 }
 
 { #category : #accessing }
+REGImport >> basename [
+	^ (self rawName substrings: '/') last
+]
+
+{ #category : #accessing }
 REGImport >> fromUnit [
 	^ fromUnit
 ]
@@ -29,7 +34,15 @@ REGImport >> name: anObject [
 	name := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+REGImport >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	self name ifNotNil: [ str nextPutAll: self rawName ].
+	str nextPut: $>.
+]
+
+{ #category : #accessing }
 REGImport >> rawName [
 	^ name copyWithoutAll: '<>"'
 ]
