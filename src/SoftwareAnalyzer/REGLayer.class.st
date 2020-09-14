@@ -73,6 +73,23 @@ REGLayer >> units [
 { #category : #visualization }
 REGLayer >> visualize [
 
+	| m |
+	m := RSMondrian new.
+	m shape circle.
+	m nodes: self units.
+	m line 
+		connectToAll: #outgoingUnits.
+	m normalizeColor: #numberOfLinesOfCode.
+	m normalizeSize: #numberOfLinesOfCode.
+	m layout force charge: -300.
+	m translucentShapes.
+	m build.
+	^ m canvas
+]
+
+{ #category : #visualization }
+REGLayer >> visualizeOLD [
+
 	| c color uShapes eb |
 	c := RSCanvas new.
 	
