@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'modules',
 		'headers',
-		'layers'
+		'layers',
+		'rootFilename'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
@@ -54,6 +55,7 @@ REGModel >> addUnitAsXML: xml [
 	(#('.C' '.c' '.cpp' '.CPP') anySatisfy: [ :p | m filename endsWith: p ])
 		ifTrue: [ modules add: m ]
 		ifFalse: [ headers add: m ].
+	m model: self.
 	^ m
 	
 ]
@@ -119,6 +121,9 @@ REGModel >> exampleFPrime [
 	fprimePath := '/Users/alexandrebergel/Dropbox/Workspace/NASA/fprime/xml'.
 	
 	m := REGModel new.
+	
+	"Say where to get the application source code"
+	m rootFilename: '/Users/alexandrebergel/Dropbox/Workspace/NASA/fprime'.
 	fprimePath asFileReference children do: [ :c |
 		[ m addSrcMLXML: c readStream contents ] on: ZnInvalidUTF8 do: [ :ex |  ].
 	].
@@ -285,6 +290,17 @@ REGModel >> resolve [
 	].
 
 
+]
+
+{ #category : #accessing }
+REGModel >> rootFilename [
+	^ rootFilename
+]
+
+{ #category : #accessing }
+REGModel >> rootFilename: aString [
+	"Set the root of the folder that contains the application source code"
+	rootFilename := aString
 ]
 
 { #category : #accessing }

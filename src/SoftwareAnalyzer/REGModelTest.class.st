@@ -187,6 +187,8 @@ REGModelTest >> testAddExample [
 	
 	self assert: m modules first numberOfLinesOfCode equals: 9.
 	self assert: m numberOfLinesOfCode equals: 30.
+	
+	self assert: (m units allSatisfy: [ :u | u model == m ])
 ]
 
 { #category : #tests }

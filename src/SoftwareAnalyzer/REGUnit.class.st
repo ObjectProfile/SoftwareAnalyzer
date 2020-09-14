@@ -2,6 +2,7 @@ Class {
 	#name : #REGUnit,
 	#superclass : #REGObject,
 	#instVars : [
+		'model',
 		'includes',
 		'filename',
 		'layer',
@@ -56,6 +57,14 @@ REGUnit >> functions [
 	^ functions
 ]
 
+{ #category : #visualization }
+REGUnit >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite text
+		title: 'Source';
+		display: [ self sourceCode ]
+]
+
 { #category : #accessing }
 REGUnit >> includes [
 	^ includes
@@ -100,6 +109,16 @@ REGUnit >> layer: aLayer [
 	
 ]
 
+{ #category : #accessing }
+REGUnit >> model [
+	^ model
+]
+
+{ #category : #accessing }
+REGUnit >> model: aModel [
+	model := aModel
+]
+
 { #category : #'public - metrics' }
 REGUnit >> numberOfClasses [
 	^ classes size
@@ -132,4 +151,15 @@ REGUnit >> printOn: str [
 	str nextPut: $<.
 	str nextPutAll: self basename.
 	str nextPut: $>.
+]
+
+{ #category : #public }
+REGUnit >> sourceCode [
+	| fr |
+	(self model isNil |
+	 self model rootFilename isNil |
+	 self model rootFilename isEmpty) ifTrue: [ ^ '' ].
+	fr := (self model rootFilename, '/', self filename) asFileReference.
+	fr exists ifFalse: [ ^ '' ].
+	^ fr contents
 ]
