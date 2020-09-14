@@ -322,3 +322,21 @@ REGModelTest >> testLayersNotExisting [
 	self assert: l outgoingLayers size equals: 0.
 	self assert: l modules first outgoingUnits size equals: 0.
 ]
+
+{ #category : #tests }
+REGModelTest >> testVisualizationOnExample [
+
+	| m ss |
+	m := REGModel new.
+	m addSrcMLXML: self codeExample.
+	m resolve.
+	m buildArchitecture.
+	
+	ss := m class selectors select: [ :sel | sel beginsWith: 'visualize' ].
+	ss do: [ :s | self assert: (m perform: s) notNil ].
+	
+	m units do: [ :u |
+		ss := u class selectors select: [ :sel | sel beginsWith: 'visualize' ].
+		ss do: [ :s | self assert: (u perform: s) notNil ].
+	]
+]

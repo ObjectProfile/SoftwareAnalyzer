@@ -193,14 +193,6 @@ REGModel >> gtInspectorModulesIn: composite [
 		initializeCanvas: [ self visualizeModules ]
 ]
 
-{ #category : #visualization }
-REGModel >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -20>
-	composite roassal3
-		title: 'Modules';
-		initializeCanvas: [ self visualizeModules ]
-]
-
 { #category : #accessing }
 REGModel >> headers [
 	^ headers
