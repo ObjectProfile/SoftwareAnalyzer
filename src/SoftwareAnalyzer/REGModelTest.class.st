@@ -338,5 +338,10 @@ REGModelTest >> testVisualizationOnExample [
 	m units do: [ :u |
 		ss := u class selectors select: [ :sel | sel beginsWith: 'visualize' ].
 		ss do: [ :s | self assert: (u perform: s) notNil ].
+	].
+
+	m layers do: [ :u |
+		ss := u class selectors select: [ :sel | sel beginsWith: 'visualize' ].
+		ss do: [ :s | self assert: (u perform: s) notNil ].
 	]
 ]
