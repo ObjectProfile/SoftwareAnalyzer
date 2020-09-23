@@ -5,7 +5,8 @@ Class {
 		'units',
 		'features',
 		'packages',
-		'featureColorScale'
+		'featureColorScale',
+		'rootFilename'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -63,14 +64,16 @@ SAJModel >> addSrcMLXML: xmlAsString [
 
 { #category : #private }
 SAJModel >> addUnitAsXML: xml [
-	| u hasPackageName |
+	| u hasPackageName filename |
 	self assert: [ xml class name beginsWith: 'XML' ] description: 'Wrong type'.
 	(xml elementAt: 'class') ifNotNil: [ u := self addClassAsXML: xml ].
 	(xml elementAt: 'interface') ifNotNil: [ u := self addInterfaceAsXML: xml ].
+	filename := xml attributeAt: 'filename'.
 	"Could be enum"
 	u ifNil: [ ^ self ].
 	u loc: xml asString lines size.
 	u model: self.
+	u filename: filename.
 	
 	hasPackageName := (xml @ { 'package' . 'name' }) notNil.
 	hasPackageName ifTrue: [
@@ -271,6 +274,17 @@ SAJModel >> resolveSuperclasses [
 	self classes do: [ :cls |
 		cls superclassName ifNotNil: [ 
 			cls superclass: (self classNamed: cls superclassName ifNone: [ nil ]) ]  ]
+]
+
+{ #category : #accessing }
+SAJModel >> rootFilename [
+	^ rootFilename
+]
+
+{ #category : #accessing }
+SAJModel >> rootFilename: aString [
+	"Set the root of the folder that contains the application source code"
+	rootFilename := aString
 ]
 
 { #category : #visualization }

@@ -6,7 +6,8 @@ Class {
 		'loc',
 		'annotations',
 		'package',
-		'packageName'
+		'packageName',
+		'filename'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -24,6 +25,16 @@ SAJUnit >> annotations [
 { #category : #accessing }
 SAJUnit >> features [
 	^ (annotations collect: #feature as: Set) asSortedCollection: [ :f1 :f2 | f1 featureName < f2 featureName ]
+]
+
+{ #category : #accessing }
+SAJUnit >> filename [
+	^ filename
+]
+
+{ #category : #accessing }
+SAJUnit >> filename: anObject [
+	filename := anObject
 ]
 
 { #category : #initialization }
@@ -106,6 +117,17 @@ SAJUnit >> printOn: str [
 	str nextPut: $<.
 	str nextPutAll: self name.
 	str nextPut: $>.
+]
+
+{ #category : #accessing }
+SAJUnit >> sourceCode [
+	| fr |
+	(self model isNil |
+	 self model rootFilename isNil |
+	 self model rootFilename isEmpty) ifTrue: [ ^ '' ].
+	fr := (self model rootFilename, '/', self filename) asFileReference.
+	fr exists ifFalse: [ ^ '' ].
+	^ fr contents
 ]
 
 { #category : #visualization }

@@ -19,10 +19,11 @@ SAJExample >> exampleWallet [
 	<script: 'self new exampleWallet inspect'>
 	| m fr |
 	m := SAJModel new.
-	
-	fr := '/Users/alexandrebergel/Dropbox/GitRepos/SoftwareAnalyzer/data/example.xml' asFileReference.
-	fr readStream encoding: (ZnUTF8Encoder new).
-	m addSrcMLXML: fr contents.
+	m rootFilename: '/Users/alexandrebergel/Dropbox/GitRepos/datasetbitcoinwallet/src'.
+	fr := '/Users/alexandrebergel/Dropbox/GitRepos/datasetbitcoinwallet/src/xml' asFileReference.
+	fr children do: [ :ffr |
+		m addSrcMLXML: ffr contents.
+	].	
 	m build.
 	m importFeaturesAsCSV: SAJTest new featureAnnotations.
 	^ m
