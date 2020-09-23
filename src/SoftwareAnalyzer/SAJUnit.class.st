@@ -50,6 +50,11 @@ SAJUnit >> isClass [
 ]
 
 { #category : #testing }
+SAJUnit >> isEnum [
+	^ false
+]
+
+{ #category : #testing }
 SAJUnit >> isInterface [
 	^ false
 ]

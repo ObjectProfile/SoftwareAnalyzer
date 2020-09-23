@@ -864,6 +864,60 @@ SAJTest >> setUp [
 ]
 
 { #category : #'code example' }
+SAJTest >> sourceCodeEnumXML [
+
+^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="Java" filename="de/schildbach/wallet/ui/send/FeeCategory.java"><comment type="block">/*
+ * Copyright 2015 the original author or authors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+ */</comment>
+
+<package>package <name><name>de</name><operator>.</operator><name>schildbach</name><operator>.</operator><name>wallet</name><operator>.</operator><name>ui</name><operator>.</operator><name>send</name></name>;</package>
+
+<comment type="line">//&amp;begin[Fee]</comment>
+<comment type="block" format="javadoc">/**
+ * @author Andreas Schildbach
+ */</comment>
+<enum><specifier>public</specifier> enum <name>FeeCategory</name> <block>{
+    <comment type="line">//&amp;begin[Economic]</comment>
+    <comment type="block" format="javadoc">/**
+     * We don''t care when it confirms, but it should confirm at some time. Can be days or weeks.
+     */</comment>
+    <decl><name>ECONOMIC</name></decl>,
+    <comment type="line">//&amp;end[Economic]</comment>
+
+    <comment type="line">//&amp;begin[Normal]</comment>
+    <comment type="block" format="javadoc">/**
+     * Under normal network conditions, confirms within the next 15 minutes. Can take longer, but this should
+     * be an exception. And it should not take days or weeks.
+     */</comment>
+    <decl><name>NORMAL</name></decl>,
+    <comment type="line">//&amp;end[Normal]</comment>
+
+    <comment type="line">//&amp;begin[Priority]</comment>
+    <comment type="block" format="javadoc">/**
+     * Confirms within the next 15 minutes.
+     */</comment>
+    <decl><name>PRIORITY</name></decl>;
+    <comment type="line">//&amp;end[Priority]</comment>
+}</block></enum>
+<comment type="line">//&amp;end[Fee]</comment></unit>
+'
+]
+
+{ #category : #'code example' }
 SAJTest >> sourceCodeExampleXML [
 ^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0">
@@ -1013,6 +1067,17 @@ SAJTest >> testEmpty [
 	self assert: empty numberOfInterfaces equals: 0
 ]
 
+{ #category : #'tests - core' }
+SAJTest >> testEnum [
+
+	m := SAJModel new.
+	self assert: m numberOfUnits equals: 0.
+	m addSrcMLXML: self sourceCodeEnumXML.
+	self assert: m numberOfUnits equals: 1.
+	self assert: m numberOfEnums equals: 1.
+	self assert: m numberOfClasses equals: 0.
+]
+
 { #category : #'tests - features' }
 SAJTest >> testFeatures [
 
@@ -1024,8 +1089,8 @@ SAJTest >> testFeatures [
 	configurationFeature := m featureNamed: 'Denomination'.
 	self assert: configurationFeature featureName equals: 'Denomination'.
 	
-	self assert: configurationFeature numberOfAnnotations equals: 20.
-	self assert: configurationFeature annotations size equals: 20.
+	self assert: configurationFeature numberOfAnnotations equals: 0.
+	self assert: configurationFeature annotations size equals: 0.
 	self assert: (configurationFeature annotations allSatisfy: [ :a | a feature == configurationFeature ])
 ]
 

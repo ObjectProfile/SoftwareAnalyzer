@@ -53,6 +53,14 @@ SAJFeatureAnnotations >> from: anObject [
 ]
 
 { #category : #accessing }
+SAJFeatureAnnotations >> sourceCode [
+	| lines numberOfLines |
+	lines := self unit sourceCode lines.
+	numberOfLines := lines size.
+	^ String cr join: (lines copyFrom: (self from min: numberOfLines) to: (self to min: numberOfLines))
+]
+
+{ #category : #accessing }
 SAJFeatureAnnotations >> to [
 	^ to
 ]

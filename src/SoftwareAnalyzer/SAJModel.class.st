@@ -36,6 +36,17 @@ SAJModel >> addClassAsXML: xml [
 ]
 
 { #category : #private }
+SAJModel >> addEnumAsXML: xml [
+	"PRIVATE METHOD"
+	| enumName anEnum |
+	enumName := ((xml elementAt: 'enum') elementAt: 'name') nodes first asString.
+	anEnum := SAJEnum new
+					name: enumName.
+	units add: anEnum.
+	^ anEnum
+]
+
+{ #category : #private }
 SAJModel >> addInterfaceAsXML: xml [
 	"PRIVATE METHOD"
 	| interfaceName anInterface |
@@ -68,9 +79,11 @@ SAJModel >> addUnitAsXML: xml [
 	self assert: [ xml class name beginsWith: 'XML' ] description: 'Wrong type'.
 	(xml elementAt: 'class') ifNotNil: [ u := self addClassAsXML: xml ].
 	(xml elementAt: 'interface') ifNotNil: [ u := self addInterfaceAsXML: xml ].
+	(xml elementAt: 'enum') ifNotNil: [ u := self addEnumAsXML: xml ].
 	filename := xml attributeAt: 'filename'.
-	"Could be enum"
-	u ifNil: [ ^ self ].
+
+	u ifNil: [ self halt. ].
+	
 	u loc: xml asString lines size.
 	u model: self.
 	u filename: filename.
@@ -127,6 +140,12 @@ SAJModel >> createColorScaleForFeatures [
 	"Return a scale ready to be used to color feature"
 	^ NSScale ordinal range: (Color wheel: self numberOfFeatures).
 	
+]
+
+{ #category : #'public - metrics' }
+SAJModel >> enums [
+
+	^ units select: #isEnum
 ]
 
 { #category : #'public - features' }
@@ -199,7 +218,9 @@ SAJModel >> importFeaturesAsCSV: csvAsString [
 		ss := l substrings: '.,-'.
 		unitName := (ss first substrings: '\') last.
 		from := ss third asInteger.
-		to := ss fourth asInteger.
+		
+		"to cannot be inferior than from"
+		to := ss fourth asInteger max: from.
 		featureName := ss fifth.
 		annotationGranularity := ss sixth.
 		
@@ -211,10 +232,11 @@ SAJModel >> importFeaturesAsCSV: csvAsString [
 		annotation from: from.
 		annotation to: to.
 		annotation unit: unit.
-		unit ifNotNil: [ unit addAnnotation: annotation ].
-		annotation feature: feat.
-		feat addAnnotation: annotation.
-	]
+		unit ifNotNil: [ 
+			unit addAnnotation: annotation.
+			annotation feature: feat.
+			feat addAnnotation: annotation  ] "ifNil: [ self halt ]".
+	] 
 ]
 
 { #category : #initialization }
@@ -243,6 +265,12 @@ SAJModel >> numberOfClasses [
 ]
 
 { #category : #'public - metrics' }
+SAJModel >> numberOfEnums [
+
+	^ self enums size
+]
+
+{ #category : #'public - metrics' }
 SAJModel >> numberOfFeatures [
 	^ features size
 ]
@@ -260,7 +288,7 @@ SAJModel >> numberOfPackages [
 
 { #category : #'public - metrics' }
 SAJModel >> numberOfUnits [
-	^ self numberOfClasses + self numberOfInterfaces
+	^ units size
 ]
 
 { #category : #accessing }
