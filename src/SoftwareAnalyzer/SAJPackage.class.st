@@ -62,6 +62,7 @@ SAJPackage >> visualizeClasses: someClasses inContainer: aContainer [
 	| eb classes compo sc |
 	classes := someClasses collect: [ :cls |
 		compo := RSComposite new.
+		compo color: Color gray darker.
 		cls visualizeInContainer: compo.
 		compo model: cls.
 		compo adjustToChildren.
@@ -83,7 +84,7 @@ SAJPackage >> visualizeClasses: someClasses inContainer: aContainer [
 		else: RSGridLayout new;
 		on: classes.
 
-	sc := RSNormalizer color.
+"	sc := RSNormalizer color.
 	sc
 		shapes: classes;
 		from: Color gray;
@@ -91,6 +92,6 @@ SAJPackage >> visualizeClasses: someClasses inContainer: aContainer [
 	sc scale domain: { (self model units detectMin: #loc) loc . (self model units detectMax: #loc) loc }.
 	sc
 		normalize: #loc.
-
+"
 
 ]

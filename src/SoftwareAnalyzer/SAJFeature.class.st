@@ -2,7 +2,8 @@ Class {
 	#name : #SAJFeature,
 	#superclass : #SAJStructuralElement,
 	#instVars : [
-		'annotations'
+		'annotations',
+		'color'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -20,6 +21,16 @@ SAJFeature >> annotations [
 { #category : #visualization }
 SAJFeature >> classes [
 	^ self units select: #isClass
+]
+
+{ #category : #accessing }
+SAJFeature >> color [
+	^ color
+]
+
+{ #category : #accessing }
+SAJFeature >> color: anObject [
+	color := anObject
 ]
 
 { #category : #accessing }

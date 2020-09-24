@@ -32,6 +32,11 @@ SAJFeatureAnnotations >> feature: anObject [
 	feature := anObject
 ]
 
+{ #category : #printing }
+SAJFeatureAnnotations >> featureName [
+	^ self feature name
+]
+
 { #category : #accessing }
 SAJFeatureAnnotations >> filename [
 	^ filename
@@ -50,6 +55,14 @@ SAJFeatureAnnotations >> from [
 { #category : #accessing }
 SAJFeatureAnnotations >> from: anObject [
 	from := anObject
+]
+
+{ #category : #printing }
+SAJFeatureAnnotations >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	str nextPutAll: self featureName.
+	str nextPut: $>.
 ]
 
 { #category : #accessing }

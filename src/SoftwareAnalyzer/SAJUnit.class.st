@@ -37,6 +37,22 @@ SAJUnit >> filename: anObject [
 	filename := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SAJUnit >> gtInspectorSourceCodeIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite text
+		title: 'Source';
+		display: #sourceCode
+]
+
+{ #category : #'as yet unclassified' }
+SAJUnit >> gtInspectorVisualizeIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'Visualize';
+		initializeCanvas: [ self visualize ]
+]
+
 { #category : #initialization }
 SAJUnit >> initialize [
 	super initialize.
@@ -136,9 +152,31 @@ SAJUnit >> sourceCode [
 ]
 
 { #category : #visualization }
+SAJUnit >> visualize [
+	| c b ab |
+	c := RSCanvas new.
+	
+	b := RSBox model: self.
+	b @ RSPopup.
+	b fromRectangle: ((-25 @ 0) corner: (25 @ self loc)).
+	b width: 50.
+	c add: b.
+	
+	self annotations do: [ :a |
+		ab := RSBox model: a.
+		ab @ RSPopup.
+		ab color: a feature color.
+		ab fromRectangle: ((-25 @ a from) corner: (25 @ (a to + 1))).
+		c add: ab.
+	].
+	
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
 SAJUnit >> visualizeInContainer: compo [
 	self features do: [ :feat |
-		compo add: (RSBox new model: self; size: 10; model: feat; color: (model scaleForFeaturesColoring scale: feat)).
+		compo add: (RSBox new model: self; size: 10; model: feat; color: (feat color)).
 	].
 	compo children @ RSPopup.
 	RSGridLayout on: compo children.

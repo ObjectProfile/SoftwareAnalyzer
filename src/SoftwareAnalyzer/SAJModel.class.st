@@ -101,7 +101,8 @@ SAJModel >> addUnitAsXML: xml [
 { #category : #public }
 SAJModel >> build [
 	self resolveSuperclasses.
-	self createAndBindPackages	
+	self createAndBindPackages.
+	self computeFeatureColor	
 ]
 
 { #category : #accessing }
@@ -118,6 +119,13 @@ SAJModel >> classNamed: aClassName ifNone: block [
 SAJModel >> classes [
 
 	^ units select: #isClass
+]
+
+{ #category : #public }
+SAJModel >> computeFeatureColor [	
+	self features do: [ :f |
+		f color: (self scaleForFeaturesColoring scale: f) ]
+	
 ]
 
 { #category : #private }
@@ -340,7 +348,7 @@ SAJModel >> units [
 
 { #category : #'visualization - not interesting' }
 SAJModel >> visualize [
-	| c classes eb connectedShapes nonConnectedShapes |
+	| c classes eb |
 	c := RSCanvas new.
 	
 	classes := self classes collect: [ :cls | RSBox new model: cls ] as: RSGroup.
@@ -391,6 +399,7 @@ SAJModel >> visualizeAnnotations [
 	
 	featureShapes := c deepShapesFromModels: self features.
 	self assert: [ featureShapes notEmpty ].
+
 	featureShapes do: [ :fs |
 		fs @ (RSHighlightable new highlightBorder: (RSBorder new color: Color yellow; width: 5); highlightShapes: [ :ss | featureShapes select: [ :sss | (sss model == fs model) and: [ sss ~~ fs ]  ] ]) ].
 	

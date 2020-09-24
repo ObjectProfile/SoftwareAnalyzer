@@ -25,7 +25,7 @@ SAJExample >> exampleWallet [
 	fr children do: [ :ffr |
 		m addSrcMLXML: ffr contents.
 	].	
-	m build.
 	m importFeaturesAsCSV: SAJTest new featureAnnotations.
+	m build.
 	^ m
 ]
