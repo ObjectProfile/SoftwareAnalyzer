@@ -57,12 +57,30 @@ SAJFeatureAnnotations >> from: anObject [
 	from := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SAJFeatureAnnotations >> gtInspectorSourceCodeIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite text
+		title: 'Source';
+		display: #sourceCode
+]
+
 { #category : #printing }
 SAJFeatureAnnotations >> printOn: str [
+	| s |
 	super printOn: str.
 	str nextPut: $<.
 	str nextPutAll: self featureName.
 	str nextPut: $>.
+	
+	str lf.
+	
+	s := self sourceCode lines.
+	s size > 15 ifTrue: [
+		str nextPutAll: (String lf join: (s first: 15)).
+		str lf.
+		str nextPutAll: '........' ]
+		ifFalse: [ str nextPutAll: self sourceCode ]
 ]
 
 { #category : #accessing }
