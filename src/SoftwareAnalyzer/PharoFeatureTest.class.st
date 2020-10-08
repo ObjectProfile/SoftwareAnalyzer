@@ -14,6 +14,14 @@ PharoFeatureTest >> setUp [
 ]
 
 { #category : #tests }
+PharoFeatureTest >> testAsString [
+	| c |
+	m addPharoClass: PFModel.
+	c := m classes first. 
+	self assert: c asString equals: 'a PFClass<PFModel>'
+]
+
+{ #category : #tests }
 PharoFeatureTest >> testBasic [
 
 	| nbOfFeatures fs |
@@ -128,6 +136,16 @@ PharoFeatureTest >> testPackage2 [
 	
 	self assert: m packages first classes size equals: 1.
 	self assert: m packages first classes first package equals: m packages first 
+]
+
+{ #category : #tests }
+PharoFeatureTest >> testSuperclassLink [
+
+	m addPharoClass: PFClass.
+	m addPharoClass: PFClass superclass.
+	m build.
+	
+	self assert: (m classNamed: #PFClass) superclass equals: (m classNamed: PFClass superclass name)
 ]
 
 { #category : #tests }

@@ -29,7 +29,8 @@ PFMethod >> compiledMethod [
 
 { #category : #accessing }
 PFMethod >> compiledMethod: aPharoCompiledMethod [
-	compiledMethod := aPharoCompiledMethod
+	compiledMethod := aPharoCompiledMethod.
+	self name: aPharoCompiledMethod selector
 ]
 
 { #category : #'public - features' }
@@ -64,6 +65,12 @@ PFMethod >> features [
 	"&begin[Modeling]"
 	^ features
 	"&end[Modeling]"
+]
+
+{ #category : #accessing }
+PFMethod >> getClass [
+	"Changed the name to not clash with Pharo"
+	^ class
 ]
 
 { #category : #initialization }

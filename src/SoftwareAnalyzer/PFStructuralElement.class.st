@@ -27,3 +27,12 @@ PFStructuralElement >> name [
 PFStructuralElement >> name: aString [
 	name := aString
 ]
+
+{ #category : #printing }
+PFStructuralElement >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	self name ifNotNil: [
+		str nextPutAll: self name ]. 
+	str nextPut: $>.
+]

@@ -10,7 +10,7 @@ Class {
 	#category : #'SoftwareAnalyzer-PharoFeature'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #computing }
 PFClass >> extractFeatureNames [
 	^ self methods flatCollect: #extractFeatureNames
 ]

@@ -48,6 +48,13 @@ PFModel >> classes [
 	^ classes
 ]
 
+{ #category : #'public - features' }
+PFModel >> computeFeatureColor [	
+	self features do: [ :f |
+		f color: (self scaleForFeaturesColoring scale: f) ]
+	
+]
+
 { #category : #visualization }
 PFModel >> createColorScaleForFeatures [
 	"Return a scale ready to be used to color feature"
@@ -64,6 +71,7 @@ PFModel >> example [
 	m := PFModel new.
 	pak classes do: [ :c |
 		m addPharoClass: c ].
+	m build.
 	^ m
 	"&end[Example]"
 ]
@@ -124,9 +132,9 @@ PFModel >> gtInspectorFeatureListIn: composite [
 	composite table
 		title: [ 'Features' translated ];
 		display: [ self features ];
-		column: 'Name' evaluated: [ :each | each featureName ];
-		column: '#Annotations' evaluated: [ :each | each numberOfAnnotations ];
-		column: '#Units' evaluated: [ :each | each numberOfUnits ]
+		column: 'Name' evaluated: [ :each | each name ];
+		column: '#Classes' evaluated: [ :each | each numberOfClasses ];
+		column: '#Methods' evaluated: [ :each | each numberOfMethods ]
 ]
 
 { #category : #visualization }
