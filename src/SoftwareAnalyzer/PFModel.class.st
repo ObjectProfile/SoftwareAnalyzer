@@ -25,3 +25,14 @@ PFModel >> example [
 		m addPharoClass: c ].
 	^ m
 ]
+
+{ #category : #initialization }
+PFModel >> initialize [
+	super initialize.
+	classes := OrderedCollection new
+]
+
+{ #category : #'public - metrics' }
+PFModel >> numberOfClasses [
+	^ classes size
+]
