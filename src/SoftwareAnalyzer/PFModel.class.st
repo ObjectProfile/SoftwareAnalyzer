@@ -32,6 +32,17 @@ PFModel >> addPharoClass: aClass [
 	"&end[Processing]"
 ]
 
+{ #category : #building }
+PFModel >> build [
+	self resolveSuperclasses.
+	self computeFeatureColor	
+]
+
+{ #category : #accessing }
+PFModel >> classNamed: aName [
+	^ self classes detect: [ :c | c name = aName ] ifNone: [ nil ]
+]
+
 { #category : #'public - metrics' }
 PFModel >> classes [
 	^ classes
@@ -86,13 +97,14 @@ PFModel >> getOrCreateFeatureNamed: aName [
 	f ifNotNil: [ ^ f ].
 	f := PFFeature new name: aName; yourself.
 	"&end[FeatureModeling]"
+	
 	"&begin[Adding]"
 	features add: f.
 	"&end[Adding]"
 	^ f
 ]
 
-{ #category : #'public - features' }
+{ #category : #'public - packages' }
 PFModel >> getOrCreatePackageNamed: aName [
 	"&begin[FeatureModeling]"
 	| p |
@@ -147,7 +159,17 @@ PFModel >> numberOfFeatures [
 	"&end[Metric]"
 ]
 
-{ #category : #'public - features' }
+{ #category : #'public - metrics' }
+PFModel >> numberOfMethods [
+	^ (self classes flatCollect: #methods) size
+]
+
+{ #category : #'public - metrics' }
+PFModel >> numberOfPackages [
+	^ packages size
+]
+
+{ #category : #'public - packages' }
 PFModel >> packageNamed: aName [
 	"&begin[Modeling]"
 	^ packages detect: [ :p | p name = aName ] ifNone: [ nil ]
@@ -172,6 +194,14 @@ PFModel >> processFeaturesFor: aPFClass [
 			pfMethod addFeature: f.
 			"&end[Modeling]"
 			 ] ] 
+]
+
+{ #category : #building }
+PFModel >> resolveSuperclasses [
+	| sc |
+	self classes copy do: [ :c |
+		sc := self classNamed: c superclassName.
+		sc ifNotNil: [ c superclass: sc ] ]
 ]
 
 { #category : #visualization }

@@ -2,7 +2,8 @@ Class {
 	#name : #PFFeature,
 	#superclass : #PFStructuralElement,
 	#instVars : [
-		'methods'
+		'methods',
+		'color'
 	],
 	#category : #'SoftwareAnalyzer-PharoFeature'
 }
@@ -11,6 +12,16 @@ Class {
 PFFeature >> addMethod: aPFMethod [
 	self assert: [ aPFMethod class == PFMethod ].
 	methods add: aPFMethod
+]
+
+{ #category : #accessing }
+PFFeature >> color [
+	^ color
+]
+
+{ #category : #accessing }
+PFFeature >> color: anObject [
+	color := anObject
 ]
 
 { #category : #initialization }

@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'pharoClass',
 		'methodsCache',
-		'package'
+		'package',
+		'superclass'
 	],
 	#category : #'SoftwareAnalyzer-PharoFeature'
 }
@@ -16,11 +17,7 @@ PFClass >> extractFeatureNames [
 
 { #category : #accessing }
 PFClass >> features [
-	| result |
-	result := OrderedCollection new.
-	pharoClass compiledMethods do: [ :cm |
-	].
-	^ result
+	^ (self methods flatCollect: #features) copyWithoutDuplicates
 ]
 
 { #category : #accessing }
@@ -49,5 +46,71 @@ PFClass >> pharoClass [
 { #category : #accessing }
 PFClass >> pharoClass: aPharoClass [
 	self assert: [ aPharoClass isBehavior ].
-	pharoClass := aPharoClass
+	pharoClass := aPharoClass.
+	self name: pharoClass name
+]
+
+{ #category : #accessing }
+PFClass >> superclass [
+	^ superclass
+]
+
+{ #category : #accessing }
+PFClass >> superclass: aPFClass [
+	superclass := aPFClass
+]
+
+{ #category : #accessing }
+PFClass >> superclassName [
+	^ self pharoClass superclass name
+]
+
+{ #category : #visualization }
+PFClass >> visualizeClasses: someClasses inContainer: aContainer [
+	| eb classes compo sc |
+	classes := someClasses collect: [ :cls |
+		compo := RSComposite new.
+		compo color: Color gray darker.
+		cls visualizeInContainer: compo.
+		compo model: cls.
+		compo adjustToChildren.
+		compo padding: 10.
+		compo ] as: RSGroup.
+	aContainer addAll: classes.
+
+
+	eb := RSEdgeBuilder orthoVertical.
+	eb withVerticalAttachPoint.
+	eb canvas: aContainer.
+	eb shapes: classes.
+	eb connectFrom: #superclass.
+
+	classes @ RSPopup @ RSDraggable.
+	
+	RSConditionalLayout new
+		ifConnectedThen: RSTreeLayout new;
+		else: RSGridLayout new;
+		on: classes.
+
+"	sc := RSNormalizer color.
+	sc
+		shapes: classes;
+		from: Color gray;
+		to: Color red.
+	sc scale domain: { (self model units detectMin: #loc) loc . (self model units detectMax: #loc) loc }.
+	sc
+		normalize: #loc.
+"
+
+]
+
+{ #category : #visualization }
+PFClass >> visualizeInContainer: compo [
+	self features do: [ :feat |
+		compo add: (RSBox new model: self; size: 10; model: feat; color: (feat color)).
+	].
+	compo children @ RSPopup.
+	RSGridLayout on: compo children.
+	
+
 ]

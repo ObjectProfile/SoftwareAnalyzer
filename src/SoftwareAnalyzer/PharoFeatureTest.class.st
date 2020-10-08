@@ -30,6 +30,20 @@ PharoFeatureTest >> testBasic [
 ]
 
 { #category : #tests }
+PharoFeatureTest >> testClassNamed [
+	| c1 c2 |
+	m addPharoClass: PFModel.
+	m addPharoClass: Object.
+	
+	c1 := m classNamed: #PFModel.
+	c2 := m classNamed: #Object.
+	
+	self assert: c2 methods size > c1 methods size.
+	
+	self assert: (m classNamed: #DOESNOTEXIST) isNil
+]
+
+{ #category : #tests }
 PharoFeatureTest >> testConnection [
 	| c |
 	"&begin[Adding]"
@@ -87,4 +101,38 @@ PharoFeatureTest >> testMethods [
 	
 	cls := m classes anyOne.
 	self assert: cls methods size equals: PFModel selectors size
+]
+
+{ #category : #tests }
+PharoFeatureTest >> testPackage [
+
+	| p |
+	self assert: m numberOfPackages equals: 0.
+	m addPharoClass: PFModel.
+	self assert: m numberOfPackages equals: 1.
+	self assert: m packages size equals: 1.
+	
+	p := m packages anyOne.
+	self assert: p name equals: PFModel package packageName
+]
+
+{ #category : #tests }
+PharoFeatureTest >> testPackage2 [
+	self assert: m numberOfPackages equals: 0.
+	m addPharoClass: PFModel.
+	m addPharoClass: Object.
+	self assert: m numberOfPackages equals: 2.
+	self assert: m packages size equals: 2.
+	
+	self assert: (m packages collect: #name) asArray equals: #(#SoftwareAnalyzer #Kernel).
+	
+	self assert: m packages first classes size equals: 1.
+	self assert: m packages first classes first package equals: m packages first 
+]
+
+{ #category : #tests }
+PharoFeatureTest >> testVisualizations [
+
+	m addPharoClass: PFModel.
+	m visualizeAnnotations
 ]
