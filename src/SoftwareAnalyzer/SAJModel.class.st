@@ -391,7 +391,7 @@ SAJModel >> visualizeAnnotations [
 	| c pShapes featureShapes |
 	c := RSCanvas new.
 	
-	"We render pacakges"
+	"We render packages"
 	pShapes := packages collect: [ : p |
 		p visualizeAnnotationsIn: c
 	] as: RSGroup.

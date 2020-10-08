@@ -3,7 +3,8 @@ Class {
 	#superclass : #PFStructuralElement,
 	#instVars : [
 		'pharoClass',
-		'methodsCache'
+		'methodsCache',
+		'package'
 	],
 	#category : #'SoftwareAnalyzer-PharoFeature'
 }
@@ -28,6 +29,16 @@ PFClass >> methods [
 	methodsCache := pharoClass methods collect: [ :cm |
 				PFMethod new class: self; compiledMethod: cm ].
 	^ methodsCache
+]
+
+{ #category : #accessing }
+PFClass >> package [
+	^ package
+]
+
+{ #category : #accessing }
+PFClass >> package: aPFPackage [
+	package := aPFPackage
 ]
 
 { #category : #accessing }
