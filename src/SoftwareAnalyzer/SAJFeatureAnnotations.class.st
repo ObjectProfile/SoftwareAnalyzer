@@ -65,6 +65,11 @@ SAJFeatureAnnotations >> gtInspectorSourceCodeIn: composite [
 		display: #sourceCode
 ]
 
+{ #category : #metrics }
+SAJFeatureAnnotations >> numberOfLinesOfCode [
+	^ self to - self from + 1
+]
+
 { #category : #printing }
 SAJFeatureAnnotations >> printOn: str [
 	| s |

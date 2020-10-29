@@ -18,6 +18,11 @@ SAJFeature >> annotations [
 	^ annotations
 ]
 
+{ #category : #'as yet unclassified' }
+SAJFeature >> anotationsForUnit: aUnit [
+	^ self annotations select: [ :a | a unit == aUnit ]
+]
+
 { #category : #visualization }
 SAJFeature >> classes [
 	^ self units select: #isClass
@@ -91,7 +96,7 @@ SAJFeature >> units [
 SAJFeature >> visualize [
 	| c |
 	c := RSCanvas new.
-	SAJPackage new model: self model; visualizeClasses: self classes inContainer: c.
+	SAJPackage new model: self model; visualizeClasses: self classes asSet inContainer: c.
 	
 	RSRectanglePackLayout new on: c shapes.
 	^ c @ RSCanvasController

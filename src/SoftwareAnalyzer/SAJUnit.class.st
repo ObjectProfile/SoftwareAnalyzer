@@ -176,7 +176,9 @@ SAJUnit >> visualize [
 { #category : #visualization }
 SAJUnit >> visualizeInContainer: compo [
 	self features do: [ :feat |
-		compo add: (RSBox new model: self; size: 10; model: feat; color: (feat color)).
+		| aSize |
+		aSize := ((feat anotationsForUnit: self) collect: #numberOfLinesOfCode) sum sqrt * 4.
+		compo add: (RSBox new model: self; size: aSize; model: feat; color: (feat color)).
 	].
 	compo children @ RSPopup.
 	RSGridLayout on: compo children.

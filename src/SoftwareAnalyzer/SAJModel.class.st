@@ -146,7 +146,7 @@ SAJModel >> createAndBindPackages [
 { #category : #visualization }
 SAJModel >> createColorScaleForFeatures [
 	"Return a scale ready to be used to color feature"
-	^ NSScale ordinal range: (Color wheel: self numberOfFeatures).
+	^ NSScale ordinalColored: self numberOfFeatures
 	
 ]
 
