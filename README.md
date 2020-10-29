@@ -1,5 +1,5 @@
 # SoftwareAnalyzer
-[![Build Status](https://travis-ci.org/ObjectProfile/SoftwareAnalyzer.svg?branch=master)](https://travis-ci.com/github/ObjectProfile/SoftwareAnalyzer)
+[![Build Status](https://travis-ci.com/ObjectProfile/SoftwareAnalyzer.svg?branch=master)](https://travis-ci.com/ObjectProfile/SoftwareAnalyzer)
 
 
 ```Smalltalk
