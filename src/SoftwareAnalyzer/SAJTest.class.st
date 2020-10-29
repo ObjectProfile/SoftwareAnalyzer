@@ -1231,3 +1231,12 @@ SAJTest >> testUnitNamed [
 	self assert: (m unitNamed: 'ColoredCircle') equals: (m classNamed: 'ColoredCircle').
 	self assert: (m unitNamed: 'Shape') equals: (m interfaceNamed: 'Shape').
 ]
+
+{ #category : #'tests - core' }
+SAJTest >> testVisualization [
+
+	| vs |
+	m := SAJExample new exampleSimple.
+	vs := m class selectors select: [ :k | k beginsWith: 'visualize' ].
+	vs do: [ :k | (m perform: k) open delete ]
+]
