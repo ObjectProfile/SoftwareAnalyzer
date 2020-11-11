@@ -83,6 +83,11 @@ REGModel >> buildArchitecture [
 		
 ]
 
+{ #category : #public }
+REGModel >> buildCallGraph [
+
+]
+
 { #category : #'private - XML' }
 REGModel >> createClassFromXML: xml [
 	| c nameXML fullname |
@@ -158,7 +163,7 @@ REGModel >> exampleUVent [
 	^ m
 ]
 
-{ #category : #public }
+{ #category : #accessing }
 REGModel >> getAndCreateIfNecessaryLayerNamed: aName [
 	| l |
 	l := layers detect: [ :ll | ll name = aName ] ifNone: [ nil ].
@@ -211,7 +216,7 @@ REGModel >> layers [
 	^ layers
 ]
 
-{ #category : #public }
+{ #category : #accessing }
 REGModel >> missingIncludeFiles [
 
 	| unresolvedIncludes names |

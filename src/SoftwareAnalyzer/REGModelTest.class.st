@@ -168,6 +168,47 @@ void foo(void) {
 '
 ]
 
+{ #category : #examples }
+REGModelTest >> codeVerySimpleWith3Functions [
+"#include <stdio.h>
+
+void f(void) {
+    printf(""Hello "");
+}
+
+void g(void) {
+    printf(""World!\n"");
+}
+
+
+int main(void) {
+  f();
+  g();
+  return 0;
+}
+"
+
+^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="1.0.0" language="C" filename="main.c"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;stdio.h&gt;</cpp:file></cpp:include>
+
+<function><type><name>void</name></type> <name>f</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+    <expr_stmt><expr><call><name>printf</name><argument_list>(<argument><expr><literal type="string">"Hello "</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+</block_content>}</block></function>
+
+<function><type><name>void</name></type> <name>g</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+    <expr_stmt><expr><call><name>printf</name><argument_list>(<argument><expr><literal type="string">"World!\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+</block_content>}</block></function>
+
+
+<function><type><name>int</name></type> <name>main</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+  <expr_stmt><expr><call><name>f</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>g</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <return>return <expr><literal type="number">0</literal></expr>;</return>
+</block_content>}</block></function>
+</unit>
+'
+]
+
 { #category : #tests }
 REGModelTest >> testAddExample [
 
@@ -253,6 +294,20 @@ REGModelTest >> testCPP [
 	
 	self assert: (m headers isEmpty).
 	self assert: m numberOfClasses equals: 1
+]
+
+{ #category : #'tests - call graph' }
+REGModelTest >> testCallGraph [
+
+	| m mainFunction |
+	m := REGModel new.
+	m addSrcMLXML: self codeVerySimpleWith3Functions.
+	
+	self assert: m numberOfFunctions equals: 3.
+	self assert: (m allFunctions collect: #name) asArray equals:  #('f' 'g' 'main').
+	
+	mainFunction := m allFunctions third.
+	self assert: mainFunction name equals: 'main'.
 ]
 
 { #category : #'tests - cpplint' }
