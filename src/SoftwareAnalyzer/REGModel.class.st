@@ -95,6 +95,25 @@ REGModel >> buildCallGraph [
 	self allFunctions do: [ :f | f outgoingFunctions do: [ :f2 | f2 addIncomingFunction: f ] ]
 ]
 
+{ #category : #public }
+REGModel >> buildFileDependencies [
+
+	| d |
+	d := Dictionary new.
+	modules, headers do: [ :unit | 
+		d at: unit basename put: unit ].
+	
+	modules, headers do: [ :unit | 
+		unit includes do: [ :i |
+			
+			i fromUnit: unit.
+			(d includesKey: i basename) ifTrue: [ i toUnit: (d at: i basename) ]
+		]
+	].
+
+
+]
+
 { #category : #'private - XML' }
 REGModel >> createClassFromXML: xml [
 	| c nameXML fullname |
@@ -108,13 +127,27 @@ REGModel >> createClassFromXML: xml [
 
 { #category : #'private - XML' }
 REGModel >> createFunctionFromXML: xml [
-	| f nameXML fullNameString |
+	| f nameXML fullNameString calls callNames relevantCallNames namesToConsider |
 	nameXML := xml elementAt: 'name'.
 	fullNameString := '' join: ((nameXML allNodes select: [ :x | x class == XMLString ]) collect: #asString).
 	f := REGFunction new.
 	f name: fullNameString.
 	f numberOfLinesOfCode: xml asString lines size.
-	f callingFunctionNames: ((xml searchFor: 'call') collect: [ :c | (c @ { 'name' }) getString ]).
+	
+	"Getting calls"
+	calls := xml searchFor: 'call'.
+	"callNames := calls collect: [ :c | c @ { 'name' } ]."
+	callNames := calls flatCollect: [ :c | c searchFor: 'name' ].
+	"If we have C++, then callNames contains 'name' again"
+	relevantCallNames := callNames copyWithout: nil.
+	namesToConsider := relevantCallNames collect: [ :n | n getString ].
+	"Very hacky, sorry"
+	namesToConsider := namesToConsider reject: [ :n | n beginsWith: '<name' ].
+	f callingFunctionNames: namesToConsider.
+	
+	"Getting source code"
+	f sourceCode: xml rawString.
+	
 	^ f
 ]
 
@@ -140,8 +173,9 @@ REGModel >> exampleFPrime [
 	fprimePath asFileReference children do: [ :c |
 		[ m addSrcMLXML: c readStream contents ] on: ZnInvalidUTF8 do: [ :ex |  ].
 	].
-	m resolve.
+	m buildFileDependencies.
 	m buildArchitecture.
+	m buildCallGraph.
 	^ m
 ]
 
@@ -152,7 +186,7 @@ REGModel >> exampleSmall [
 	| m |
 	m := REGModel new.
 	m addSrcMLXML: REGModelTest new codeExample.
-	m resolve.
+	m buildFileDependencies.
 	m buildArchitecture.
 	^ m
 ]
@@ -166,7 +200,7 @@ REGModel >> exampleUVent [
 	
 	m := REGModel new.
 	m addSrcMLXML: uventPath asFileReference contents.
-	m resolve.
+	m buildFileDependencies.
 	m buildArchitecture.
 	^ m
 ]
@@ -276,25 +310,6 @@ REGModel >> numberOfModules [
 { #category : #'public - metrics' }
 REGModel >> numberOfUnits [
 	^ self numberOfModules + self numberOfHeaders
-]
-
-{ #category : #public }
-REGModel >> resolve [
-
-	| d |
-	d := Dictionary new.
-	modules, headers do: [ :unit | 
-		d at: unit basename put: unit ].
-	
-	modules, headers do: [ :unit | 
-		unit includes do: [ :i |
-			
-			i fromUnit: unit.
-			(d includesKey: i basename) ifTrue: [ i toUnit: (d at: i basename) ]
-		]
-	].
-
-
 ]
 
 { #category : #accessing }

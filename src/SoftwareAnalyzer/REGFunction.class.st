@@ -6,7 +6,8 @@ Class {
 		'module',
 		'callingFunctionNames',
 		'incomingFunctions',
-		'outgoingFunctions'
+		'outgoingFunctions',
+		'sourceCode'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
@@ -36,7 +37,26 @@ REGFunction >> callingFunctionNames: someNames [
 	"Set the list of name of functions called by me"
 	self assert: [ someNames isCollection ].
 	self assert: [ someNames allSatisfy: [ :n | n isString ] ].
+	self assert: [ someNames noneSatisfy: [ :n | n beginsWith: '<name' ] ].
 	callingFunctionNames := someNames
+]
+
+{ #category : #visualization }
+REGFunction >> gtInspectorCalledFunctionNameIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite text
+		title: 'FunctionName';
+		display: [
+			String lf join: callingFunctionNames
+			 ]
+]
+
+{ #category : #visualization }
+REGFunction >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite text
+		title: 'Source';
+		display: [ self sourceCode ]
 ]
 
 { #category : #accessing }
@@ -75,4 +95,14 @@ REGFunction >> name: anObject [
 { #category : #accessing }
 REGFunction >> outgoingFunctions [
 	^ outgoingFunctions
+]
+
+{ #category : #accessing }
+REGFunction >> sourceCode [
+	^ sourceCode
+]
+
+{ #category : #accessing }
+REGFunction >> sourceCode: aString [
+	sourceCode := aString
 ]

@@ -17,6 +17,24 @@ XMLElement >> getString [
 ]
 
 { #category : #'*SoftwareAnalyzer' }
+XMLElement >> rawString [
+	| result |
+	result := OrderedCollection new.
+	self rawStringIn: result.
+	^ '' join: result
+]
+
+{ #category : #'*SoftwareAnalyzer' }
+XMLElement >> rawStringIn: result [
+
+	self nodes do: [ :n | 
+		n class ~~ XMLString
+			ifTrue: [ n rawStringIn: result ]
+			ifFalse: [ result add: n asString ] ].
+
+]
+
+{ #category : #'*SoftwareAnalyzer' }
 XMLElement >> searchFor: aName [
 	"Recursively look for tags"
 	| result |

@@ -242,7 +242,7 @@ REGModelTest >> testAddExampleAndBuildArchitecture2 [
 	m addSrcMLXML: self codeModuleB_h.
 	
 	self assert: m numberOfLayers equals: 0.
-	m resolve.
+	m buildFileDependencies.
 	self assert: m numberOfLayers equals: 0.
 	
 	self assert: m numberOfUnits equals: 3.
@@ -290,7 +290,7 @@ REGModelTest >> testCPP [
 	self assert: moduleMain filename equals: 'main.cpp'.
 	self assert: (moduleMain numberOfIncludes) equals: 1.
 	self assert: (moduleMain includes collect: #name) asArray equals: #('<iostream>').
-	m resolve.
+	m buildFileDependencies.
 	
 	self assert: (m headers isEmpty).
 	self assert: m numberOfClasses equals: 1
@@ -373,7 +373,7 @@ REGModelTest >> testImport [
 	self assert: moduleMain filename equals: 'main.c'.
 	self assert: (moduleMain numberOfIncludes) equals: 2.
 	self assert: (moduleMain includes collect: #name) asArray equals: #('<stdio.h>' '"myOtherModule.h"').
-	m resolve.
+	m buildFileDependencies.
 	
 	header := m headers first.
 	self assert: (moduleMain doesInclude: header)
@@ -413,7 +413,7 @@ REGModelTest >> testVisualizationOnExample [
 	| m ss |
 	m := REGModel new.
 	m addSrcMLXML: self codeExample.
-	m resolve.
+	m buildFileDependencies.
 	m buildArchitecture.
 	
 	ss := m class selectors select: [ :sel | sel beginsWith: 'visualize' ].
