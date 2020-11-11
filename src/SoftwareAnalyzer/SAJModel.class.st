@@ -398,7 +398,7 @@ SAJModel >> visualizeAnnotations [
 	RSGridLayout on: pShapes.
 	
 	featureShapes := c deepShapesFromModels: self features.
-	self assert: [ featureShapes notEmpty ].
+	"self assert: [ featureShapes notEmpty ]."
 
 	featureShapes do: [ :fs |
 		fs @ (RSHighlightable new highlightBorder: (RSBorder new color: Color yellow; width: 5); highlightShapes: [ :ss | featureShapes select: [ :sss | (sss model == fs model) and: [ sss ~~ fs ]  ] ]) ].

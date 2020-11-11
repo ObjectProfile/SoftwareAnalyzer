@@ -299,7 +299,7 @@ REGModelTest >> testCPP [
 { #category : #'tests - call graph' }
 REGModelTest >> testCallGraph [
 
-	| m mainFunction |
+	| m mainFunction fFunction |
 	m := REGModel new.
 	m addSrcMLXML: self codeVerySimpleWith3Functions.
 	
@@ -308,6 +308,35 @@ REGModelTest >> testCallGraph [
 	
 	mainFunction := m allFunctions third.
 	self assert: mainFunction name equals: 'main'.
+	self assert: mainFunction callingFunctionNames asArray equals: #('f' 'g').
+	
+	fFunction := m allFunctions first.
+	self assert: fFunction callingFunctionNames asArray equals: #('printf').
+]
+
+{ #category : #'tests - call graph' }
+REGModelTest >> testCallGraphIncoming [
+
+	| m mainFunction fFunction gFunction printfFunction |
+	m := REGModel new.
+	m addSrcMLXML: self codeVerySimpleWith3Functions.
+	
+	mainFunction := m allFunctions third.
+	self assert: mainFunction name equals: 'main'.
+	self assert: mainFunction callingFunctionNames asArray equals: #('f' 'g').
+
+	fFunction := m allFunctions first.
+	gFunction := m allFunctions second.
+	printfFunction := m allFunctions third.
+	
+	self assert: mainFunction outgoingFunctions isEmpty.
+	self assert: fFunction incomingFunctions isEmpty.
+	self assert: fFunction incomingFunctions isEmpty.
+	
+	m buildCallGraph.
+	self assert: mainFunction outgoingFunctions notEmpty.
+	self assert: mainFunction outgoingFunctions asArray equals: { fFunction . gFunction }.
+	self assert: (fFunction incomingFunctions includes: mainFunction)
 ]
 
 { #category : #'tests - cpplint' }

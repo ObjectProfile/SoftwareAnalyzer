@@ -85,7 +85,14 @@ REGModel >> buildArchitecture [
 
 { #category : #public }
 REGModel >> buildCallGraph [
-
+	| dict |
+	dict := self allFunctions groupedBy: #name.
+	self allFunctions do: [ :f | 
+		f callingFunctionNames do: [ :n |
+			(dict includesKey: n)
+				ifTrue: [ f addOutgoingFunctions: (dict at: n) ] ] ].
+	
+	self allFunctions do: [ :f | f outgoingFunctions do: [ :f2 | f2 addIncomingFunction: f ] ]
 ]
 
 { #category : #'private - XML' }
@@ -107,6 +114,7 @@ REGModel >> createFunctionFromXML: xml [
 	f := REGFunction new.
 	f name: fullNameString.
 	f numberOfLinesOfCode: xml asString lines size.
+	f callingFunctionNames: ((xml searchFor: 'call') collect: [ :c | (c @ { 'name' }) getString ]).
 	^ f
 ]
 
