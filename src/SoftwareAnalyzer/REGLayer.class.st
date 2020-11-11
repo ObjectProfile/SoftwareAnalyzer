@@ -81,7 +81,7 @@ REGLayer >> visualize [
 		connectToAll: #outgoingUnits.
 	m normalizeColor: #numberOfLinesOfCode.
 	m normalizeSize: #numberOfLinesOfCode.
-	m layout force charge: -300.
+	m layout force.
 	m translucentShapes.
 	m build.
 	^ m canvas

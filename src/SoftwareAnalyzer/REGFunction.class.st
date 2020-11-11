@@ -53,7 +53,7 @@ REGFunction >> gtInspectorCalledFunctionNameIn: composite [
 
 { #category : #visualization }
 REGFunction >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -10>
+	<gtInspectorPresentationOrder: -20>
 	composite text
 		title: 'Source';
 		display: [ self sourceCode ]
@@ -95,6 +95,11 @@ REGFunction >> name: anObject [
 { #category : #accessing }
 REGFunction >> outgoingFunctions [
 	^ outgoingFunctions
+]
+
+{ #category : #printing }
+REGFunction >> printOn: str [
+	str nextPutAll: (self module filename, '[', self name, ']')
 ]
 
 { #category : #accessing }

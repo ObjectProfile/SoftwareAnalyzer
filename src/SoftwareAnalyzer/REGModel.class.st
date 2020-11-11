@@ -217,6 +217,14 @@ REGModel >> getAndCreateIfNecessaryLayerNamed: aName [
 ]
 
 { #category : #visualization }
+REGModel >> gtInspectorFunctionDependenciesn: composite [
+	<gtInspectorPresentationOrder: -5>
+	composite roassal3
+		title: 'FunctionDep';
+		initializeCanvas: [ self visualizeFunctionDependencies ]
+]
+
+{ #category : #visualization }
 REGModel >> gtInspectorLayersIn: composite [
 	<gtInspectorPresentationOrder: -25>
 	composite roassal3
@@ -362,6 +370,20 @@ REGModel >> visualize [
 	RSForceBasedLayout new charge: -800; on: units.
 	c @ RSCanvasController.
 	^ c
+]
+
+{ #category : #visualization }
+REGModel >> visualizeFunctionDependencies [
+
+	| m |
+	m := RSMondrian new.
+	m shape circle color: Color blue darker.
+	m nodes: self allFunctions.
+	m line connectToAll: #outgoingFunctions.
+	m normalizeSize: #numberOfLinesOfCode.
+	m layout force.
+	m build.
+	^ m canvas
 ]
 
 { #category : #visualization }
