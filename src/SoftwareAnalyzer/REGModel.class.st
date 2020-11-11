@@ -400,11 +400,11 @@ REGModel >> visualizeModules [
 	
 	units := RSGroup new.
 	self modules do: [ :m |
-		units add: (RSBox new model: m).
+		units add: (RSEllipse new model: m).
 	].
 
 	self headers do: [ :m |
-		units add: (RSBox new model: m; color: Color pink lighter lighter lighter).
+		units add: (RSEllipse new model: m; color: Color red lighter lighter).
 	].
 
 	RSNormalizer size
