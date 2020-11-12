@@ -455,7 +455,8 @@ SAJModel >> visualizeFeatureInteraction [
 
 	| c m allPackages featureLabels channel |
 	c := RSCanvas new.
-
+	c inspectorContext interactionsToBeRegistered removeAll.
+	
 	"packages and classes"
 	m := RSMondrian new.
 	m canvas: c.
