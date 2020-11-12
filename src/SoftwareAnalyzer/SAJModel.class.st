@@ -175,6 +175,14 @@ SAJModel >> getOrCreateFeatureNamed: aName [
 ]
 
 { #category : #visualization }
+SAJModel >> gtInspectorFeatureInteractionIn: composite [
+	<gtInspectorPresentationOrder: -50>
+	composite roassal3
+		title: 'Feat. Int.';
+		initializeCanvas: [ self visualizeFeatureInteraction ]
+]
+
+{ #category : #visualization }
 SAJModel >> gtInspectorFeatureListIn: composite [
 	<gtInspectorPresentationOrder: 30>
 	composite table
@@ -439,6 +447,44 @@ SAJModel >> visualizeAnnotationsOLD [
 		normalize: #numberOfAnnotations.
 
 	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeatureInteraction [
+
+
+	| c m allPackages featureLabels channel |
+	c := RSCanvas new.
+
+	"packages and classes"
+	m := RSMondrian new.
+	m canvas: c.
+	m shape box color: Color gray lighter lighter lighter.
+	m nodes: self packages forEach: [ :pak |
+		m shape box size: [ :cc | cc loc sqrt * 2 ].
+		m nodes: pak classes.
+		m orthoVerticalLine connectFrom: #superclass.
+		m layout ifConnected: RSTreeLayout new.
+	].
+	m layout flow.
+	m build.
+	allPackages := c nodes copy.
+
+	"Features"
+	featureLabels := (self features sortedAs: #name) collect: [ :f | RSLabel new text: f name; model: f ] as: RSGroup.
+	RSFlowLayout new maxWidth: 700; on: featureLabels.
+	c addAll: featureLabels.
+	RSVerticalLineLayout on: { featureLabels . allPackages }.
+	featureLabels do: [ :aFeatLabel |
+		channel := RSChannel new.
+		channel color: aFeatLabel model color.
+		channel input: { aFeatLabel } asGroup.
+		channel output: (c deepShapesFromModels: aFeatLabel model units).
+		channel build.
+	].
+
+	c @ RSCanvasController.
+	^ c
 ]
 
 { #category : #'visualization - not interesting' }
