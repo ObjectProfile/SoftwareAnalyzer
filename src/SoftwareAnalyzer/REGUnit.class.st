@@ -58,8 +58,8 @@ REGUnit >> functions [
 ]
 
 { #category : #visualization }
-REGUnit >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -10>
+REGUnit >> gtInspectorSourceIn: composite [
+	<gtInspectorPresentationOrder: -30>
 	composite text
 		title: 'Source';
 		display: [ self sourceCode ]
@@ -95,7 +95,7 @@ REGUnit >> isHeader [
 
 { #category : #testing }
 REGUnit >> isModule [
-	^ true
+	^ false
 ]
 
 { #category : #accessing }
