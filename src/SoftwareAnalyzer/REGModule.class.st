@@ -6,7 +6,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 REGModule >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -10>
+	<gtInspectorPresentationOrder: -15>
 	composite roassal3
 		title: 'Callgraph';
 		initializeCanvas: [ self visualizeCallGraph ]
@@ -17,6 +17,11 @@ REGModule >> initialize [
 	super initialize.
 	functions := OrderedCollection new.
 	classes := OrderedCollection new
+]
+
+{ #category : #testing }
+REGModule >> isModule [
+	^ true
 ]
 
 { #category : #'as yet unclassified' }

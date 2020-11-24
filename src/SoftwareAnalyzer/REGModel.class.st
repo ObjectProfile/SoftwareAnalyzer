@@ -20,6 +20,7 @@ REGModel >> addSrcMLXML: xml [
 
 	When folder may contain source code files
 	find . -type f \( -iname \*.c -o -iname \*.cpp -o -iname \*.h -o -iname \*.hpp \) -exec srcml {} -o {}.xml \;
+	mkdir xml
 	find . -name ""*.xml"" -exec mv {} xml \;
 	"
 	| units |
@@ -188,6 +189,26 @@ REGModel >> exampleSmall [
 	m addSrcMLXML: REGModelTest new codeExample.
 	m buildFileDependencies.
 	m buildArchitecture.
+	^ m
+]
+
+{ #category : #examples }
+REGModel >> exampleSuchai [
+	<script: 'self new exampleSuchai inspect'>
+
+	| fprimePath m |
+	fprimePath := '/Users/alexandrebergel/Dropbox/Workspace/suchai-flight-software/xml'.
+	
+	m := REGModel new.
+	
+	"Say where to get the application source code"
+	m rootFilename: '/Users/alexandrebergel/Dropbox/Workspace/suchai-flight-software'.
+	fprimePath asFileReference children do: [ :c |
+		[ m addSrcMLXML: c readStream contents ] on: ZnInvalidUTF8 do: [ :ex |  ].
+	].
+	m buildFileDependencies.
+	m buildArchitecture.
+	m buildCallGraph.
 	^ m
 ]
 

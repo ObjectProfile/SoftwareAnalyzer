@@ -11,8 +11,3 @@ Class {
 REGHeader >> isHeader [
 	^ true
 ]
-
-{ #category : #testing }
-REGHeader >> isModule [
-	^ false
-]
