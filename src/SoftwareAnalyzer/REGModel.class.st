@@ -86,7 +86,7 @@ REGModel >> buildArchitecture [
 { #category : #public }
 REGModel >> buildCallGraph [
 	| dict |
-	dict := self allFunctions groupedBy: #name.
+	dict := self allFunctions groupedBy: #basename.
 	self allFunctions do: [ :f | 
 		f callingFunctionNames do: [ :n |
 			(dict includesKey: n)

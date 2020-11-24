@@ -7,7 +7,8 @@ Class {
 		'callingFunctionNames',
 		'incomingFunctions',
 		'outgoingFunctions',
-		'sourceCode'
+		'sourceCode',
+		'basenameCache'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
@@ -24,6 +25,15 @@ REGFunction >> addOutgoingFunctions: someFunctions [
 	self assert: [ someFunctions isCollection ].
 	self assert: [ someFunctions allSatisfy: [ :f | f class == REGFunction ] ].
 	outgoingFunctions addAll: someFunctions
+]
+
+{ #category : #accessing }
+REGFunction >> basename [
+	"If the function is a C++ method, then it returns the function name, without the classname and the :: oerator"
+	basenameCache ifNotNil: [ ^ basenameCache ].
+	^ (self name includes: $:)
+			ifTrue: [ basenameCache := (self name substrings: ':') last ]
+			ifFalse: [ basenameCache := self name ]
 ]
 
 { #category : #accessing }
