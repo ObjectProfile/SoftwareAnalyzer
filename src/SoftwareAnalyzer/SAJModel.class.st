@@ -176,7 +176,7 @@ SAJModel >> getOrCreateFeatureNamed: aName [
 
 { #category : #visualization }
 SAJModel >> gtInspectorFeatureInteractionIn: composite [
-	<gtInspectorPresentationOrder: -50>
+	<gtInspectorPresentationOrder: -90>
 	composite roassal3
 		title: 'Feat. Int.';
 		initializeCanvas: [ self visualizeFeatureInteraction ]
@@ -465,17 +465,22 @@ SAJModel >> visualizeFeatureInteraction [
 		m shape box size: [ :cc | cc loc sqrt * 2 ].
 		m nodes: pak classes.
 		m orthoVerticalLine connectFrom: #superclass.
-		m layout ifConnected: RSTreeLayout new.
+		m layout ifConnected: RSTreeLayout new ifNotConnected: (RSFlowLayout new gapSize: 20).
 	].
-	m layout flow.
+	m layout flow gapSize: 30.
 	m build.
 	allPackages := c nodes copy.
+	allPackages @ (RSLabeled new text: [ :pak | pak name ]).
 
 	"Features"
 	featureLabels := (self features sortedAs: #name) collect: [ :f | RSLabel new text: f name; model: f ] as: RSGroup.
+	RSNormalizer fontSize
+		shapes: featureLabels;
+		from: 10; to: 20;
+		normalize: #numberOfUnits.
 	RSFlowLayout new maxWidth: 700; on: featureLabels.
 	c addAll: featureLabels.
-	RSVerticalLineLayout on: { featureLabels . allPackages }.
+	RSVerticalLineLayout new gapSize: 40; on: { featureLabels . allPackages }.
 	featureLabels do: [ :aFeatLabel |
 		channel := RSChannel new.
 		channel color: aFeatLabel model color.
