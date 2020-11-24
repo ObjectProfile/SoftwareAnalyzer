@@ -467,7 +467,7 @@ SAJModel >> visualizeFeatureInteraction [
 		m orthoVerticalLine connectFrom: #superclass.
 		m layout ifConnected: RSTreeLayout new ifNotConnected: (RSFlowLayout new gapSize: 20).
 	].
-	m layout flow gapSize: 30.
+	m layout flow gapSize: 30; maxWidth: 2000.
 	m build.
 	allPackages := c nodes copy.
 	allPackages @ (RSLabeled new text: [ :pak | pak name ]).
@@ -486,6 +486,12 @@ SAJModel >> visualizeFeatureInteraction [
 		channel color: aFeatLabel model color.
 		channel input: { aFeatLabel } asGroup.
 		channel output: (c deepShapesFromModels: aFeatLabel model units).
+		channel build.
+		
+		channel := RSChannel new.
+		channel color: aFeatLabel model color.
+		channel input: (c deepShapesFromModels: aFeatLabel model units).
+		channel output: { aFeatLabel } asGroup.
 		channel build.
 	].
 
