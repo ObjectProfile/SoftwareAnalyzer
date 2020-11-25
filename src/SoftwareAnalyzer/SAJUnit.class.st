@@ -22,6 +22,30 @@ SAJUnit >> annotations [
 	^ annotations
 ]
 
+{ #category : #'as yet unclassified' }
+SAJUnit >> buildAnnotationHierarchy [
+	"Build the hierarchy of the annotation. Compute the parent annotation for each parent.
+	This method assumes that each annotation has one parent at most."
+	| sortedAnnotations parentsStack runningParent |
+	self assert: [ self annotations allSatisfy: [ :a | a parentAnnotation isNil ] ].
+	sortedAnnotations := self annotations sortedAs: #from.
+	
+	parentsStack := OrderedCollection new.
+
+	sortedAnnotations do: [ :a |
+		parentsStack 
+			ifEmpty: [ parentsStack add: a ]
+			ifNotEmpty: [
+		
+				runningParent := parentsStack last.
+				(runningParent from < a from and: [ runningParent to > a to ])
+					ifTrue: [ a parentAnnotation: runningParent. parentsStack add: a ].
+				(runningParent from < a to) ifTrue: [ parentsStack removeLast ].
+			]
+	]
+
+]
+
 { #category : #accessing }
 SAJUnit >> features [
 	^ (annotations collect: #feature as: Set) asSortedCollection: [ :f1 :f2 | f1 featureName < f2 featureName ]
@@ -167,6 +191,7 @@ SAJUnit >> visualize [
 		ab @ RSPopup.
 		ab color: a feature color.
 		ab fromRectangle: ((-25 @ a from) corner: (25 @ (a to + 1))).
+		ab translateBy: (a depth * 20) @ 0.
 		c add: ab.
 	].
 	

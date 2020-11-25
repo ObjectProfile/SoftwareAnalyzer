@@ -100,9 +100,17 @@ SAJModel >> addUnitAsXML: xml [
 
 { #category : #public }
 SAJModel >> build [
+	"Public method"
 	self resolveSuperclasses.
 	self createAndBindPackages.
-	self computeFeatureColor	
+	self computeFeatureColor.
+	self buildAnnotationHierarchy
+]
+
+{ #category : #private }
+SAJModel >> buildAnnotationHierarchy [
+	"Build annotation for each unit"
+	self units do: #buildAnnotationHierarchy
 ]
 
 { #category : #accessing }
@@ -121,7 +129,7 @@ SAJModel >> classes [
 	^ units select: #isClass
 ]
 
-{ #category : #public }
+{ #category : #private }
 SAJModel >> computeFeatureColor [	
 	self features do: [ :f |
 		f color: (self scaleForFeaturesColoring scale: f) ]
@@ -480,7 +488,7 @@ SAJModel >> visualizeFeatureInteraction [
 		normalize: #numberOfUnits.
 	RSFlowLayout new maxWidth: 700; on: featureLabels.
 	c addAll: featureLabels.
-	RSVerticalLineLayout new gapSize: 40; on: { featureLabels . allPackages }.
+	RSVerticalLineLayout new gapSize: 40; alignCenter; on: { featureLabels . allPackages }.
 	featureLabels do: [ :aFeatLabel |
 		channel := RSChannel new.
 		channel color: aFeatLabel model color.

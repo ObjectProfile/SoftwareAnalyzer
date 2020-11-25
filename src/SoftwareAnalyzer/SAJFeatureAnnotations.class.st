@@ -7,7 +7,8 @@ Class {
 		'annotationGranularity',
 		'from',
 		'to',
-		'filename'
+		'filename',
+		'parentAnnotation'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -20,6 +21,13 @@ SAJFeatureAnnotations >> annotationGranularity [
 { #category : #accessing }
 SAJFeatureAnnotations >> annotationGranularity: anObject [
 	annotationGranularity := anObject
+]
+
+{ #category : #accessing }
+SAJFeatureAnnotations >> depth [
+	^ parentAnnotation 
+		ifNil: [ 0 ]
+		ifNotNil: [ 1 + parentAnnotation depth ]
 ]
 
 { #category : #accessing }
@@ -57,7 +65,7 @@ SAJFeatureAnnotations >> from: anObject [
 	from := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 SAJFeatureAnnotations >> gtInspectorSourceCodeIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite text
@@ -68,6 +76,18 @@ SAJFeatureAnnotations >> gtInspectorSourceCodeIn: composite [
 { #category : #metrics }
 SAJFeatureAnnotations >> numberOfLinesOfCode [
 	^ self to - self from + 1
+]
+
+{ #category : #accessing }
+SAJFeatureAnnotations >> parentAnnotation [
+	"Return the parent annotation. Return nil if none"
+	^ parentAnnotation
+]
+
+{ #category : #accessing }
+SAJFeatureAnnotations >> parentAnnotation: anAnnotation [
+	"Set the parent annotation"
+	parentAnnotation := anAnnotation
 ]
 
 { #category : #printing }
