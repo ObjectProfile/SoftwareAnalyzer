@@ -497,12 +497,17 @@ SAJModel >> visualizeFeatureInteraction [
 		channel build.
 		
 		channel := RSChannel new.
+		channel makeNotClickable.
 		channel color: aFeatLabel model color.
 		channel input: (c deepShapesFromModels: aFeatLabel model units).
 		channel output: { aFeatLabel } asGroup.
 		channel build.
 	].
 
+	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
+		evt shape model visualize openWithTitle: evt shape model name.
+	].
+	
 	c @ RSCanvasController.
 	^ c
 ]
