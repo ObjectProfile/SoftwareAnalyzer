@@ -491,6 +491,7 @@ SAJModel >> visualizeFeatureInteraction [
 	RSVerticalLineLayout new gapSize: 40; alignCenter; on: { featureLabels . allPackages }.
 	featureLabels do: [ :aFeatLabel |
 		channel := RSChannel new.
+		channel markGoUp.
 		channel color: aFeatLabel model color.
 		channel input: { aFeatLabel } asGroup.
 		channel output: (c deepShapesFromModels: aFeatLabel model units).
@@ -505,7 +506,7 @@ SAJModel >> visualizeFeatureInteraction [
 	].
 
 	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
-		evt shape model visualize openWithTitle: evt shape model name.
+		evt shape model visualize inspect "openWithTitle: evt shape model name".
 	].
 	
 	c @ RSCanvasController.
