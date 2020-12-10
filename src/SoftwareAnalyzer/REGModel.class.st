@@ -97,6 +97,53 @@ REGModel >> buildCallGraph [
 ]
 
 { #category : #public }
+REGModel >> buildFeatures [
+	| allNames allFeatureAnnotations dictionary featureAnnotationStack |
+	allNames := OrderedCollection new.
+	allFeatureAnnotations := OrderedCollection new.
+	featureAnnotationStack := OrderedCollection new.
+	self units do: [ :unit |
+		unit sourceCode lines doWithIndex: [ :l :index |
+			(l trimLeft beginsWith: '#if')
+				ifTrue: [ 
+					| a |
+					a := REGFeatureAnnotation new. 
+					a name: l substrings second. 
+					a startLine: index.
+					a unit: unit.
+					allNames add: a name.
+					allFeatureAnnotations add: a.
+					featureAnnotationStack ifNotEmpty: [ 
+						featureAnnotationStack last addChildrenAnnotation: a.
+						a parentAnnotation: featureAnnotationStack last. ].
+					featureAnnotationStack add: a ].
+				
+			(l trimLeft beginsWith: '#endif')
+				ifTrue: [ 
+					featureAnnotationStack last endLine: index.
+					unit addFeatureAnnotation: featureAnnotationStack last.
+					featureAnnotationStack removeLast  ]
+			 ]
+	].
+
+	"We build the features themselves, from the names found in the annotations"
+	dictionary := Dictionary new.
+	allNames do: [ :aName |
+		dictionary at: aName put: (REGFeature new name: aName) ].
+	
+	allFeatureAnnotations do: [ :aa |
+		| f |
+		f := dictionary at: aa name.
+		aa feature: f.
+		f addAnnotation: aa
+		 ]
+	
+	
+
+	
+]
+
+{ #category : #public }
 REGModel >> buildFileDependencies [
 
 	| d |
@@ -209,6 +256,7 @@ REGModel >> exampleSuchai [
 	m buildFileDependencies.
 	m buildArchitecture.
 	m buildCallGraph.
+	m buildFeatures.
 	^ m
 ]
 
@@ -224,6 +272,17 @@ REGModel >> exampleUVent [
 	m buildFileDependencies.
 	m buildArchitecture.
 	^ m
+]
+
+{ #category : #accessing }
+REGModel >> featureAnnotations [
+	^ self units flatCollect: #featureAnnotations
+]
+
+{ #category : #accessing }
+REGModel >> features [
+	"Return all the feature of the units"
+	^ (self units flatCollect: #features) copyWithoutDuplicates
 ]
 
 { #category : #accessing }
@@ -305,6 +364,18 @@ REGModel >> modules [
 REGModel >> numberOfClasses [
 	modules ifEmpty: [ ^ 0 ].
 	^ (modules collect: #numberOfClasses) sum
+]
+
+{ #category : #'public - metrics' }
+REGModel >> numberOfFeatureAnnotations [
+	self units ifEmpty: [ ^ 0 ].
+	^ (self units collect: #numberOfFeatureAnnotations) sum
+]
+
+{ #category : #'public - metrics' }
+REGModel >> numberOfFeatures [
+	"Return the number of features founds in the model"
+	^ self features size
 ]
 
 { #category : #'public - metrics' }

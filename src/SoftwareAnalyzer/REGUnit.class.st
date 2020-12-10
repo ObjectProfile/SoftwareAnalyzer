@@ -7,7 +7,9 @@ Class {
 		'filename',
 		'layer',
 		'classes',
-		'functions'
+		'functions',
+		'sourceCodeCache',
+		'featureAnnotations'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
@@ -15,6 +17,12 @@ Class {
 { #category : #adding }
 REGUnit >> addClass: aClass [
 	classes add: aClass
+]
+
+{ #category : #adding }
+REGUnit >> addFeatureAnnotation: anAnnotation [
+	self assert: [ anAnnotation isKindOf: REGFeatureAnnotation ].
+	featureAnnotations add: anAnnotation
 ]
 
 { #category : #adding }
@@ -38,6 +46,17 @@ REGUnit >> basename [
 REGUnit >> doesInclude: aUnit [
 
 	^ includes anySatisfy: [ :i | i toUnit == aUnit ]
+]
+
+{ #category : #accessing }
+REGUnit >> featureAnnotations [
+	^ featureAnnotations
+]
+
+{ #category : #accessing }
+REGUnit >> features [
+	"Return the feature that contribute to the unit"
+	^ (self featureAnnotations collect: #feature) copyWithoutDuplicates
 ]
 
 { #category : #accessing }
@@ -86,6 +105,7 @@ REGUnit >> initialize [
 	includes := OrderedCollection new.
 	classes := OrderedCollection new.
 	functions := OrderedCollection new.
+	featureAnnotations := OrderedCollection new
 ]
 
 { #category : #testing }
@@ -125,6 +145,16 @@ REGUnit >> numberOfClasses [
 ]
 
 { #category : #'public - metrics' }
+REGUnit >> numberOfFeatureAnnotations [
+	^ featureAnnotations size
+]
+
+{ #category : #'public - metrics' }
+REGUnit >> numberOfFeatures [ 
+	^ featureAnnotations size
+]
+
+{ #category : #'public - metrics' }
 REGUnit >> numberOfFunctions [
 	functions ifNil: [ ^ 0 ].
 	^ functions size
@@ -156,10 +186,23 @@ REGUnit >> printOn: str [
 { #category : #public }
 REGUnit >> sourceCode [
 	| fr |
-	(self model isNil |
-	 self model rootFilename isNil |
-	 self model rootFilename isEmpty) ifTrue: [ ^ '' ].
+	sourceCodeCache ifNotNil: [ ^ sourceCodeCache ].
+	((self model isNil or: [ 
+	 self model rootFilename isNil ]) or: [
+	 self model rootFilename isEmpty ]) ifTrue: [ ^ '' ].
 	fr := (self model rootFilename, '/', self filename) asFileReference.
 	fr exists ifFalse: [ ^ '' ].
 	^ fr contents
+]
+
+{ #category : #accessing }
+REGUnit >> sourceCodeCache [
+
+	^ sourceCodeCache
+]
+
+{ #category : #accessing }
+REGUnit >> sourceCodeCache: sourceCodeAsString [
+	"set the source code cache. When set, there is no need for file system"
+	sourceCodeCache := sourceCodeAsString
 ]

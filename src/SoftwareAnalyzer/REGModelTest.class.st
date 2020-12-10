@@ -209,6 +209,123 @@ int main(void) {
 '
 ]
 
+{ #category : #examples }
+REGModelTest >> codeVerySimpleWith3FunctionsAndPreprocessor [
+"#include <stdio.h>
+
+#if SCH_HK_ENABLED
+void f(void) {
+    printf(""Hello from SCH_HK_ENABLED"");
+}
+#endif
+
+#if SCH_FP
+void f(void) {
+    printf(""Hello from SCH_FP"");
+}
+#endif
+
+void g(void) {
+    printf(""World!\n"");
+}
+
+
+int main(void) {
+  f();
+  g();
+  return 0;
+}
+"
+
+^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="1.0.0" language="C" filename="main.c"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;stdio.h&gt;</cpp:file></cpp:include>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>SCH_HK_ENABLED</name></expr></cpp:if>
+<function><type><name>void</name></type> <name>f</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+    <expr_stmt><expr><call><name>printf</name><argument_list>(<argument><expr><literal type="string">"Hello from SCH_HK_ENABLED"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+</block_content>}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>SCH_FP</name></expr></cpp:if>
+<function><type><name>void</name></type> <name>f</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+    <expr_stmt><expr><call><name>printf</name><argument_list>(<argument><expr><literal type="string">"Hello from SCH_FP"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+</block_content>}</block></function>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<function><type><name>void</name></type> <name>g</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+    <expr_stmt><expr><call><name>printf</name><argument_list>(<argument><expr><literal type="string">"World!\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+</block_content>}</block></function>
+
+
+<function><type><name>int</name></type> <name>main</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list> <block>{<block_content>
+  <expr_stmt><expr><call><name>f</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>g</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <return>return <expr><literal type="number">0</literal></expr>;</return>
+</block_content>}</block></function>
+</unit>
+'
+]
+
+{ #category : #examples }
+REGModelTest >> codeVerySimpleWith3FunctionsAndPreprocessorCode [
+
+	^ '#include <stdio.h>
+
+#if SCH_HK_ENABLED
+void f(void) {
+    printf("Hello from SCH_HK_ENABLED");
+}
+#endif
+
+#if SCH_FP
+void f(void) {
+    printf("Hello from SCH_FP");
+}
+#endif
+
+void g(void) {
+    printf("World!\n");
+}
+
+
+int main(void) {
+  f();
+  g();
+  return 0;
+}'
+]
+
+{ #category : #examples }
+REGModelTest >> codeVerySimpleWith3FunctionsAndPreprocessorCodeNested [
+
+	^ '#include <stdio.h>
+
+#if SCH_HK_ENABLED
+#if FOOBAR
+void f(void) {
+    printf("Hello from SCH_HK_ENABLED");
+}
+#endif
+#endif
+
+#if SCH_FP
+void f(void) {
+    printf("Hello from SCH_FP");
+}
+#endif
+
+void g(void) {
+    printf("World!\n");
+}
+
+
+int main(void) {
+  f();
+  g();
+  return 0;
+}'
+]
+
 { #category : #tests }
 REGModelTest >> testAddExample [
 
@@ -360,6 +477,77 @@ REGModelTest >> testEmpty [
 	m := REGModel new.
 	self assert: m numberOfModules equals: 0.	
 	self assert: m numberOfFunctions equals: 0.
+]
+
+{ #category : #'tests - features' }
+REGModelTest >> testFeatures [
+
+	| m moduleMain |
+	m := REGModel new.
+	m addSrcMLXML: self codeVerySimpleWith3FunctionsAndPreprocessor.
+	
+	
+	moduleMain := m modules first.
+	self assert: moduleMain filename equals: 'main.c'.
+	self assert: moduleMain numberOfFeatures equals: 0.
+	self assert: moduleMain sourceCode isEmpty.
+	
+	moduleMain sourceCodeCache: self codeVerySimpleWith3FunctionsAndPreprocessorCode.
+	self assert: moduleMain sourceCode equals: self codeVerySimpleWith3FunctionsAndPreprocessorCode.
+	
+	"BEFORE BUILDING FEATURES"
+	self assert: m numberOfFeatureAnnotations equals: 0.
+	self assert: m features isEmpty.
+	self assert: m numberOfFeatures equals: 0.
+	self assert: moduleMain numberOfFeatureAnnotations equals: 0.
+	
+	"BUILD THE FEATURES"
+	m buildFeatures.
+	
+	"AFTER BUILDING FEATURES"
+	self assert: (m featureAnnotations allSatisfy: [ :a | a feature notNil ]).
+	self assert: m numberOfFeatureAnnotations equals: 2.
+	self assert: m numberOfFeatures equals: 2.
+	self assert: moduleMain numberOfFeatureAnnotations equals: 2.
+	self assert: (moduleMain features collect: #name) asSet equals: #('SCH_HK_ENABLED' 'SCH_FP') asSet
+]
+
+{ #category : #'tests - features' }
+REGModelTest >> testFeatures2WithNestedFeatureAnnotations [
+
+	| m moduleMain |
+	m := REGModel new.
+	m addSrcMLXML: self codeVerySimpleWith3FunctionsAndPreprocessor.
+
+	moduleMain := m modules first.
+	self assert: moduleMain filename equals: 'main.c'.
+	self assert: moduleMain numberOfFeatures equals: 0.
+	self assert: moduleMain sourceCode isEmpty.
+	
+	moduleMain sourceCodeCache: self codeVerySimpleWith3FunctionsAndPreprocessorCodeNested.
+	self assert: moduleMain sourceCode equals: self codeVerySimpleWith3FunctionsAndPreprocessorCodeNested.
+	
+	"BEFORE BUILDING FEATURES"
+	self assert: m numberOfFeatureAnnotations equals: 0.
+	self assert: m features isEmpty.
+	self assert: m numberOfFeatures equals: 0.
+	self assert: moduleMain numberOfFeatureAnnotations equals: 0.
+	
+	"BUILD THE FEATURES"
+	m buildFeatures.
+	
+	"AFTER BUILDING FEATURES"
+	self assert: (m featureAnnotations allSatisfy: [ :a | a feature notNil ]).
+	self assert: m numberOfFeatureAnnotations equals: 3.
+	self assert: m numberOfFeatures equals: 3.
+	self assert: moduleMain numberOfFeatureAnnotations equals: 3.
+	self assert: (moduleMain features collect: #name) asSet equals: #('SCH_HK_ENABLED' 'SCH_FP' 'FOOBAR') asSet.
+	
+	"SCH_HK_ENABLED is parent of FOOBAR"
+	self assert: m featureAnnotations first name equals: 'FOOBAR'.
+	self assert: m featureAnnotations second name equals: 'SCH_HK_ENABLED'.
+	self assert: m featureAnnotations first parentAnnotation equals: m featureAnnotations second.
+	self assert: (m featureAnnotations second children includes: m featureAnnotations first)
 ]
 
 { #category : #tests }
