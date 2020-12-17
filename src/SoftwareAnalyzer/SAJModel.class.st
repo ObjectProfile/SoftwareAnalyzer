@@ -531,7 +531,7 @@ SAJModel >> visualizeFeatureInteraction [
 	].
 
 	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
-		evt shape model visualize  openWithTitle: evt shape model name. "inspect"
+		evt shape model visualize  "openWithTitle: evt shape model name." inspect
 	].
 	
 	c @ RSCanvasController.

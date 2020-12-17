@@ -3,7 +3,9 @@ Class {
 	#superclass : #SAJStructuralElement,
 	#instVars : [
 		'annotations',
-		'color'
+		'color',
+		'parent',
+		'children'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -34,8 +36,8 @@ SAJFeature >> color [
 ]
 
 { #category : #accessing }
-SAJFeature >> color: anObject [
-	color := anObject
+SAJFeature >> color: aColor [
+	color := aColor
 ]
 
 { #category : #accessing }
@@ -59,7 +61,8 @@ SAJFeature >> gtInspectorView2In: composite [
 { #category : #initialization }
 SAJFeature >> initialize [
 	super initialize.
-	annotations := OrderedCollection new
+	annotations := OrderedCollection new.
+	children := OrderedCollection new
 ]
 
 { #category : #'as yet unclassified' }

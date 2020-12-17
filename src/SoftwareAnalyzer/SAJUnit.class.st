@@ -232,7 +232,7 @@ SAJUnit >> sourceCode [
 
 { #category : #visualization }
 SAJUnit >> visualize [
-	| c in g out all lblOut lblIn |
+	| c in g out all lblOut lblIn breadCrumb |
 	c := RSCanvas new.
 	
 	in := RSGroup new.
@@ -273,6 +273,10 @@ SAJUnit >> visualize [
 	c add: lblIn.
 	RSLocation move: lblIn above: in. 
 
+	breadCrumb := RSLabel text:  filename.
+	c add: breadCrumb.
+	breadCrumb setAsFixed.
+	breadCrumb translateTo: 200 @ 10.
 
 	^ c @ RSCanvasController
 
@@ -293,6 +297,9 @@ SAJUnit >> visualizeIn: c [
 	b fromRectangle: ((-25 @ 0) corner: (25 @ self loc)).
 	b width: 50.
 	c add: b.
+	
+	b @ (RSMenuActivable new menuDo: [ :menu :element | menu add: 'Source code' target: element model  selector: #inspect ]).
+	
 	
 	self annotations do: [ :a |
 		ab := RSBox model: a.
