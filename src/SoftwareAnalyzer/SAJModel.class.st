@@ -75,7 +75,7 @@ SAJModel >> addSrcMLXML: xmlAsString [
 
 { #category : #private }
 SAJModel >> addUnitAsXML: xml [
-	| u hasPackageName filename |
+	| u hasPackageName filename import |
 	self assert: [ xml class name beginsWith: 'XML' ] description: 'Wrong type'.
 	(xml elementAt: 'class') ifNotNil: [ u := self addClassAsXML: xml ].
 	(xml elementAt: 'interface') ifNotNil: [ u := self addInterfaceAsXML: xml ].
@@ -88,6 +88,7 @@ SAJModel >> addUnitAsXML: xml [
 	u model: self.
 	u filename: filename.
 	
+	"CHECK PACKAGE"
 	hasPackageName := (xml @ { 'package' . 'name' }) notNil.
 	hasPackageName ifTrue: [
 		| packageName |
@@ -96,6 +97,15 @@ SAJModel >> addUnitAsXML: xml [
 			ifFalse: [ packageName := (xml @ { 'package' . 'name' }) nodes flatCollect: [ :n | n nodes first asString ] as: String].
 		
 		u packageName: packageName ].
+	
+	"CHECK IMPORTS"
+	(xml searchFor: 'import') do: [ :importAsXml |
+		import := SAJImport new.
+		import fromUnit: u.
+		import fullName: ('.' join: ((importAsXml searchFor: 'name') allButFirst collect: #rawString)).
+		u addImport: import.
+	].
+
 ]
 
 { #category : #public }
@@ -104,7 +114,8 @@ SAJModel >> build [
 	self resolveSuperclasses.
 	self createAndBindPackages.
 	self computeFeatureColor.
-	self buildAnnotationHierarchy
+	self buildAnnotationHierarchy.
+	self resolveImports
 ]
 
 { #category : #private }
@@ -321,6 +332,20 @@ SAJModel >> packages [
 ]
 
 { #category : #private }
+SAJModel >> resolveImports [
+	"This is a private method"
+	self units do: [ :u |
+		u imports do: [ :i |
+			i toUnit: (self unitNamed: i getClassName ifNone: [ nil ]).
+			i toUnit ifNotNil: [ 
+				i toUnit addIncomingUnit: i fromUnit.
+				i fromUnit addOutgoingUnit: i toUnit
+				 ]
+			 ]
+	]
+]
+
+{ #category : #private }
 SAJModel >> resolveSuperclasses [
 	"This is a private method"
 	self classes do: [ :cls |
@@ -506,7 +531,7 @@ SAJModel >> visualizeFeatureInteraction [
 	].
 
 	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
-		evt shape model visualize inspect "openWithTitle: evt shape model name".
+		evt shape model visualize  openWithTitle: evt shape model name. "inspect"
 	].
 	
 	c @ RSCanvasController.

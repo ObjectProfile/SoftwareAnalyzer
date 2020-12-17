@@ -9,7 +9,9 @@ Class {
 		'classes',
 		'functions',
 		'sourceCodeCache',
-		'featureAnnotations'
+		'featureAnnotations',
+		'outgoingUnits',
+		'incomingUnits'
 	],
 	#category : #'SoftwareAnalyzer-CPP'
 }
@@ -105,7 +107,9 @@ REGUnit >> initialize [
 	includes := OrderedCollection new.
 	classes := OrderedCollection new.
 	functions := OrderedCollection new.
-	featureAnnotations := OrderedCollection new
+	featureAnnotations := OrderedCollection new.
+	outgoingUnits := OrderedCollection new.
+	incomingUnits := OrderedCollection new.
 ]
 
 { #category : #testing }

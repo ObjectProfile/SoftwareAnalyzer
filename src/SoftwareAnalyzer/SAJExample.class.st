@@ -16,7 +16,7 @@ SAJExample >> exampleSimple [
 
 { #category : #examples }
 SAJExample >> exampleWallet [
-	<script: 'self new exampleWallet inspect'>
+	<script: 'self new exampleWallet'>
 	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "
 	| m fr |
 	m := SAJModel new.
@@ -27,5 +27,6 @@ SAJExample >> exampleWallet [
 	].	
 	m importFeaturesAsCSV: SAJTest new featureAnnotations.
 	m build.
+	m visualizeFeatureInteraction open.
 	^ m
 ]

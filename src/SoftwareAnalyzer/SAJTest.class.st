@@ -1047,6 +1047,55 @@ public class D { }
 '
 ]
 
+{ #category : #'tests - imports' }
+SAJTest >> sourceXMLWithImport [
+
+"
+import java.lang.String;
+import java.awt.Color;
+
+public class C {
+	public static void main(String[] args) {
+		String s;
+		Color c;
+	}
+}
+
+----
+
+import foo.zork.C;
+
+public class Color {
+
+}
+
+
+"
+
+^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0">
+
+<unit revision="1.0.0" language="Java" filename="C.java" hash="761cebd23e9de4c8b4b841a1a3e1a4d5c33eaa87">
+<import>import <name><name>java</name><operator>.</operator><name>lang</name><operator>.</operator><name>String</name></name>;</import>
+<import>import <name><name>java</name><operator>.</operator><name>awt</name><operator>.</operator><name>Color</name></name>;</import>
+
+<class><specifier>public</specifier> class <name>C</name> <block>{
+	<function><type><specifier>public</specifier> <specifier>static</specifier> <name>void</name></type> <name>main</name><parameter_list>(<parameter><decl><type><name><name>String</name><index>[]</index></name></type> <name>args</name></decl></parameter>)</parameter_list> <block>{<block_content>
+		<decl_stmt><decl><type><name>String</name></type> <name>s</name></decl>;</decl_stmt>
+		<decl_stmt><decl><type><name>Color</name></type> <name>c</name></decl>;</decl_stmt>
+	</block_content>}</block></function>
+}</block></class></unit>
+
+<unit revision="1.0.0" language="Java" filename="Color.java" hash="21184dd3d6f5fef4eeed4450494428e45652e2f0"><import>import <name><name>foo</name><operator>.</operator><name>zork</name><operator>.</operator><name>C</name></name>;</import>
+
+<class><specifier>public</specifier> class <name>Color</name> <block>{
+
+}</block></class></unit>
+
+</unit>
+'
+]
+
 { #category : #'tests - core' }
 SAJTest >> testBasic [
 	self assert: m numberOfClasses equals: 4.
@@ -1109,6 +1158,41 @@ Shape.java,6-7,Feature1,FRAGMENT
 
 	self assert: (m unitNamed: 'Canvas') numberOfFeatures equals: 2.
 	self assert: (m unitNamed: 'Canvas') features size equals: 2.
+]
+
+{ #category : #'tests - imports' }
+SAJTest >> testImport01 [
+
+	| c imports color |
+	m := SAJModel new.
+	m addSrcMLXML: self sourceXMLWithImport.
+	self assert: m numberOfUnits equals: 2.
+	
+	c := m units first.
+	self assert: c name equals: 'C'.
+	
+	self assert: c numberOfImports equals: 2.
+
+	imports := c imports.
+	self assert: imports size equals: 2.
+	self assert: (imports allSatisfy: [ :i | i class == SAJImport ]).
+	self assert: (imports collect: #fullName) asArray equals: { 'java.lang.String' . 'java.awt.Color' }.
+	self assert: (imports collect: #fromUnit) asSet asArray equals: { c }.
+	self assert: ((imports collect: #toUnit) allSatisfy: #isNil).
+	
+	self assert: c numberOfOutgoingUnits isZero.
+	self assert: c numberOfIncomingUnits isZero.
+	
+	color := m classNamed: 'Color'.
+	self assert: color numberOfOutgoingUnits isZero.
+	self assert: color numberOfIncomingUnits isZero.
+	
+	m build.
+	
+	self assert: (imports collect: #toUnit) asArray equals: { nil . color }.
+	self assert: c numberOfOutgoingUnits equals: 1.
+	self assert: c outgoingUnits asArray equals: { color }
+	
 ]
 
 { #category : #'tests - core' }

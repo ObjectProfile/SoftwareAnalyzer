@@ -7,7 +7,10 @@ Class {
 		'annotations',
 		'package',
 		'packageName',
-		'filename'
+		'filename',
+		'imports',
+		'outgoingUnits',
+		'incomingUnits'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -15,6 +18,21 @@ Class {
 { #category : #adding }
 SAJUnit >> addAnnotation: ann [
 	annotations add: ann
+]
+
+{ #category : #adding }
+SAJUnit >> addImport: anImport [
+	imports add: anImport 
+]
+
+{ #category : #adding }
+SAJUnit >> addIncomingUnit: aUnit [
+	incomingUnits add: aUnit
+]
+
+{ #category : #adding }
+SAJUnit >> addOutgoingUnit: aUnit [
+	outgoingUnits add: aUnit
 ]
 
 { #category : #accessing }
@@ -77,11 +95,24 @@ SAJUnit >> gtInspectorVisualizeIn: composite [
 		initializeCanvas: [ self visualize ]
 ]
 
+{ #category : #accessing }
+SAJUnit >> imports [
+	^ imports
+]
+
+{ #category : #accessing }
+SAJUnit >> incomingUnits [
+	^ incomingUnits
+]
+
 { #category : #initialization }
 SAJUnit >> initialize [
 	super initialize.
 	annotations := OrderedCollection new.
-	packageName := 'default'
+	packageName := 'default'.
+	imports := OrderedCollection new.
+	outgoingUnits := OrderedCollection new.
+	incomingUnits := OrderedCollection new
 ]
 
 { #category : #testing }
@@ -134,6 +165,26 @@ SAJUnit >> numberOfFeatures [
 	^ self features size
 ]
 
+{ #category : #'public - metrics' }
+SAJUnit >> numberOfImports [
+	^ imports size
+]
+
+{ #category : #'public - metrics' }
+SAJUnit >> numberOfIncomingUnits [
+	^ incomingUnits size
+]
+
+{ #category : #'public - metrics' }
+SAJUnit >> numberOfOutgoingUnits [
+	^ outgoingUnits size
+]
+
+{ #category : #accessing }
+SAJUnit >> outgoingUnits [
+	^ outgoingUnits
+]
+
 { #category : #accessing }
 SAJUnit >> package [
 	^ package
@@ -177,8 +228,17 @@ SAJUnit >> sourceCode [
 
 { #category : #visualization }
 SAJUnit >> visualize [
-	| c b ab |
+	| c g |
 	c := RSCanvas new.
+	g := RSGroup new.
+	self visualizeIn: g.
+	c add: g asShape.
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJUnit >> visualizeIn: c [
+	| b ab |
 	
 	b := RSBox model: self.
 	b @ RSPopup.
@@ -194,8 +254,7 @@ SAJUnit >> visualize [
 		ab translateBy: (a depth * 20) @ 0.
 		c add: ab.
 	].
-	
-	^ c @ RSCanvasController
+
 ]
 
 { #category : #visualization }

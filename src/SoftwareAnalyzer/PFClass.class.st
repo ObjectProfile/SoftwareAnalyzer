@@ -67,7 +67,7 @@ PFClass >> superclassName [
 
 { #category : #visualization }
 PFClass >> visualizeClasses: someClasses inContainer: aContainer [
-	| eb classes compo sc |
+	| eb classes compo |
 	classes := someClasses collect: [ :cls |
 		compo := RSComposite new.
 		compo color: Color gray darker.
