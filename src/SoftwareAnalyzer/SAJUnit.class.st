@@ -212,6 +212,10 @@ SAJUnit >> printOn: str [
 	super printOn: str.
 	str nextPut: $<.
 	str nextPutAll: self name.
+	str nextPutAll: ', Fan-out: '.
+	str nextPutAll: self numberOfOutgoingUnits asString.
+	str nextPutAll: ', Fan-in: '.
+	str nextPutAll: self numberOfIncomingUnits asString.
 	str nextPut: $>.
 ]
 
@@ -228,12 +232,56 @@ SAJUnit >> sourceCode [
 
 { #category : #visualization }
 SAJUnit >> visualize [
-	| c g |
+	| c in g out all lblOut lblIn |
+	c := RSCanvas new.
+	
+	in := RSGroup new.
+	self incomingUnits do: [ :u |
+		g := RSGroup new.
+		u visualizeIn: g.
+		in add: g asShape.
+	].
+	out := RSGroup new.
+	self outgoingUnits do: [ :u |
+		g := RSGroup new.
+		u visualizeIn: g.
+		out add: g asShape.
+	].
+
+	c addAll: in; addAll: out.
+	
+	g := RSGroup new.
+	self visualizeIn: g.
+	c add: g asShape.
+
+	RSGridLayout on: in.
+	RSGridLayout on: out.
+	
+	all := RSGroup new.
+	all add: in.
+	all add: g.
+	all add: out.
+	RSHorizontalLineLayout new alignMiddle; gapSize: 300; on: all.
+
+	g translateBy: g extent / -2.
+	
+	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units ', (out size asString), ')'. 
+	c add: lblOut.
+	RSLocation move: lblOut above: out. 
+
+	lblIn := RSLabel new fontSize: 50; text: 'Incoming units (', (in size asString), ')'.
+	c add: lblIn.
+	RSLocation move: lblIn above: in. 
+
+
+	^ c @ RSCanvasController
+
+"	| c g |
 	c := RSCanvas new.
 	g := RSGroup new.
 	self visualizeIn: g.
 	c add: g asShape.
-	^ c @ RSCanvasController
+	^ c @ RSCanvasController"
 ]
 
 { #category : #visualization }
