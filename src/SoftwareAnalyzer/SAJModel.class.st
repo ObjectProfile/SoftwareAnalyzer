@@ -82,7 +82,7 @@ SAJModel >> addUnitAsXML: xml [
 	(xml elementAt: 'enum') ifNotNil: [ u := self addEnumAsXML: xml ].
 	filename := xml attributeAt: 'filename'.
 
-	u ifNil: [ self halt. ].
+	u ifNil: [ self error: 'Cannot be nil!' ].
 	
 	u loc: xml asString lines size.
 	u model: self.
@@ -247,6 +247,15 @@ SAJModel >> gtInspectorViewIn: composite [
 { #category : #'public - features' }
 SAJModel >> importFeaturesAsCSV: csvAsString [
 
+	"Expect an input such as:
+'fileName,lineRange,featureName,annotationGranualarity
+Canvas.java,2-3,Feature1,FRAGMENT
+Canvas.java,6-7,Feature2,FRAGMENT
+Shape.java,6-7,Feature1,FRAGMENT
+Shape.java,6-7,Feature3,FRAGMENT
+Shape.java,6-7,Feature4,FRAGMENT
+'
+"
 	| lines ss unitName from to featureName annotationGranularity feat annotation unit |
 	lines := csvAsString lines allButFirst.
 	lines do: [ :l |
@@ -272,6 +281,34 @@ SAJModel >> importFeaturesAsCSV: csvAsString [
 			annotation feature: feat.
 			feat addAnnotation: annotation  ] "ifNil: [ self halt ]".
 	] 
+]
+
+{ #category : #'public - features' }
+SAJModel >> importFeaturesHierarchy: string [
+
+	"Expect an input such as:
+'BitcoinWallet
+    BitCoins
+        Denomination
+            BTC8dp'
+"
+	| lines numberOfSpaces stack level name |
+	numberOfSpaces := '    ' size.
+	lines := string lines.
+	stack := OrderedCollection new.
+	lines do: [ :l |
+		level := (l select: [ :c | c = $  ]) size / numberOfSpaces.
+		name := self getOrCreateFeatureNamed: l trimLeft.
+		level = 0 
+			ifTrue: [ stack addLast: name ]
+			ifFalse: [ 
+				level < stack size 
+					ifFalse: [ stack := stack first: level ].
+				name parent: stack last.
+				 stack addLast: name.
+				 ].
+	]
+	
 ]
 
 { #category : #initialization }

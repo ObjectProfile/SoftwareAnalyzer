@@ -16,6 +16,11 @@ SAJFeature >> addAnnotation: aFeatureAnnotation [
 ]
 
 { #category : #accessing }
+SAJFeature >> addChild: aFeature [
+	children add: aFeature
+]
+
+{ #category : #accessing }
 SAJFeature >> annotations [
 	^ annotations
 ]
@@ -79,6 +84,16 @@ SAJFeature >> numberOfAnnotations [
 SAJFeature >> numberOfUnits [
 
 	^ self units asSet size
+]
+
+{ #category : #accessing }
+SAJFeature >> parent [
+	^ parent
+]
+
+{ #category : #accessing }
+SAJFeature >> parent: aParentFeature [
+	parent := aParentFeature
 ]
 
 { #category : #printing }

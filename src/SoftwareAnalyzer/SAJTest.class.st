@@ -1160,6 +1160,37 @@ Shape.java,6-7,Feature1,FRAGMENT
 	self assert: (m unitNamed: 'Canvas') features size equals: 2.
 ]
 
+{ #category : #'tests - features' }
+SAJTest >> testFeaturesHierarchy [
+
+	| annotations annotationHierarchy f2 |
+	annotations := 'fileName,lineRange,featureName,annotationGranualarity
+Canvas.java,2-3,Feature1,FRAGMENT
+Canvas.java,6-7,Feature2,FRAGMENT
+Shape.java,6-7,Feature1,FRAGMENT
+Shape.java,6-7,Feature3,FRAGMENT
+Shape.java,6-7,Feature4,FRAGMENT
+Shape.java,6-7,Feature5,FRAGMENT
+'.
+	self assert: m numberOfFeatures equals: 0.
+	annotationHierarchy := 'App
+    Feature1
+        Feature2
+        Feature3
+    Feature4
+        Feature5'.
+	m importFeaturesAsCSV: annotations.
+	self assert: m numberOfFeatures equals: 5.
+	m importFeaturesHierarchy: annotationHierarchy.
+	
+	"App was just added"
+	self assert: m numberOfFeatures equals: 6.
+	
+	f2 := m getOrCreateFeatureNamed: 'Feature2'.
+	self assert: f2 parent equals: (m getOrCreateFeatureNamed: 'Feature1')
+
+]
+
 { #category : #'tests - imports' }
 SAJTest >> testImport01 [
 
