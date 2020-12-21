@@ -1163,7 +1163,7 @@ Shape.java,6-7,Feature1,FRAGMENT
 { #category : #'tests - features' }
 SAJTest >> testFeaturesHierarchy [
 
-	| annotations annotationHierarchy f2 |
+	| annotations annotationHierarchy f2 f1 f3 f4 f5 fApp |
 	annotations := 'fileName,lineRange,featureName,annotationGranualarity
 Canvas.java,2-3,Feature1,FRAGMENT
 Canvas.java,6-7,Feature2,FRAGMENT
@@ -1186,9 +1186,23 @@ Shape.java,6-7,Feature5,FRAGMENT
 	"App was just added"
 	self assert: m numberOfFeatures equals: 6.
 	
+	f1 := m getOrCreateFeatureNamed: 'Feature1'.
 	f2 := m getOrCreateFeatureNamed: 'Feature2'.
-	self assert: f2 parent equals: (m getOrCreateFeatureNamed: 'Feature1')
-
+	f3 := m getOrCreateFeatureNamed: 'Feature3'.
+	f4 := m getOrCreateFeatureNamed: 'Feature4'.
+	f5 := m getOrCreateFeatureNamed: 'Feature5'.
+	fApp := m getOrCreateFeatureNamed: 'App'.
+	
+	self assert: f2 parent equals: f1.
+	self assert: f3 parent equals: f1.
+	self assert: f5 parent equals: f4.
+	self assert: f1 parent equals: fApp.
+	self assert: f4 parent equals: fApp.
+	self assert: fApp parent isNil.
+	
+	self assert: fApp children equals: { f1 . f4 }.
+	self assert: f1 children equals: { f2 . f3 }.
+	self assert: f5 children isEmpty.
 ]
 
 { #category : #'tests - imports' }

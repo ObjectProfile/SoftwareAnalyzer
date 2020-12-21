@@ -292,23 +292,23 @@ SAJModel >> importFeaturesHierarchy: string [
         Denomination
             BTC8dp'
 "
-	| lines numberOfSpaces stack level name |
+
+	| lines numberOfSpaces stack level currentFeature |
 	numberOfSpaces := '    ' size.
 	lines := string lines.
 	stack := OrderedCollection new.
-	lines do: [ :l |
-		level := (l select: [ :c | c = $  ]) size / numberOfSpaces.
-		name := self getOrCreateFeatureNamed: l trimLeft.
-		level = 0 
-			ifTrue: [ stack addLast: name ]
+	lines do: [ :l | 
+		level := (l select: [ :c | c = $  ]) size / numberOfSpaces + 1.
+		currentFeature := self getOrCreateFeatureNamed: l trimLeft.
+
+		level = 1
+			ifTrue: [ stack addLast: currentFeature ]
 			ifFalse: [ 
-				level < stack size 
-					ifFalse: [ stack := stack first: level ].
-				name parent: stack last.
-				 stack addLast: name.
-				 ].
-	]
-	
+				level < stack size ifTrue: [ stack := stack first: level ].
+				level = stack size ifTrue: [ stack := stack allButLast ].
+				currentFeature parent: stack last.
+				stack last addChild: currentFeature.
+				stack addLast: currentFeature ] ]
 ]
 
 { #category : #initialization }

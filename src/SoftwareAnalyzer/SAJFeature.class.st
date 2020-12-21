@@ -30,6 +30,11 @@ SAJFeature >> anotationsForUnit: aUnit [
 	^ self annotations select: [ :a | a unit == aUnit ]
 ]
 
+{ #category : #accessing }
+SAJFeature >> children [
+	^ children asArray
+]
+
 { #category : #visualization }
 SAJFeature >> classes [
 	^ self units select: #isClass
