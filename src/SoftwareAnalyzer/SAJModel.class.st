@@ -220,7 +220,7 @@ SAJModel >> gtInspectorView2In: composite [
 		initializeCanvas: [ self visualizeFeaturesOnly2 ]
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> gtInspectorViewAnnotationsIn: composite [
 	<gtInspectorPresentationOrder: -50>
 	composite roassal3
@@ -464,7 +464,7 @@ SAJModel >> visualize [
 	^ c @ RSCanvasController
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> visualizeAnnotations [
 	| c pShapes featureShapes |
 	c := RSCanvas new.
@@ -523,7 +523,7 @@ SAJModel >> visualizeAnnotationsOLD [
 SAJModel >> visualizeFeatureInteraction [
 
 
-	| c m allPackages featureLabels channel |
+	| c m allPackages featureLabels channel eb |
 	c := RSCanvas new.
 	c inspectorContext interactionsToBeRegistered removeAll.
 	
@@ -537,7 +537,7 @@ SAJModel >> visualizeFeatureInteraction [
 		m orthoVerticalLine connectFrom: #superclass.
 		m layout ifConnected: RSTreeLayout new ifNotConnected: (RSFlowLayout new gapSize: 20).
 	].
-	m layout flow gapSize: 30; maxWidth: 2000.
+	m layout flow gapSize: 30"; maxWidth: 2000".
 	m build.
 	allPackages := c nodes copy.
 	allPackages @ (RSLabeled new text: [ :pak | pak name ]).
@@ -548,9 +548,18 @@ SAJModel >> visualizeFeatureInteraction [
 		shapes: featureLabels;
 		from: 10; to: 20;
 		normalize: #numberOfUnits.
-	RSFlowLayout new maxWidth: 700; on: featureLabels.
+	
+	eb := RSEdgeBuilder orthoHorizontal.
+	eb withHorizontalAttachPoint.
+	eb canvas: c.
+	eb shapes: featureLabels.
+	eb connectFrom: #parent.
+	
+	"RSFlowLayout new maxWidth: 700; on: featureLabels."
+	RSHorizontalTreeLayout new on: featureLabels.
+	
 	c addAll: featureLabels.
-	RSVerticalLineLayout new gapSize: 40; alignCenter; on: { featureLabels . allPackages }.
+	RSHorizontalLineLayout new gapSize: 40; alignMiddle; on: { featureLabels . allPackages }.
 	featureLabels do: [ :aFeatLabel |
 		channel := RSChannel new.
 		channel markGoUp.
