@@ -64,6 +64,11 @@ SAJModel >> addSrcMLXML: xmlAsString [
 	
 	Using:
 	srcml *.java -o example.xml
+	
+	When folder may contain source code files
+	find . -type f \( -iname \*.java \) -exec srcml {} -o {}.xml \;
+	mkdir xml
+	find . -name ""*.xml"" -exec mv {} xml \;
 	"
 	| someClasses |
 	self assert: [ xmlAsString isByteString ] description: 'Wrong type'.
