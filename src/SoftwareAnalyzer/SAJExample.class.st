@@ -5,6 +5,24 @@ Class {
 }
 
 { #category : #examples }
+SAJExample >> exampleEolian [
+
+	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "
+
+	<script: 'self new exampleEolian inspect'>
+	| m fr |
+	m := SAJModel new.
+	m rootFilename:
+		'/tmp/E/Eolian-Telemetria-Auriga'.
+	fr := '/tmp/E/Eolian-Telemetria-Auriga/xml'
+		      asFileReference.
+	fr children do: [ :ffr | m addSrcMLXML: ffr contents ].
+	m build.
+	"m visualizeFeatureInteraction open."
+	^ m
+]
+
+{ #category : #examples }
 SAJExample >> exampleSimple [
 	<script: 'self new exampleSimple inspect'>
 	| m |
