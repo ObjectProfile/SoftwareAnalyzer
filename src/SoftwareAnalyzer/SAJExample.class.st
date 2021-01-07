@@ -16,7 +16,7 @@ SAJExample >> exampleArgoUmlSPL [
 		'/Users/alexandrebergel/Dropbox/GitRepos/argouml-spl-benchmark'.
 	fr := '/Users/alexandrebergel/Dropbox/GitRepos/argouml-spl-benchmark/xml'
 		      asFileReference.
-	(fr children first: 500) do: [ :ffr | m addSrcMLXML: ffr contents ].
+	(fr children) do: [ :ffr | m addSrcMLXML: ffr contents ].
 "	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents)."
 	m importFeaturesAsCSV: m getFeatureListFromSourceCodeUsingArgoUmlSPL.
 	m build.

@@ -248,7 +248,7 @@ Shape.java,6-7,Feature4,FRAGMENT
 	| w |
 	w := WriteStream on: String new.
 	self units do: [ :u |
-		self getFeatureListFromSourceCodeUsingArgoUmlSPLFor: u in: w
+		[self getFeatureListFromSourceCodeUsingArgoUmlSPLFor: u in: w] on: Error do: [  ]
 		 ].
 	^ w contents
 ]
