@@ -191,6 +191,47 @@ SAJModel >> features [
 ]
 
 { #category : #'public - features' }
+SAJModel >> getFeatureListFromSourceCode [
+
+	"Produce a CSV file something like:
+'fileName,lineRange,featureName,annotationGranualarity
+Canvas.java,2-3,Feature1,FRAGMENT
+Canvas.java,6-7,Feature2,FRAGMENT
+Shape.java,6-7,Feature1,FRAGMENT
+Shape.java,6-7,Feature3,FRAGMENT
+Shape.java,6-7,Feature4,FRAGMENT
+'
+"
+	| w |
+	w := WriteStream on: String new.
+	self units do: [ :u |
+		self getFeatureListFromSourceCodeFor: u in: w
+		 ].
+	^ w contents
+]
+
+{ #category : #private }
+SAJModel >> getFeatureListFromSourceCodeFor: unit in: stream [	
+	| stack b |
+	stack := OrderedCollection new.
+	unit sourceCode lines doWithIndex: [ :l :index |
+		('*//&begin*(*' match: l) ifTrue: [ stack addLast: index ].
+		('*// &begin*(*' match: l) ifTrue: [ stack addLast: index ].
+		(('*//&end*(*' match: l) or: [ ('*// &end*(*' match: l) ]) ifTrue: [ b := stack removeLast.
+			stream nextPutAll: unit filename.
+			stream nextPut: $,.
+			stream nextPutAll: b asString.
+			stream nextPut: $-.
+			stream nextPutAll: index asString.
+			stream nextPut: $,.
+			stream nextPutAll: ((l substrings: '&') last substrings: '()') last.
+			stream nextPutAll: ',FRAGMENT'.
+			stream cr.
+			].
+	]
+]
+
+{ #category : #'public - features' }
 SAJModel >> getOrCreateFeatureNamed: aName [
 	| doesExist |
 	doesExist := features anySatisfy: [ :f | f featureName = aName ].

@@ -23,6 +23,28 @@ SAJExample >> exampleEolian [
 ]
 
 { #category : #examples }
+SAJExample >> exampleFAXE [
+
+	"Source code from: https://bitbucket.org/easelab/faxe/src/master/ "
+
+	<script: 'self new exampleFAXE inspect'>
+	| m fr |
+	m := SAJModel new.
+	m rootFilename:
+		'/Users/alexandrebergel/Dropbox/GitRepos/faxe'.
+	fr := '/Users/alexandrebergel/Dropbox/GitRepos/faxe/xml'
+		      asFileReference.
+	fr children do: [ :ffr | m addSrcMLXML: ffr contents ].
+	m importFeaturesAsCSV: m getFeatureListFromSourceCode.
+
+	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents).
+
+	m build.
+	"m visualizeFeatureInteraction open."
+	^ m
+]
+
+{ #category : #examples }
 SAJExample >> exampleSimple [
 	<script: 'self new exampleSimple inspect'>
 	| m |

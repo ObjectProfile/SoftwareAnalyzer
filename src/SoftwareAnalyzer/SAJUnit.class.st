@@ -115,6 +115,11 @@ SAJUnit >> initialize [
 	incomingUnits := OrderedCollection new
 ]
 
+{ #category : #'as yet unclassified' }
+SAJUnit >> inspectSourceCode [
+	^ self sourceCode inspect
+]
+
 { #category : #testing }
 SAJUnit >> isClass [
 	^ false
@@ -298,8 +303,8 @@ SAJUnit >> visualizeIn: c [
 	b width: 50.
 	c add: b.
 	
-	b @ (RSMenuActivable new menuDo: [ :menu :element | menu add: 'Source code' target: element model  selector: #inspect ]).
-	
+	b @ (RSMenuActivable new menuDo: [ :menu :element | 
+		menu add: 'Source code' target: element model selector: #inspectSourceCode ]).
 	
 	self annotations do: [ :a |
 		ab := RSBox model: a.
