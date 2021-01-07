@@ -68,7 +68,7 @@ SAJModel >> addSrcMLXML: xmlAsString [
 	When folder may contain source code files
 	find . -type f \( -iname \*.java \) -exec srcml {} -o {}.xml \;
 	mkdir xml
-	find . -name ""*.xml"" -exec mv {} xml \;
+	find . -name ""*.java.xml"" -exec mv {} xml \;
 	"
 	| someClasses |
 	self assert: [ xmlAsString isByteString ] description: 'Wrong type'.
@@ -87,7 +87,9 @@ SAJModel >> addUnitAsXML: xml [
 	(xml elementAt: 'enum') ifNotNil: [ u := self addEnumAsXML: xml ].
 	filename := xml attributeAt: 'filename'.
 
-	u ifNil: [ self error: 'Cannot be nil!' ].
+	u ifNil: [ "self error: 'Cannot be nil!'" 
+		"do nothing"
+		^ self ].
 	
 	u loc: xml asString lines size.
 	u model: self.
@@ -232,6 +234,49 @@ SAJModel >> getFeatureListFromSourceCodeFor: unit in: stream [
 ]
 
 { #category : #'public - features' }
+SAJModel >> getFeatureListFromSourceCodeUsingArgoUmlSPL [
+	"INPUT = ARGO UML SPL"
+	"Produce a CSV file something like:
+'fileName,lineRange,featureName,annotationGranualarity
+Canvas.java,2-3,Feature1,FRAGMENT
+Canvas.java,6-7,Feature2,FRAGMENT
+Shape.java,6-7,Feature1,FRAGMENT
+Shape.java,6-7,Feature3,FRAGMENT
+Shape.java,6-7,Feature4,FRAGMENT
+'
+"
+	| w |
+	w := WriteStream on: String new.
+	self units do: [ :u |
+		self getFeatureListFromSourceCodeUsingArgoUmlSPLFor: u in: w
+		 ].
+	^ w contents
+]
+
+{ #category : #private }
+SAJModel >> getFeatureListFromSourceCodeUsingArgoUmlSPLFor: unit in: stream [	
+
+	| stack b |
+	stack := OrderedCollection new.
+	unit sourceCode lines doWithIndex: [ :l :index |
+		('*#if defined(*' match: l) ifTrue: [ 
+			stack addLast: { index . (l substrings: '()') last } ].
+		('*#endif*' match: l) ifTrue: [ 
+			b := stack removeLast.
+			stream nextPutAll: unit filename.
+			stream nextPut: $,.
+			stream nextPutAll: b first asString.
+			stream nextPut: $-.
+			stream nextPutAll: index asString.
+			stream nextPut: $,.
+			stream nextPutAll: b second.
+			stream nextPutAll: ',FRAGMENT'.
+			stream cr.
+			].
+	]
+]
+
+{ #category : #'public - features' }
 SAJModel >> getOrCreateFeatureNamed: aName [
 	| doesExist |
 	doesExist := features anySatisfy: [ :f | f featureName = aName ].
@@ -305,14 +350,14 @@ Shape.java,6-7,Feature4,FRAGMENT
 	| lines ss unitName from to featureName annotationGranularity feat annotation unit |
 	lines := csvAsString lines allButFirst.
 	lines do: [ :l |
-		ss := l substrings: '.,-'.
-		unitName := (ss first substrings: '\/') last.
-		from := ss third asInteger.
+		ss := l substrings: ','.
+		unitName := (ss first substrings: '\/.') allButLast last.
+		from := (ss second substrings: '-') first asInteger.
 		
 		"to cannot be inferior than from"
-		to := ss fourth asInteger max: from.
-		featureName := ss fifth.
-		annotationGranularity := ss sixth.
+		to := (ss second substrings: '-') second asInteger max: from.
+		featureName := ss third.
+		annotationGranularity := ss fourth.
 		
 		feat := self getOrCreateFeatureNamed: featureName.
 		unit := self unitNamed: unitName ifNone: [ nil ].

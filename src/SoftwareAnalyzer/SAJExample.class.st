@@ -5,6 +5,26 @@ Class {
 }
 
 { #category : #examples }
+SAJExample >> exampleArgoUmlSPL [
+
+	"Source code from: https://bitbucket.org/easelab/faxe/src/master/ "
+
+	<script: 'self new exampleArgoUmlSPL inspect'>
+	| m fr |
+	m := SAJModel new.
+	m rootFilename:
+		'/Users/alexandrebergel/Dropbox/GitRepos/argouml-spl-benchmark'.
+	fr := '/Users/alexandrebergel/Dropbox/GitRepos/argouml-spl-benchmark/xml'
+		      asFileReference.
+	(fr children first: 500) do: [ :ffr | m addSrcMLXML: ffr contents ].
+"	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents)."
+	m importFeaturesAsCSV: m getFeatureListFromSourceCodeUsingArgoUmlSPL.
+	m build.
+	"m visualizeFeatureInteraction open."
+	^ m
+]
+
+{ #category : #examples }
 SAJExample >> exampleEolian [
 
 	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "
@@ -36,7 +56,7 @@ SAJExample >> exampleFAXE [
 		      asFileReference.
 	fr children do: [ :ffr | m addSrcMLXML: ffr contents ].
 	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents).
-m importFeaturesAsCSV: m getFeatureListFromSourceCode.
+	m importFeaturesAsCSV: m getFeatureListFromSourceCode.
 	m build.
 	"m visualizeFeatureInteraction open."
 	^ m
