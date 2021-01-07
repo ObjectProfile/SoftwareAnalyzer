@@ -306,7 +306,7 @@ Shape.java,6-7,Feature4,FRAGMENT
 	lines := csvAsString lines allButFirst.
 	lines do: [ :l |
 		ss := l substrings: '.,-'.
-		unitName := (ss first substrings: '\') last.
+		unitName := (ss first substrings: '\/') last.
 		from := ss third asInteger.
 		
 		"to cannot be inferior than from"

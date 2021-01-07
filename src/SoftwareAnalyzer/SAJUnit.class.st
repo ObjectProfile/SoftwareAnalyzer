@@ -304,7 +304,8 @@ SAJUnit >> visualizeIn: c [
 	c add: b.
 	
 	b @ (RSMenuActivable new menuDo: [ :menu :element | 
-		menu add: 'Source code' target: element model selector: #inspectSourceCode ]).
+		menu add: 'Source code' target: element model selector: #inspectSourceCode.
+		menu add: 'Inspect' target: element model selector: #inspect. ] ).
 	
 	self annotations do: [ :a |
 		ab := RSBox model: a.
