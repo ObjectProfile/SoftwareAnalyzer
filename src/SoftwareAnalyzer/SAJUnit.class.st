@@ -270,7 +270,8 @@ SAJUnit >> visualize [
 
 	g translateBy: g extent / -2.
 	
-	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units ', (out size asString), ')'. 
+	
+	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 
 	c add: lblOut.
 	RSLocation move: lblOut above: out. 
 
