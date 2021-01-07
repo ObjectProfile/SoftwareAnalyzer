@@ -256,11 +256,13 @@ Shape.java,6-7,Feature4,FRAGMENT
 { #category : #private }
 SAJModel >> getFeatureListFromSourceCodeUsingArgoUmlSPLFor: unit in: stream [	
 
-	| stack b |
+	| stack b featureName |
 	stack := OrderedCollection new.
 	unit sourceCode lines doWithIndex: [ :l :index |
-		('*#if defined(*' match: l) ifTrue: [ 
-			stack addLast: { index . (l substrings: '()') last } ].
+		('*#if defined(*' match: l) ifTrue: [
+			featureName := (l trimBoth substrings: '()') last.
+			"Halt if: [ featureName size < 4 ]. "
+			stack addLast: { index . featureName } ].
 		('*#endif*' match: l) ifTrue: [ 
 			b := stack removeLast.
 			stream nextPutAll: unit filename.

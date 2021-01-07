@@ -35,6 +35,7 @@ SAJImport >> fullName: aString [
 
 { #category : #accessing }
 SAJImport >> getClassName [
+	fullName ifEmpty: [ ^ '' ].
 	^ (fullName substrings: '.') last
 ]
 
