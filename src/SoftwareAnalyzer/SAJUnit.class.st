@@ -237,7 +237,7 @@ SAJUnit >> sourceCode [
 
 { #category : #visualization }
 SAJUnit >> visualize [
-	| c in g out all lblOut lblIn breadCrumb |
+	| c in g out all lblOut lblIn breadCrumb centralCompositeShape leftCompositeShape rightCompositeShape|
 	c := RSCanvas new.
 	
 	in := RSGroup new.
@@ -257,18 +257,19 @@ SAJUnit >> visualize [
 	
 	g := RSGroup new.
 	self visualizeIn: g.
-	c add: g asShape.
+	centralCompositeShape := g asShape.
+	c add: centralCompositeShape.
 
 	RSGridLayout on: in.
 	RSGridLayout on: out.
 	
 	all := RSGroup new.
 	all add: in.
-	all add: g.
+	all add: centralCompositeShape.
 	all add: out.
 	RSHorizontalLineLayout new alignMiddle; gapSize: 300; on: all.
 
-	g translateBy: g extent / -2.
+"	centralCompositeShape translateBy: g extent / -2."
 	
 	
 	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 

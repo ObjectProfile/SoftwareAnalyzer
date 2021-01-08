@@ -33,6 +33,7 @@ PFPackage >> visualizeAnnotationsIn: container [
 	composite padding: 10.
 	composite model: self.
 	container add: composite.
+	composite adjustToChildren.
 	composite @ (RSLabeled new text: self name asString).
 	^ composite
 ]
