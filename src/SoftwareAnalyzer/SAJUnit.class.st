@@ -237,9 +237,9 @@ SAJUnit >> sourceCode [
 
 { #category : #visualization }
 SAJUnit >> visualize [
-	| c in g out all lblOut lblIn breadCrumb centralCompositeShape leftCompositeShape rightCompositeShape|
+	| c in g out all lblOut lblIn breadCrumb centralCompositeShape |
 	c := RSCanvas new.
-	
+self halt.
 	in := RSGroup new.
 	self incomingUnits do: [ :u |
 		g := RSGroup new.
@@ -296,6 +296,81 @@ SAJUnit >> visualize [
 ]
 
 { #category : #visualization }
+SAJUnit >> visualizeButterfly [
+	| c |
+	c := RSCanvas new.
+	
+	self visualizeButterflyIn: c.
+
+	^ c @ RSCanvasController
+
+"	| c g |
+	c := RSCanvas new.
+	g := RSGroup new.
+	self visualizeIn: g.
+	c add: g asShape.
+	^ c @ RSCanvasController"
+]
+
+{ #category : #visualization }
+SAJUnit >> visualizeButterflyIn: c [
+	| in g out all lblOut lblIn breadCrumb centralCompositeShape |
+	
+	in := RSGroup new.
+	self incomingUnits do: [ :u |
+		g := RSGroup new.
+		u visualizeIn: g.
+		in add: g asShape.
+	].
+	out := RSGroup new.
+	self outgoingUnits do: [ :u |
+		g := RSGroup new.
+		u visualizeIn: g.
+		out add: g asShape.
+	].
+
+	c addAll: in; addAll: out.
+	
+	g := RSGroup new.
+	self visualizeIn: g.
+	centralCompositeShape := g asShape.
+	c add: centralCompositeShape.
+
+	RSGridLayout on: in.
+	RSGridLayout on: out.
+	
+	all := RSGroup new.
+	all add: in.
+	all add: centralCompositeShape.
+	all add: out.
+	RSHorizontalLineLayout new alignMiddle; gapSize: 300; on: all.
+
+"	centralCompositeShape translateBy: g extent / -2."
+	
+	
+	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 
+	c add: lblOut.
+	RSLocation move: lblOut above: out. 
+
+	lblIn := RSLabel new fontSize: 50; text: 'Incoming units (', (in size asString), ')'.
+	c add: lblIn.
+	RSLocation move: lblIn above: in. 
+
+	breadCrumb := RSLabel text:  filename.
+	c add: breadCrumb.
+	breadCrumb setAsFixed.
+	breadCrumb translateTo: 200 @ 10.
+
+
+"	| c g |
+	c := RSCanvas new.
+	g := RSGroup new.
+	self visualizeIn: g.
+	c add: g asShape.
+	^ c @ RSCanvasController"
+]
+
+{ #category : #visualization }
 SAJUnit >> visualizeIn: c [
 	| b ab |
 	
@@ -304,6 +379,8 @@ SAJUnit >> visualizeIn: c [
 	b fromRectangle: ((-25 @ 0) corner: (25 @ self loc)).
 	b width: 50.
 	c add: b.
+	
+	b when: RSMouseClick do: [ :evt | self visualizeButterfly open ].
 	
 	b @ (RSMenuActivable new menuDo: [ :menu :element | 
 		menu add: 'Source code' target: element model selector: #inspectSourceCode.

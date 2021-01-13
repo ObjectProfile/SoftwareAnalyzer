@@ -192,6 +192,28 @@ SAJModel >> features [
 	^ features
 ]
 
+{ #category : #visualization }
+SAJModel >> flow [
+	"DOES NOT WORK :-("
+
+	| f aCanvas |
+	aCanvas := RSCanvas new.
+	aCanvas @ RSCanvasController.
+	f := RSFlowCanvas new.
+	f setOnCanvas: aCanvas.
+	f when: SAJModel visualize: [ :canvas :aModel |
+		canvas halt.
+		aModel visualizeFeatureInteractionIn: canvas.
+		canvas zoomToFit. ].
+	f when: SAJUnit visualize: [ :canvas :aUnit | 
+		canvas release initialize.
+		aUnit visualizeButterflyIn: canvas.
+		canvas zoomToFit.
+	].
+	f clickOnModel: self.
+	f open
+]
+
 { #category : #'public - features' }
 SAJModel >> getFeatureListFromSourceCode [
 
@@ -616,10 +638,18 @@ SAJModel >> visualizeAnnotationsOLD [
 SAJModel >> visualizeFeatureInteraction [
 
 
-	| c m allPackages featureLabels channel eb |
+	| c |
 	c := RSCanvas new.
-	c inspectorContext interactionsToBeRegistered removeAll.
-	
+	self visualizeFeatureInteractionIn: c.
+	c @ RSCanvasController.
+	^ c
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeatureInteractionIn: c [
+
+
+	| m allPackages featureLabels channel eb |
 	"packages and classes"
 	m := RSMondrian new.
 	m canvas: c.
@@ -632,7 +662,8 @@ SAJModel >> visualizeFeatureInteraction [
 	].
 	m layout flow gapSize: 30"; maxWidth: 2000".
 	m build.
-	allPackages := c nodes copy.
+	
+	allPackages := c shapesFromModels: self packages copy.
 	allPackages @ (RSLabeled new text: [ :pak | pak name ]).
 
 	"Features"
@@ -670,11 +701,9 @@ SAJModel >> visualizeFeatureInteraction [
 	].
 
 	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
-		evt shape model visualize  "openWithTitle: evt shape model name." inspect
+		evt shape model visualizeButterfly  openWithTitle: evt shape model name." inspect"
 	].
-	
-	c @ RSCanvasController.
-	^ c
+
 ]
 
 { #category : #'visualization - not interesting' }
