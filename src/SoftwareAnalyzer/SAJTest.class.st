@@ -1366,6 +1366,6 @@ SAJTest >> testVisualization [
 
 	| vs |
 	m := SAJExample new exampleSimple.
-	vs := m class selectors select: [ :k | k beginsWith: 'visualize' ].
+	vs := m class selectors select: [ :k | (k beginsWith: 'visualize') and: [ (k includes: $:) not ] ].
 	vs do: [ :k | (m perform: k) open delete ]
 ]
