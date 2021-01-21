@@ -238,6 +238,7 @@ Shape.java,6-7,Feature4,FRAGMENT
 SAJModel >> getFeatureListFromSourceCodeFor: unit in: stream [	
 	| stack b |
 	stack := OrderedCollection new.
+	Halt if: [ unit sourceCode isEmpty ].
 	unit sourceCode lines doWithIndex: [ :l :index |
 		('*//&begin*(*' match: l) ifTrue: [ stack addLast: index ].
 		('*// &begin*(*' match: l) ifTrue: [ stack addLast: index ].

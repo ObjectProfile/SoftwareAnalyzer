@@ -54,7 +54,7 @@ SAJExample >> exampleFAXE [
 		'/Users/alexandrebergel/Dropbox/GitRepos/faxe'.
 	fr := '/Users/alexandrebergel/Dropbox/GitRepos/faxe/xml'
 		      asFileReference.
-	fr children do: [ :ffr | m addSrcMLXML: ffr contents ].
+	(fr children select: [ :f | f basename endsWith: '.xml' ]) do: [ :ffr | m addSrcMLXML: ffr contents ].
 	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents).
 	m importFeaturesAsCSV: m getFeatureListFromSourceCode.
 	m build.
