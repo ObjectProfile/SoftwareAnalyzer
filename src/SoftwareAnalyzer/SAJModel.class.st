@@ -690,7 +690,7 @@ SAJModel >> visualizeFeatureInteraction [
 SAJModel >> visualizeFeatureInteractionIn: c [
 
 
-	| m allPackages featureLabels channel eb |
+	| m allPackages featureLabels channel eb interaction |
 	"packages and classes"
 	m := RSMondrian new.
 	m canvas: c.
@@ -703,6 +703,14 @@ SAJModel >> visualizeFeatureInteractionIn: c [
 	].
 	m layout flow gapSize: 30"; maxWidth: 2000".
 	m build.
+	
+	
+"	interaction := RSHighlightable 
+    						showEdges: #outgoingUnits 
+    						using: RSLine new.
+	(m canvas deepShapesFromModels: self units) do: [ :u | u @ interaction ].
+"	
+	
 	
 	allPackages := c shapesFromModels: self packages copy.
 	allPackages @ (RSLabeled new text: [ :pak | pak name ]).
