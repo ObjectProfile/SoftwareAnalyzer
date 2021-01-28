@@ -112,6 +112,15 @@ REGUnit >> initialize [
 	incomingUnits := OrderedCollection new.
 ]
 
+{ #category : #visualization }
+REGUnit >> inspectorText [
+ 	<inspectorPresentationOrder: 90 title: 'Source'>
+ 	^ SpTextPresenter new
+ 		text: self sourceCode;
+ 		yourself.
+
+]
+
 { #category : #testing }
 REGUnit >> isHeader [
 	^ false

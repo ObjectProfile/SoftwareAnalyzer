@@ -435,6 +435,20 @@ SAJModel >> initialize [
 	packages := OrderedCollection new
 ]
 
+{ #category : #visualization }
+SAJModel >> inspectorCanvas [
+	<inspectorPresentationOrder: 90 title: 'Canvas'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeFeatureInteraction;
+		yourself
+]
+
+{ #category : #visualization }
+SAJModel >> inspectorCanvasContext: aContext [
+  
+  aContext withoutEvaluator
+]
+
 { #category : #accessing }
 SAJModel >> interfaceNamed: aClassName [
 	^ self interfaces detect: [ :cls | cls name = aClassName ]
@@ -701,10 +715,13 @@ SAJModel >> visualizeFeatureInteractionIn: c [
 		channel build.
 	].
 
-	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
-		evt shape model visualizeButterfly  openWithTitle: evt shape model name." inspect"
+	"We remove all the label to prevent the inspector from opening"
+	featureLabels do: [ :l | l model: nil ]
+	
+"	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
+		evt shape model visualizeButterfly  openWithTitle: evt shape model name.
 	].
-
+"
 ]
 
 { #category : #'visualization - not interesting' }

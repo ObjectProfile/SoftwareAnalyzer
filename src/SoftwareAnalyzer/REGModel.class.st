@@ -341,6 +341,22 @@ REGModel >> initialize [
 	layers := OrderedCollection new
 ]
 
+{ #category : #visualization }
+REGModel >> inspectorFunctionDependencies [
+	<inspectorPresentationOrder: 90 title: 'Function dependencies'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeFunctionDependencies;
+		yourself
+]
+
+{ #category : #visualization }
+REGModel >> inspectorVisualization [
+	<inspectorPresentationOrder: 90 title: 'Canvas'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualize;
+		yourself
+]
+
 { #category : #accessing }
 REGModel >> layers [
 	^ layers

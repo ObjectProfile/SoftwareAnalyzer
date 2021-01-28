@@ -120,6 +120,14 @@ SAJUnit >> inspectSourceCode [
 	^ self sourceCode inspect
 ]
 
+{ #category : #visualization }
+SAJUnit >> inspectorCanvas [
+	<inspectorPresentationOrder: 90 title: 'Canvas'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeButterfly;
+		yourself
+]
+
 { #category : #testing }
 SAJUnit >> isClass [
 	^ false
@@ -380,7 +388,7 @@ SAJUnit >> visualizeIn: c [
 	b width: 50.
 	c add: b.
 	
-	b when: RSMouseClick do: [ :evt | self visualizeButterfly open ].
+	"b when: RSMouseClick do: [ :evt | self visualizeButterfly open ]."
 	
 	b @ (RSMenuActivable new menuDo: [ :menu :element | 
 		menu add: 'Source code' target: element model selector: #inspectSourceCode.
