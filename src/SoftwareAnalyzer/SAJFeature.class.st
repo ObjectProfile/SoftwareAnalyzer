@@ -124,24 +124,3 @@ SAJFeature >> visualize [
 	RSRectanglePackLayout new on: c shapes.
 	^ c @ RSCanvasController
 ]
-
-{ #category : #visualization }
-SAJFeature >> visualizeOLD [
-	| c shapes eb |
-	c := RSCanvas new.
-	shapes := self classes asSet collect: [ :u | RSBox new model: u ] as: RSGroup.
-	c addAll: shapes.
-	shapes @ RSDraggable @ RSPopup @ RSLabeled.
-
-	eb := RSEdgeBuilder orthoVertical.
-	eb canvas: c.
-	eb shapes: shapes.
-	eb connectFrom: #superclass.
-	
-	RSNormalizer size
-		shapes: shapes;
-		normalize: #loc.
-
-	RSRectanglePackLayout new on: shapes.
-	^ c @ RSCanvasController
-]
