@@ -51,6 +51,26 @@ SAJExample >> exampleFAXE [
 	| m fr |
 	m := SAJModel new.
 	m rootFilename:
+		'/Users/alexandrebergel/Dropbox/GitRepos/faxe/src/main'.
+	fr := '/Users/alexandrebergel/Dropbox/GitRepos/faxe/src/main/xml'
+		      asFileReference.
+	(fr children select: [ :f | f basename endsWith: '.xml' ]) do: [ :ffr | m addSrcMLXML: ffr contents ].
+	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents).
+	m importFeaturesAsCSV: m getFeatureListFromSourceCode.
+	m build.
+	"m visualizeFeatureInteraction open."
+	^ m
+]
+
+{ #category : #examples }
+SAJExample >> exampleFAXEOLD [
+
+	"Source code from: https://bitbucket.org/easelab/faxe/src/master/ "
+
+	<script: 'self new exampleFAXE inspect'>
+	| m fr |
+	m := SAJModel new.
+	m rootFilename:
 		'/Users/alexandrebergel/Dropbox/GitRepos/faxe'.
 	fr := '/Users/alexandrebergel/Dropbox/GitRepos/faxe/xml'
 		      asFileReference.
