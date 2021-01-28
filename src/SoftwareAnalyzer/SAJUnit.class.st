@@ -40,7 +40,7 @@ SAJUnit >> annotations [
 	^ annotations
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #private }
 SAJUnit >> buildAnnotationHierarchy [
 	"Build the hierarchy of the annotation. Compute the parent annotation for each parent.
 	This method assumes that each annotation has one parent at most."
@@ -79,7 +79,7 @@ SAJUnit >> filename: anObject [
 	filename := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'TO REMOVE' }
 SAJUnit >> gtInspectorSourceCodeIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite text
@@ -87,7 +87,7 @@ SAJUnit >> gtInspectorSourceCodeIn: composite [
 		display: #sourceCode
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'TO REMOVE' }
 SAJUnit >> gtInspectorVisualizeIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
@@ -115,7 +115,7 @@ SAJUnit >> initialize [
 	incomingUnits := OrderedCollection new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualization }
 SAJUnit >> inspectSourceCode [
 	^ self sourceCode inspect
 ]
@@ -126,6 +126,12 @@ SAJUnit >> inspectorCanvas [
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeButterfly;
 		yourself
+]
+
+{ #category : #visualization }
+SAJUnit >> inspectorCanvasContext: aContext [
+  
+  aContext withoutEvaluator
 ]
 
 { #category : #testing }
@@ -244,66 +250,6 @@ SAJUnit >> sourceCode [
 ]
 
 { #category : #visualization }
-SAJUnit >> visualize [
-	| c in g out all lblOut lblIn breadCrumb centralCompositeShape |
-	c := RSCanvas new.
-self halt.
-	in := RSGroup new.
-	self incomingUnits do: [ :u |
-		g := RSGroup new.
-		u visualizeIn: g.
-		in add: g asShape.
-	].
-	out := RSGroup new.
-	self outgoingUnits do: [ :u |
-		g := RSGroup new.
-		u visualizeIn: g.
-		out add: g asShape.
-	].
-
-	c addAll: in; addAll: out.
-	
-	g := RSGroup new.
-	self visualizeIn: g.
-	centralCompositeShape := g asShape.
-	c add: centralCompositeShape.
-
-	RSGridLayout on: in.
-	RSGridLayout on: out.
-	
-	all := RSGroup new.
-	all add: in.
-	all add: centralCompositeShape.
-	all add: out.
-	RSHorizontalLineLayout new alignMiddle; gapSize: 300; on: all.
-
-"	centralCompositeShape translateBy: g extent / -2."
-	
-	
-	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 
-	c add: lblOut.
-	RSLocation move: lblOut above: out. 
-
-	lblIn := RSLabel new fontSize: 50; text: 'Incoming units (', (in size asString), ')'.
-	c add: lblIn.
-	RSLocation move: lblIn above: in. 
-
-	breadCrumb := RSLabel text:  filename.
-	c add: breadCrumb.
-	breadCrumb setAsFixed.
-	breadCrumb translateTo: 200 @ 10.
-
-	^ c @ RSCanvasController
-
-"	| c g |
-	c := RSCanvas new.
-	g := RSGroup new.
-	self visualizeIn: g.
-	c add: g asShape.
-	^ c @ RSCanvasController"
-]
-
-{ #category : #visualization }
 SAJUnit >> visualizeButterfly [
 	| c |
 	c := RSCanvas new.
@@ -322,7 +268,7 @@ SAJUnit >> visualizeButterfly [
 
 { #category : #visualization }
 SAJUnit >> visualizeButterflyIn: c [
-	| in g out all lblOut lblIn breadCrumb centralCompositeShape |
+	| in g out all lblOut lblIn breadCrumb centralCompositeShape lblCentral |
 	
 	in := RSGroup new.
 	self incomingUnits do: [ :u |
@@ -339,6 +285,7 @@ SAJUnit >> visualizeButterflyIn: c [
 
 	c addAll: in; addAll: out.
 	
+	"We render the unit itself"
 	g := RSGroup new.
 	self visualizeIn: g.
 	centralCompositeShape := g asShape.
@@ -355,27 +302,25 @@ SAJUnit >> visualizeButterflyIn: c [
 
 "	centralCompositeShape translateBy: g extent / -2."
 	
+	lblCentral := RSLabel new fontSize: 50; text: self name. 
+	c add: lblCentral.
+	RSLocation move: lblCentral above: centralCompositeShape.
 	
-	lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 
-	c add: lblOut.
-	RSLocation move: lblOut above: out. 
+	out isNotEmpty ifTrue: [
+		lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 
+		c add: lblOut.
+		RSLocation move: lblOut above: out ]. 
 
-	lblIn := RSLabel new fontSize: 50; text: 'Incoming units (', (in size asString), ')'.
-	c add: lblIn.
-	RSLocation move: lblIn above: in. 
+	in isNotEmpty ifTrue: [
+		lblIn := RSLabel new fontSize: 50; text: 'Incoming units (', (in size asString), ')'.
+		c add: lblIn.
+		RSLocation move: lblIn above: in ]. 
 
 	breadCrumb := RSLabel text:  filename.
 	c add: breadCrumb.
 	breadCrumb setAsFixed.
 	breadCrumb translateTo: 200 @ 10.
 
-
-"	| c g |
-	c := RSCanvas new.
-	g := RSGroup new.
-	self visualizeIn: g.
-	c add: g asShape.
-	^ c @ RSCanvasController"
 ]
 
 { #category : #visualization }

@@ -1110,6 +1110,14 @@ SAJTest >> testBasic [
 	self assert: m numberOfPackages equals: 0.
 ]
 
+{ #category : #'tests - features' }
+SAJTest >> testBuilding [
+	
+	m importFeaturesAsCSV: self featureAnnotations.
+	m build.
+
+]
+
 { #category : #'tests - core' }
 SAJTest >> testEmpty [
 	self assert: empty numberOfClasses equals: 0.
@@ -1203,6 +1211,31 @@ Shape.java,6-7,Feature5,FRAGMENT
 	self assert: fApp children equals: { f1 . f4 }.
 	self assert: f1 children equals: { f2 . f3 }.
 	self assert: f5 children isEmpty.
+]
+
+{ #category : #'tests - features' }
+SAJTest >> testFeaturesHierarchyAndBuild [
+
+	| annotations annotationHierarchy |
+	annotations := 'fileName,lineRange,featureName,annotationGranualarity
+Canvas.java,2-3,Feature1,FRAGMENT
+Canvas.java,6-7,Feature2,FRAGMENT
+Shape.java,6-7,Feature1,FRAGMENT
+Shape.java,6-7,Feature3,FRAGMENT
+Shape.java,6-7,Feature4,FRAGMENT
+Shape.java,6-7,Feature5,FRAGMENT
+'.
+
+	annotationHierarchy := 'App
+    Feature1
+        Feature2
+        Feature3
+    Feature4
+        Feature5'.
+	m importFeaturesAsCSV: annotations.
+	m importFeaturesHierarchy: annotationHierarchy.
+	
+	m build
 ]
 
 { #category : #'tests - imports' }

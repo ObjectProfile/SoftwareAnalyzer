@@ -149,9 +149,13 @@ SAJModel >> classes [
 
 { #category : #private }
 SAJModel >> computeFeatureColor [	
-	self features do: [ :f |
+	| c |
+	c := SAJColoredFeatureTreePalette new.
+	c features: self features.
+	c assignColor.
+"	self features do: [ :f |
 		f color: (self scaleForFeaturesColoring scale: f) ]
-	
+	"
 ]
 
 { #category : #private }
@@ -167,13 +171,6 @@ SAJModel >> createAndBindPackages [
 		u package: (d at: u packageName).
 		(d at: u packageName) addUnit: u
 		 ]
-]
-
-{ #category : #visualization }
-SAJModel >> createColorScaleForFeatures [
-	"Return a scale ready to be used to color feature"
-	^ NSScale ordinalColored: self numberOfFeatures
-	
 ]
 
 { #category : #'public - metrics' }
@@ -303,6 +300,7 @@ SAJModel >> getFeatureListFromSourceCodeUsingArgoUmlSPLFor: unit in: stream [
 
 { #category : #'public - features' }
 SAJModel >> getOrCreateFeatureNamed: aName [
+	"Return a SAJFeature or create one if it does not exist"
 	| doesExist |
 	doesExist := features anySatisfy: [ :f | f featureName = aName ].
 	doesExist ifFalse: [ features add: (SAJFeature new featureName: aName; model: self) ].
@@ -445,6 +443,20 @@ SAJModel >> inspectorCanvas [
 
 { #category : #visualization }
 SAJModel >> inspectorCanvasContext: aContext [
+  
+  aContext withoutEvaluator
+]
+
+{ #category : #visualization }
+SAJModel >> inspectorFeatureColor [
+	<inspectorPresentationOrder: 90 title: 'FeatureColor'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeFeatureColor;
+		yourself
+]
+
+{ #category : #visualization }
+SAJModel >> inspectorFeatureColorContext: aContext [
   
   aContext withoutEvaluator
 ]
@@ -647,6 +659,20 @@ SAJModel >> visualizeAnnotationsOLD [
 		normalize: #numberOfAnnotations.
 
 	 ^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeatureColor [
+	| m |
+	m := RSMondrian new.
+	m shape box color: #color.
+	m nodes: self features.
+	m orthoVerticalLine connectFrom: #parent.
+	m normalizeSize: #numberOfAnnotations.
+	m layout tree.
+	m build.
+
+	^ m canvas
 ]
 
 { #category : #visualization }
