@@ -411,6 +411,7 @@ SAJModel >> importFeaturesHierarchy: string [
 	numberOfSpaces := '    ' size.
 	lines := string lines.
 	stack := OrderedCollection new.
+self halt.
 	lines do: [ :l | 
 		level := (l select: [ :c | c = $  ]) size / numberOfSpaces + 1.
 		currentFeature := self getOrCreateFeatureNamed: l trimLeft.

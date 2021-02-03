@@ -57,8 +57,8 @@ SAJExample >> exampleFAXE [
 	(fr children select: [ :f | f basename endsWith: '.xml' ]) do: [ :ffr | m addSrcMLXML: ffr contents ].
 	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/faxe/_.feature-model' asFileReference contents).
 	m importFeaturesAsCSV: m getFeatureListFromSourceCode.
+
 	m build.
-	"m visualizeFeatureInteraction open."
 	^ m
 ]
 
@@ -94,6 +94,26 @@ SAJExample >> exampleSimple [
 
 { #category : #examples }
 SAJExample >> exampleWallet [
+
+	"Source code from: https://bitbucket.org/easelab/faxe/src/master/ "
+
+	<script: 'self new exampleWallet inspect'>
+	| m fr |
+	m := SAJModel new.
+	m rootFilename:
+		'/Users/alexandrebergel/Dropbox/GitRepos/datasetbitcoinwallet'.
+	fr := '/Users/alexandrebergel/Dropbox/GitRepos/datasetbitcoinwallet/xml'
+		      asFileReference.
+	(fr children select: [ :f | f basename endsWith: '.xml' ]) do: [ :ffr | m addSrcMLXML: ffr contents ].
+	m importFeaturesHierarchy: ('/Users/alexandrebergel/Dropbox/GitRepos/datasetbitcoinwallet/src/de/schildbach/wallet/_.feature-model' asFileReference contents).
+	m importFeaturesAsCSV: m getFeatureListFromSourceCode.
+
+	m build.
+	^ m
+]
+
+{ #category : #examples }
+SAJExample >> exampleWalletOLD [
 
 	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "
 
