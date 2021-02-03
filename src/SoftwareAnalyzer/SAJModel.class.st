@@ -237,19 +237,37 @@ SAJModel >> getFeatureListFromSourceCodeFor: unit in: stream [
 	stack := OrderedCollection new.
 	Halt if: [ unit sourceCode isEmpty ].
 	unit sourceCode lines doWithIndex: [ :l :index |
+		(('*//&line*(*' match: l) or: [ ('*//&line*[*' match: l) ]) ifTrue: [
+				stream nextPutAll: unit filename.
+				stream nextPut: $,.
+				stream nextPutAll: index asString.
+				stream nextPut: $-.
+				stream nextPutAll: (index + 1) asString.
+				stream nextPut: $,.
+				stream nextPutAll: ((l substrings: '&') last substrings: '()[]') last.
+				stream nextPutAll: ',LINE'.
+				stream cr.	
+				].
+	
+	
 		('*//&begin*(*' match: l) ifTrue: [ stack addLast: index ].
 		('*// &begin*(*' match: l) ifTrue: [ stack addLast: index ].
-		(('*//&end*(*' match: l) or: [ ('*// &end*(*' match: l) ]) ifTrue: [ b := stack removeLast.
-			stream nextPutAll: unit filename.
-			stream nextPut: $,.
-			stream nextPutAll: b asString.
-			stream nextPut: $-.
-			stream nextPutAll: index asString.
-			stream nextPut: $,.
-			stream nextPutAll: ((l substrings: '&') last substrings: '()') last.
-			stream nextPutAll: ',FRAGMENT'.
-			stream cr.
-			].
+		('*//&begin*[*' match: l) ifTrue: [ stack addLast: index ].
+		('*// &begin*[*' match: l) ifTrue: [ stack addLast: index ].
+		((('*//&end*(*' match: l) or: [ ('*// &end*(*' match: l) ]) or: [ (('*//&end*[*' match: l) or: [ ('*// &end*[*' match: l) ]) ])
+			ifTrue: [ 
+				
+				b := stack removeLast.
+				stream nextPutAll: unit filename.
+				stream nextPut: $,.
+				stream nextPutAll: b asString.
+				stream nextPut: $-.
+				stream nextPutAll: index asString.
+				stream nextPut: $,.
+				stream nextPutAll: ((l substrings: '&') last substrings: '()[]') last.
+				stream nextPutAll: ',FRAGMENT'.
+				stream cr.
+				].
 	]
 ]
 
@@ -411,7 +429,7 @@ SAJModel >> importFeaturesHierarchy: string [
 	numberOfSpaces := '    ' size.
 	lines := string lines.
 	stack := OrderedCollection new.
-self halt.
+
 	lines do: [ :l | 
 		level := (l select: [ :c | c = $  ]) size / numberOfSpaces + 1.
 		currentFeature := self getOrCreateFeatureNamed: l trimLeft.
