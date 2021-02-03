@@ -134,6 +134,24 @@ SAJUnit >> inspectorCanvasContext: aContext [
   aContext withoutEvaluator
 ]
 
+{ #category : #visualization }
+SAJUnit >> inspectorSourceCode [
+	<inspectorPresentationOrder: 90 title: 'SourceCode'>
+	^ SpTextPresenter new
+		text: self sourceCode;
+		yourself.
+	
+
+]
+
+{ #category : #visualization }
+SAJUnit >> inspectorSourceCodeContext: aContext [
+  
+  aContext withoutEvaluator
+	
+
+]
+
 { #category : #testing }
 SAJUnit >> isClass [
 	^ false
