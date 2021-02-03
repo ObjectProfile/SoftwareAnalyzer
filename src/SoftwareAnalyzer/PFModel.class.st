@@ -103,7 +103,6 @@ PFModel >> getOrCreateFeatureNamed: aName [
 	| f |
 	f := self featureNamed: aName.
 	f ifNotNil: [ ^ f ].
-	self halt.
 	f := PFFeature new name: aName; yourself.
 	"&end[FeatureModeling]"
 	
