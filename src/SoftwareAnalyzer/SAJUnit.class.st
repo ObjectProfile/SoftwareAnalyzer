@@ -360,7 +360,7 @@ SAJUnit >> visualizeIn: c [
 	self annotations do: [ :a |
 		ab := RSBox model: a.
 		ab @ RSPopup.
-		ab color: a feature color.
+		ab color: (a feature color alpha: 0.4).
 		ab fromRectangle: ((-25 @ a from) corner: (25 @ (a to + 1))).
 		ab translateBy: (a depth * 20) @ 0.
 		c add: ab.
