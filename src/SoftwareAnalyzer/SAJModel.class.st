@@ -189,7 +189,7 @@ SAJModel >> features [
 	^ features
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> flow [
 	"DOES NOT WORK :-("
 
@@ -336,7 +336,7 @@ SAJModel >> getOrCreateFeatureNamed: aName [
 	^ features detect: [ :f | f featureName = aName ].
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> gtInspectorFeatureInteractionIn: composite [
 	<gtInspectorPresentationOrder: -90>
 	composite roassal3
@@ -344,7 +344,7 @@ SAJModel >> gtInspectorFeatureInteractionIn: composite [
 		initializeCanvas: [ self visualizeFeatureInteraction ]
 ]
 
-{ #category : #visualization }
+{ #category : #'visualization - not interesting' }
 SAJModel >> gtInspectorFeatureListIn: composite [
 	<gtInspectorPresentationOrder: 30>
 	composite table
@@ -559,7 +559,7 @@ SAJModel >> resolveSuperclasses [
 	"This is a private method"
 	self classes do: [ :cls |
 		cls superclassName ifNotNil: [ 
-			cls superclass: (self classNamed: cls superclassName ifNone: [ nil ]) ]  ]
+			cls superclass: (self getOrCreateClassNamed: cls superclassName) ]  ]
 ]
 
 { #category : #accessing }
@@ -724,7 +724,7 @@ SAJModel >> visualizeFeatureInteractionIn: c [
 	m canvas: c.
 	m shape box color: Color gray lighter lighter lighter.
 	m nodes: self packages forEach: [ :pak |
-		m shape box size: [ :cc | cc loc sqrt * 2 ].
+		m shape box size: [ :cc | cc loc sqrt * 2 + 5].
 		m nodes: pak classes.
 		m orthoVerticalLine connectFrom: #superclass.
 		m layout ifConnected: RSTreeLayout new ifNotConnected: (RSFlowLayout new gapSize: 20).

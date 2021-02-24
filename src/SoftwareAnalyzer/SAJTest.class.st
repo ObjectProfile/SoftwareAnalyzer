@@ -1110,6 +1110,14 @@ SAJTest >> testBasic [
 	self assert: m numberOfPackages equals: 0.
 ]
 
+{ #category : #'tests - core' }
+SAJTest >> testBasicClass [
+
+	| c |
+	c := SAJClass new.
+	self assert: c loc equals: 0
+]
+
 { #category : #'tests - features' }
 SAJTest >> testBuilding [
 	

@@ -114,7 +114,8 @@ SAJUnit >> initialize [
 	imports := OrderedCollection new.
 	outgoingUnits := OrderedCollection new.
 	incomingUnits := OrderedCollection new.
-	isStub := false
+	isStub := false.
+	self loc: 0
 ]
 
 { #category : #visualization }
@@ -186,8 +187,8 @@ SAJUnit >> loc [
 ]
 
 { #category : #accessing }
-SAJUnit >> loc: anObject [
-	loc := anObject
+SAJUnit >> loc: anInteger [
+	loc := anInteger
 ]
 
 { #category : #accessing }
