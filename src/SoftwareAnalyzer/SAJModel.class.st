@@ -465,7 +465,7 @@ SAJModel >> initialize [
 
 { #category : #visualization }
 SAJModel >> inspectorCanvas [
-	<inspectorPresentationOrder: 90 title: 'Canvas'>
+	<inspectorPresentationOrder: 70 title: 'Canvas'>
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeFeatureInteraction;
 		yourself
@@ -479,7 +479,7 @@ SAJModel >> inspectorCanvasContext: aContext [
 
 { #category : #visualization }
 SAJModel >> inspectorFeatureColor [
-	<inspectorPresentationOrder: 90 title: 'FeatureColor'>
+	<inspectorPresentationOrder: 80 title: 'FeatureColor'>
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeFeatureColor;
 		yourself
@@ -718,9 +718,7 @@ SAJModel >> visualizeFeatureInteraction [
 
 { #category : #visualization }
 SAJModel >> visualizeFeatureInteractionIn: c [
-
-
-	| m allPackages featureLabels channel eb interaction |
+	| m allPackages featureLabels channel eb |
 	"packages and classes"
 	m := RSMondrian new.
 	m canvas: c.
@@ -780,7 +778,7 @@ SAJModel >> visualizeFeatureInteractionIn: c [
 	].
 
 	"We remove all the label to prevent the inspector from opening"
-	featureLabels do: [ :l | l model: nil ]
+	"featureLabels do: [ :l | l model: nil ]"
 	
 "	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
 		evt shape model visualizeButterfly  openWithTitle: evt shape model name.
