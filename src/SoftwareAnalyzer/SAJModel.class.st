@@ -491,6 +491,20 @@ SAJModel >> inspectorFeatureColorContext: aContext [
   aContext withoutEvaluator
 ]
 
+{ #category : #visualization }
+SAJModel >> inspectorHierarchy [
+	<inspectorPresentationOrder: 80 title: 'Hierarchy'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeFeatureInteractionHierarchy;
+		yourself
+]
+
+{ #category : #visualization }
+SAJModel >> inspectorHierarchyContext: aContext [
+  
+  aContext withoutEvaluator
+]
+
 { #category : #accessing }
 SAJModel >> interfaceNamed: aClassName [
 	^ self interfaces detect: [ :cls | cls name = aClassName ]
@@ -714,6 +728,91 @@ SAJModel >> visualizeFeatureInteraction [
 	self visualizeFeatureInteractionIn: c.
 	c @ RSCanvasController.
 	^ c
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeatureInteractionHierarchy [
+	| c |
+	c := RSCanvas new.
+	self visualizeFeatureInteractionHierarchyIn: c.
+	c @ RSCanvasController.
+	^ c
+]
+
+{ #category : #visualization }
+SAJModel >> visualizeFeatureInteractionHierarchyIn: c [
+	| m featureLabels channel eb allClasses |
+	"packages and classes"
+	m := RSMondrian new.
+	m canvas: c.
+	m shape box size: [ :cc | cc loc sqrt * 2 + 5 ].
+	m nodes: self classes.
+	m orthoVerticalLine connectFrom: #superclass.
+	m layout ifConnected: RSTreeLayout new ifNotConnected: (RSFlowLayout new gapSize: 20).
+	m build.
+	
+	"RSClusteringLayout new 
+	    clustersLayout: RSFlowLayout new;
+	    forEachLayout: RSTreeLayout new;
+		on: m canvas nodes. "
+"	RSConditionalLayout new
+	 ifNotConnectedThen: RSGridLayout new;
+	 else: (RSClusteringLayout new 
+	    clustersLayout: RSFlowLayout new;
+	    forEachLayout: RSTreeLayout new);
+	 on: m canvas nodes."
+
+	
+"	interaction := RSHighlightable 
+    						showEdges: #outgoingUnits 
+    						using: RSLine new.
+	(m canvas deepShapesFromModels: self units) do: [ :u | u @ interaction ].
+"	
+	
+	
+	allClasses := c shapesFromModels: self classes copy.
+
+	"Features"
+	featureLabels := (self features sortedAs: #name) collect: [ :f | RSLabel new text: f name; model: f ] as: RSGroup.
+	RSNormalizer fontSize
+		shapes: featureLabels;
+		from: 10; to: 20;
+		normalize: #numberOfUnits.
+	
+	eb := RSEdgeBuilder orthoHorizontal.
+	eb withHorizontalAttachPoint.
+	eb canvas: c.
+	eb shapes: featureLabels.
+	eb connectFrom: #parent.
+	
+	"RSFlowLayout new maxWidth: 700; on: featureLabels."
+	RSHorizontalTreeLayout new on: featureLabels.
+	
+	c addAll: featureLabels.
+	RSHorizontalLineLayout new gapSize: 40; alignMiddle; on: { featureLabels . allClasses }.
+	featureLabels do: [ :aFeatLabel |
+		channel := RSChannel new.
+		channel markGoUp.
+		channel color: aFeatLabel model color.
+		channel input: { aFeatLabel } asGroup.
+		channel output: (c deepShapesFromModels: aFeatLabel model units).
+		channel build.
+		
+		channel := RSChannel new.
+		channel makeNotClickable.
+		channel color: aFeatLabel model color.
+		channel input: (c deepShapesFromModels: aFeatLabel model units).
+		channel output: { aFeatLabel } asGroup.
+		channel build.
+	].
+
+	"We remove all the label to prevent the inspector from opening"
+	"featureLabels do: [ :l | l model: nil ]"
+	
+"	(c deepShapesFromModels: self units) when: RSMouseClick do: [ :evt |
+		evt shape model visualizeButterfly  openWithTitle: evt shape model name.
+	].
+"
 ]
 
 { #category : #visualization }
