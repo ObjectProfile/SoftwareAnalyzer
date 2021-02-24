@@ -66,11 +66,19 @@ SAJFeatureAnnotations >> from: anObject [
 ]
 
 { #category : #visualization }
-SAJFeatureAnnotations >> gtInspectorSourceCodeIn: composite [
-	<gtInspectorPresentationOrder: -10>
-	composite text
-		title: 'Source';
-		display: #sourceCode
+SAJFeatureAnnotations >> inspectorSourceCode [
+	<inspectorPresentationOrder: 90 title: 'SourceCode'>
+	^ SpTextPresenter new
+		text: self sourceCode;
+		yourself.
+]
+
+{ #category : #visualization }
+SAJFeatureAnnotations >> inspectorSourceCodeContext: aContext [
+  
+  aContext withoutEvaluator
+	
+
 ]
 
 { #category : #metrics }

@@ -290,22 +290,14 @@ SAJUnit >> sourceCode [
 SAJUnit >> visualizeButterfly [
 	| c |
 	c := RSCanvas new.
-	
 	self visualizeButterflyIn: c.
-
 	^ c @ RSCanvasController
 
-"	| c g |
-	c := RSCanvas new.
-	g := RSGroup new.
-	self visualizeIn: g.
-	c add: g asShape.
-	^ c @ RSCanvasController"
 ]
 
 { #category : #visualization }
 SAJUnit >> visualizeButterflyIn: c [
-	| in g out all lblOut lblIn breadCrumb centralCompositeShape lblCentral |
+	| in g out all lblOut lblIn breadCrumb centralCompositeShape lblCentral lbl lblFeatures |
 	
 	in := RSGroup new.
 	self incomingUnits do: [ :u |
@@ -353,11 +345,20 @@ SAJUnit >> visualizeButterflyIn: c [
 		c add: lblIn.
 		RSLocation move: lblIn above: in ]. 
 
+	"BREADCRUMB"
 	breadCrumb := RSLabel text:  filename.
 	c add: breadCrumb.
 	breadCrumb setAsFixed.
 	breadCrumb translateTo: 200 @ 10.
 
+	"FEATURES BELOW"
+	lblFeatures := RSLabel 
+							models: self features 
+							forEach: [ :lbll :feat | lbll text: feat name; fontSize: 50 ].
+	lblFeatures @ RSHighlightable red.
+	c addAll: lblFeatures. 
+	RSGridLayout new gapSize: 20; on: lblFeatures.
+	RSLocation new below; center; move: lblFeatures on: all
 ]
 
 { #category : #visualization }

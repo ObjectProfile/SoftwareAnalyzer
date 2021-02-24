@@ -60,19 +60,45 @@ SAJFeature >> featureName: anObject [
 	name := anObject
 ]
 
-{ #category : #visualization }
-SAJFeature >> gtInspectorView2In: composite [
-	<gtInspectorPresentationOrder: -10>
-	composite roassal3
-		title: 'Classes';
-		initializeCanvas: [ self visualize ]
-]
-
 { #category : #initialization }
 SAJFeature >> initialize [
 	super initialize.
 	annotations := OrderedCollection new.
 	children := OrderedCollection new
+]
+
+{ #category : #visualization }
+SAJFeature >> inspectorCanvas2 [
+	<inspectorPresentationOrder: 90 title: 'Contribution'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeContribution;
+		yourself
+
+]
+
+{ #category : #visualization }
+SAJFeature >> inspectorCanvas2Context: aContext [
+  
+  aContext withoutEvaluator
+	
+
+]
+
+{ #category : #visualization }
+SAJFeature >> inspectorClasses [
+	<inspectorPresentationOrder: 90 title: 'Classes'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeClasses;
+		yourself
+
+]
+
+{ #category : #visualization }
+SAJFeature >> inspectorClassesContext: aContext [
+  
+  aContext withoutEvaluator
+	
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -112,11 +138,25 @@ SAJFeature >> printOn: str [
 { #category : #'as yet unclassified' }
 SAJFeature >> units [
 
-	^ (annotations collect: #unit) select: #notNil
+	^ (annotations collect: #unit as: Set) select: #notNil
 ]
 
 { #category : #visualization }
-SAJFeature >> visualize [
+SAJFeature >> visualizeClasses [
+	| c g |
+	c := RSCanvas new.
+	self classes do: [ :cls |
+		g := RSGroup new.
+		cls visualizeIn: g.
+		c add: g asShape.
+		 ].
+	
+	RSRectanglePackLayout new on: c shapes.
+	^ c @ RSCanvasController
+]
+
+{ #category : #visualization }
+SAJFeature >> visualizeContribution [
 	| c |
 	c := RSCanvas new.
 	SAJPackage new model: self model; visualizeClasses: self classes asSet inContainer: c.
