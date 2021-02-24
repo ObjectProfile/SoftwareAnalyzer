@@ -1402,6 +1402,31 @@ SAJTest >> testPackages2 [
 ]
 
 { #category : #'tests - core' }
+SAJTest >> testStub [
+
+	| cls |
+	cls := SAJClass new.
+	self deny: cls isStub.
+	
+	cls makeStub.
+	self assert: cls isStub
+]
+
+{ #category : #'tests - core' }
+SAJTest >> testStub2 [
+
+	| c |
+	self assert: m numberOfClasses equals: 4.
+	self assert: (m classes allSatisfy: [ :cls | cls isNotStub ]).
+	
+	c := m getOrCreateClassNamed: 'FooBar'.
+	self assert: c class equals: SAJClass.
+	self assert: c name equals: 'FooBar'.
+	self assert: c isStub.
+	self deny: c isNotStub.
+]
+
+{ #category : #'tests - core' }
 SAJTest >> testSuperclasses [
 
 	| cls |

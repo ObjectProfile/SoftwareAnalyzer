@@ -10,7 +10,8 @@ Class {
 		'filename',
 		'imports',
 		'outgoingUnits',
-		'incomingUnits'
+		'incomingUnits',
+		'isStub'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
@@ -112,7 +113,8 @@ SAJUnit >> initialize [
 	packageName := 'default'.
 	imports := OrderedCollection new.
 	outgoingUnits := OrderedCollection new.
-	incomingUnits := OrderedCollection new
+	incomingUnits := OrderedCollection new.
+	isStub := false
 ]
 
 { #category : #visualization }
@@ -168,6 +170,17 @@ SAJUnit >> isInterface [
 ]
 
 { #category : #accessing }
+SAJUnit >> isNotStub [
+	^ self isStub not
+]
+
+{ #category : #accessing }
+SAJUnit >> isStub [
+	"Return true if the class is not defined in the model"
+	^ isStub
+]
+
+{ #category : #accessing }
 SAJUnit >> loc [
 	^ loc
 ]
@@ -175,6 +188,11 @@ SAJUnit >> loc [
 { #category : #accessing }
 SAJUnit >> loc: anObject [
 	loc := anObject
+]
+
+{ #category : #accessing }
+SAJUnit >> makeStub [
+	isStub := true
 ]
 
 { #category : #accessing }

@@ -316,6 +316,17 @@ SAJModel >> getFeatureListFromSourceCodeUsingArgoUmlSPLFor: unit in: stream [
 	]
 ]
 
+{ #category : #accessing }
+SAJModel >> getOrCreateClassNamed: aClassName [
+
+	| cls |
+	^ self classNamed: aClassName ifNone: [ 
+		cls := SAJClass new name: aClassName. 
+		cls makeStub.
+		units add: cls.
+		cls ]
+]
+
 { #category : #'public - features' }
 SAJModel >> getOrCreateFeatureNamed: aName [
 	"Return a SAJFeature or create one if it does not exist"
