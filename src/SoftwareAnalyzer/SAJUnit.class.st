@@ -297,7 +297,7 @@ SAJUnit >> visualizeButterfly [
 
 { #category : #visualization }
 SAJUnit >> visualizeButterflyIn: c [
-	| in g out all lblOut lblIn breadCrumb centralCompositeShape lblCentral lbl lblFeatures |
+	| in g out all lblOut lblIn breadCrumb centralCompositeShape lblCentral lblFeatures featureContainer titleFeature |
 	
 	in := RSGroup new.
 	self incomingUnits do: [ :u |
@@ -352,13 +352,23 @@ SAJUnit >> visualizeButterflyIn: c [
 	breadCrumb translateTo: 200 @ 10.
 
 	"FEATURES BELOW"
+	featureContainer := RSComposite new.
+	featureContainer color: Color veryVeryLightGray.
 	lblFeatures := RSLabel 
 							models: self features 
 							forEach: [ :lbll :feat | lbll text: feat name; fontSize: 50 ].
 	lblFeatures @ RSHighlightable red.
-	c addAll: lblFeatures. 
+	titleFeature := RSLabel new color: Color black; fontSize: 40; text: 'Features that contribute to ', self name.
+	RSLocation new
+		above; center;
+		move: titleFeature on: lblFeatures.
+
+	"RSVerticalLineLayout on: { { titleFeature } asGroup, lblFeatures } asGroup."
 	RSGridLayout new gapSize: 20; on: lblFeatures.
-	RSLocation new below; center; move: lblFeatures on: all
+	featureContainer shapes: { titleFeature }, lblFeatures. 
+	c add: featureContainer.
+	RSLocation new below; center; move: featureContainer on: all.
+	featureContainer translateBy: 0 @ 80.
 ]
 
 { #category : #visualization }
