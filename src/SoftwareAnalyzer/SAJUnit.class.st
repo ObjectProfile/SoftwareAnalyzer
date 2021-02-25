@@ -358,13 +358,15 @@ SAJUnit >> visualizeButterflyIn: c [
 							models: self features 
 							forEach: [ :lbll :feat | lbll text: feat name; fontSize: 50 ].
 	lblFeatures @ RSHighlightable red.
-	titleFeature := RSLabel new color: Color black; fontSize: 40; text: 'Features that contribute to ', self name.
-	RSLocation new
-		above; center;
-		move: titleFeature on: lblFeatures.
 
 	"RSVerticalLineLayout on: { { titleFeature } asGroup, lblFeatures } asGroup."
 	RSGridLayout new gapSize: 20; on: lblFeatures.
+
+	titleFeature := RSLabel new color: Color black; fontSize: 40; text: 'Features that contribute to ', self name.
+	RSLocation new
+		above;
+		move: titleFeature on: lblFeatures.
+
 	featureContainer shapes: { titleFeature }, lblFeatures. 
 	c add: featureContainer.
 	RSLocation new below; center; move: featureContainer on: all.
