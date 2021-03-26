@@ -465,7 +465,7 @@ SAJModel >> initialize [
 
 { #category : #visualization }
 SAJModel >> inspectorCanvas [
-	<inspectorPresentationOrder: 70 title: 'Canvas'>
+	<inspectorPresentationOrder: 70 title: 'Feat Inter'>
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeFeatureInteraction;
 		yourself
@@ -722,19 +722,41 @@ SAJModel >> visualizeFeatureColor [
 { #category : #visualization }
 SAJModel >> visualizeFeatureInteraction [
 
-
-	| c |
+	| c lb |
 	c := RSCanvas new.
 	self visualizeFeatureInteractionIn: c.
+
+	lb := RSLegend new.
+	lb container: c.
+	lb withFrame.
+	lb onDemand: 'Legend'.
+	lb title: 'Feature interaction'.
+	lb text: 'Left: feature model'.
+	lb text: 'Right: package and its classes'.
+	lb text: 'Class size: number of lines of code'.
+	lb build.
+	
+
 	c @ RSCanvasController.
 	^ c
 ]
 
 { #category : #visualization }
 SAJModel >> visualizeFeatureInteractionHierarchy [
-	| c |
+	| c lb |
 	c := RSCanvas new.
 	self visualizeFeatureInteractionHierarchyIn: c.
+	
+	lb := RSLegend new.
+	lb container: c.
+	lb withFrame.
+	lb onDemand: 'Legend'.
+	lb title: 'Feature interaction'.
+	lb text: 'Left: feature model'.
+	lb text: 'Right: classes and their hierarchy'.
+	lb text: 'Class size: number of lines of code'.
+	lb build.
+	
 	c @ RSCanvasController.
 	^ c
 ]
@@ -755,12 +777,12 @@ SAJModel >> visualizeFeatureInteractionHierarchyIn: c [
 	    clustersLayout: RSFlowLayout new;
 	    forEachLayout: RSTreeLayout new;
 		on: m canvas nodes. "
-"	RSConditionalLayout new
+	RSConditionalLayout new
 	 ifNotConnectedThen: RSGridLayout new;
 	 else: (RSClusteringLayout new 
 	    clustersLayout: RSFlowLayout new;
 	    forEachLayout: RSTreeLayout new);
-	 on: m canvas nodes."
+	 on: m canvas nodes.
 
 	
 "	interaction := RSHighlightable 
