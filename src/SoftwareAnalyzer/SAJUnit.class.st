@@ -125,7 +125,7 @@ SAJUnit >> inspectSourceCode [
 
 { #category : #visualization }
 SAJUnit >> inspectorCanvas [
-	<inspectorPresentationOrder: 90 title: 'Canvas'>
+	<inspectorPresentationOrder: 90 title: 'Dependencies'>
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeButterfly;
 		yourself
@@ -288,9 +288,20 @@ SAJUnit >> sourceCode [
 
 { #category : #visualization }
 SAJUnit >> visualizeButterfly [
-	| c |
+	| c lb |
 	c := RSCanvas new.
 	self visualizeButterflyIn: c.
+	
+	lb := RSLegend new.
+	lb container: c.
+	lb withFrame.
+	lb onDemand: 'Legend'.
+	lb title: 'Navigating dependencies of ', self name.
+	lb text: 'Center element: the class ', self name.
+	lb text: 'Left elements: classes that depends on ', self name.
+	lb text: 'Right elements: dependencies of ', self name.
+	lb text: 'Color: feature contribution'.
+	lb build.
 	^ c @ RSCanvasController
 
 ]
@@ -336,20 +347,20 @@ SAJUnit >> visualizeButterflyIn: c [
 	RSLocation move: lblCentral above: centralCompositeShape.
 	
 	out isNotEmpty ifTrue: [
-		lblOut := RSLabel new fontSize: 50; text: 'Outgoing units (', (out size asString), ')'. 
+		lblOut := RSLabel new fontSize: 50; text: 'Outgoing classes (', (out size asString), ')'. 
 		c add: lblOut.
 		RSLocation move: lblOut above: out ]. 
 
 	in isNotEmpty ifTrue: [
-		lblIn := RSLabel new fontSize: 50; text: 'Incoming units (', (in size asString), ')'.
+		lblIn := RSLabel new fontSize: 50; text: 'Incoming classes (', (in size asString), ')'.
 		c add: lblIn.
 		RSLocation move: lblIn above: in ]. 
 
 	"BREADCRUMB"
-	breadCrumb := RSLabel text:  filename.
+	breadCrumb := RSLabel text: 'File ', filename.
 	c add: breadCrumb.
 	breadCrumb setAsFixed.
-	breadCrumb translateTo: 200 @ 10.
+	breadCrumb translateTopLeftTo: 5 @ 5.
 
 	"FEATURES BELOW"
 	featureContainer := RSComposite new.

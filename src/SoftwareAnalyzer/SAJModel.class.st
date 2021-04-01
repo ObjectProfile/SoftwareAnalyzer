@@ -731,6 +731,10 @@ SAJModel >> visualizeFeatureInteraction [
 	lb withFrame.
 	lb onDemand: 'Legend'.
 	lb title: 'Feature interaction'.
+	lb text: 'Large light-gray boxes: Java package'.
+	lb text: 'Smaller dark-gray boxes: Java classes'.
+	lb text: 'Link between Java classes: inheritance (superclass is above its subclasses)'.
+	lb text: '  '.
 	lb text: 'Left: feature model'.
 	lb text: 'Right: package and its classes'.
 	lb text: 'Class size: number of lines of code'.
@@ -752,8 +756,11 @@ SAJModel >> visualizeFeatureInteractionHierarchy [
 	lb withFrame.
 	lb onDemand: 'Legend'.
 	lb title: 'Feature interaction'.
+	lb text: 'Dark-gray boxes: Java classes'.
+	lb text: 'Link between Java classes: inheritance (superclass is above its subclasses)'.
+	lb text: '  '.
 	lb text: 'Left: feature model'.
-	lb text: 'Right: classes and their hierarchy'.
+	lb text: 'Right: Java classes'.
 	lb text: 'Class size: number of lines of code'.
 	lb build.
 	
