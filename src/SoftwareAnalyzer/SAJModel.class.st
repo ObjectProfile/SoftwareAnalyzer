@@ -895,6 +895,8 @@ SAJModel >> visualizeFeatureInteractionIn: c [
 		channel color: aFeatLabel model color.
 		channel input: { aFeatLabel } asGroup.
 		channel output: (c deepShapesFromModels: aFeatLabel model units).
+		channel toggleOnCallback: [ :aShape | aFeatLabel model makeAsSelected ].
+		channel toggleOffCallback: [ :aShape | aFeatLabel model makeAsUnselected ].
 		channel build.
 		
 		channel := RSChannel new.

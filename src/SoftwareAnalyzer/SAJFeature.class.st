@@ -5,12 +5,13 @@ Class {
 		'annotations',
 		'color',
 		'parent',
-		'children'
+		'children',
+		'isSelected'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
 
-{ #category : #initialization }
+{ #category : #public }
 SAJFeature >> addAnnotation: aFeatureAnnotation [
 	annotations add: aFeatureAnnotation
 ]
@@ -25,7 +26,7 @@ SAJFeature >> annotations [
 	^ annotations
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJFeature >> anotationsForUnit: aUnit [
 	^ self annotations select: [ :a | a unit == aUnit ]
 ]
@@ -56,15 +57,16 @@ SAJFeature >> featureName [
 ]
 
 { #category : #accessing }
-SAJFeature >> featureName: anObject [
-	name := anObject
+SAJFeature >> featureName: aNameAsString [
+	name := aNameAsString
 ]
 
 { #category : #initialization }
 SAJFeature >> initialize [
 	super initialize.
 	annotations := OrderedCollection new.
-	children := OrderedCollection new
+	children := OrderedCollection new.
+	isSelected := false.
 ]
 
 { #category : #visualization }
@@ -101,17 +103,33 @@ SAJFeature >> inspectorClassesContext: aContext [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJFeature >> interactingFeatures [
 	^ (self units flatCollect: #features) asSet
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+SAJFeature >> isSelected [
+	"Return true if the feature is selected"
+	^ isSelected
+]
+
+{ #category : #public }
+SAJFeature >> makeAsSelected [
+	isSelected := true
+]
+
+{ #category : #public }
+SAJFeature >> makeAsUnselected [
+	isSelected := false
+]
+
+{ #category : #accessing }
 SAJFeature >> numberOfAnnotations [
 	^ annotations size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJFeature >> numberOfUnits [
 
 	^ self units asSet size
@@ -135,7 +153,7 @@ SAJFeature >> printOn: str [
 	str nextPut: $>.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SAJFeature >> units [
 
 	^ (annotations collect: #unit as: Set) select: #notNil
