@@ -177,8 +177,13 @@ SAJFeature >> visualizeClasses [
 SAJFeature >> visualizeContribution [
 	| c |
 	c := RSCanvas new.
-	SAJPackage new model: self model; visualizeClasses: self classes asSet inContainer: c.
 	
-	RSRectanglePackLayout new on: c shapes.
+	self classes asSet isEmpty 
+		ifTrue: [ c add: (RSLabel text: 'This feature does not contribute to classes') ]
+		ifFalse: [ 
+			SAJPackage new model: self model; visualizeClasses: self classes asSet inContainer: c.
+			RSRectanglePackLayout new on: c shapes ].
+	
+	
 	^ c @ RSCanvasController
 ]
