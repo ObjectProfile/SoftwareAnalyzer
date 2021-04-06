@@ -46,21 +46,19 @@ SAJUnit >> buildAnnotationHierarchy [
 	"Build the hierarchy of the annotation. Compute the parent annotation for each parent.
 	This method assumes that each annotation has one parent at most."
 	| sortedAnnotations parentsStack runningParent |
-	self assert: [ self annotations allSatisfy: [ :a | a parentAnnotation isNil ] ].
+	"self assert: [ self annotations allSatisfy: [ :a | a parentAnnotation isNil ] ]."
+	
+	"We sort the annotations based on the begining of the annotation (from field, the line of code)"
 	sortedAnnotations := self annotations sortedAs: #from.
 	
 	parentsStack := OrderedCollection new.
-
+	parentsStack add: (SAJFeatureAnnotations new from: 1; to: self numberOfLinesOfCode).
+	
 	sortedAnnotations do: [ :a |
-		parentsStack 
-			ifEmpty: [ parentsStack add: a ]
-			ifNotEmpty: [
-		
-				runningParent := parentsStack last.
-				(runningParent from < a from and: [ runningParent to > a to ])
-					ifTrue: [ a parentAnnotation: runningParent. parentsStack add: a ].
-				(runningParent from < a to) ifTrue: [ parentsStack removeLast ].
-			]
+		runningParent := parentsStack last.
+		(runningParent from <= a from and: [ runningParent to >= a to ])
+			ifTrue: [ a parentAnnotation: runningParent. parentsStack add: a ]
+			ifFalse: [ parentsStack removeLast ].
 	]
 
 ]
@@ -121,6 +119,14 @@ SAJUnit >> initialize [
 { #category : #visualization }
 SAJUnit >> inspectSourceCode [
 	^ self sourceCode inspect
+]
+
+{ #category : #visualization }
+SAJUnit >> inspectorAnnotationTree [
+	<inspectorPresentationOrder: 80 title: 'AnnotationTree'>
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeAnnotationTree;
+		yourself
 ]
 
 { #category : #visualization }
@@ -232,6 +238,11 @@ SAJUnit >> numberOfIncomingUnits [
 ]
 
 { #category : #'public - metrics' }
+SAJUnit >> numberOfLinesOfCode [
+	^ self sourceCode lines size
+]
+
+{ #category : #'public - metrics' }
 SAJUnit >> numberOfOutgoingUnits [
 	^ outgoingUnits size
 ]
@@ -278,12 +289,23 @@ SAJUnit >> printOn: str [
 { #category : #accessing }
 SAJUnit >> sourceCode [
 	| fr |
-	(self model isNil |
-	 self model rootFilename isNil |
-	 self model rootFilename isEmpty) ifTrue: [ ^ '' ].
+	((self model isNil or: [ self model rootFilename isNil ]) or: [ self model rootFilename isEmpty ])
+		ifTrue: [ ^ '' ].
 	fr := (self model rootFilename, '/', self filename) asFileReference.
 	fr exists ifFalse: [ ^ '' ].
 	^ fr contents
+]
+
+{ #category : #visualization }
+SAJUnit >> visualizeAnnotationTree [
+
+	| m |
+	m := RSMondrian new.
+	m nodes: self annotations.
+	m line connectFrom: #parentAnnotation.
+	m layout tree.
+	m build.
+	^ m canvas
 ]
 
 { #category : #visualization }

@@ -51,8 +51,8 @@ SAJFeatureAnnotations >> filename [
 ]
 
 { #category : #accessing }
-SAJFeatureAnnotations >> filename: anObject [
-	filename := anObject
+SAJFeatureAnnotations >> filename: aFilename [
+	filename := aFilename
 ]
 
 { #category : #accessing }
@@ -61,8 +61,8 @@ SAJFeatureAnnotations >> from [
 ]
 
 { #category : #accessing }
-SAJFeatureAnnotations >> from: anObject [
-	from := anObject
+SAJFeatureAnnotations >> from: beginLineIndex [
+	from := beginLineIndex
 ]
 
 { #category : #visualization }
@@ -103,7 +103,9 @@ SAJFeatureAnnotations >> printOn: str [
 	| s |
 	super printOn: str.
 	str nextPut: $<.
-	str nextPutAll: self featureName.
+	self parentAnnotation 
+		ifNil: [ str nextPutAll: 'ROOT' ]
+		ifNotNil: [ str nextPutAll: self featureName ].
 	str nextPut: $>.
 	
 	str lf.
@@ -119,6 +121,7 @@ SAJFeatureAnnotations >> printOn: str [
 { #category : #accessing }
 SAJFeatureAnnotations >> sourceCode [
 	| lines numberOfLines |
+	self unit ifNil: [ ^ 'NO UNIT ATTACHED' ].
 	lines := self unit sourceCode lines.
 	numberOfLines := lines size.
 	^ String cr join: (lines copyFrom: (self from min: numberOfLines) to: (self to min: numberOfLines))
@@ -130,8 +133,8 @@ SAJFeatureAnnotations >> to [
 ]
 
 { #category : #accessing }
-SAJFeatureAnnotations >> to: anObject [
-	to := anObject
+SAJFeatureAnnotations >> to: endLineIndex [
+	to := endLineIndex
 ]
 
 { #category : #accessing }

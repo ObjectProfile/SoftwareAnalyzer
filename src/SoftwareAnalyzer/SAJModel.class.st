@@ -417,7 +417,7 @@ Shape.java,6-7,Feature4,FRAGMENT
 		annotation := SAJFeatureAnnotations new.
 		annotation annotationGranularity: annotationGranularity.
 		annotation from: from.
-		annotation to: to.
+		annotation to: to - 1.
 		annotation unit: unit.
 		unit ifNotNil: [ 
 			unit addAnnotation: annotation.
