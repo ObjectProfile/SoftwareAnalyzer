@@ -161,8 +161,9 @@ SAJFeature >> units [
 
 { #category : #visualization }
 SAJFeature >> visualizeClasses [
-	| c g |
+	| c g lbl |
 	c := RSCanvas new.
+	
 	self classes do: [ :cls |
 		g := RSGroup new.
 		cls visualizeIn: g.
@@ -170,6 +171,11 @@ SAJFeature >> visualizeClasses [
 		 ].
 	
 	RSRectanglePackLayout new on: c shapes.
+	
+	lbl := RSLabel new fontSize: 20; text: 'Classes contributed by feature ', self name.
+	c add: lbl.
+	RSLocation move: lbl above: c nodes.
+	
 	^ c @ RSCanvasController
 ]
 

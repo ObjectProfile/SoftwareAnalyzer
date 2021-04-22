@@ -454,7 +454,7 @@ SAJUnit >> visualizeIn: c [
 		ab @ RSPopup.
 		a feature isSelected 
 			ifTrue: [ ab color: (a feature color alpha: 0.4) ]
-			ifFalse: [ ab color: Color gray darker darker ].
+			ifFalse: [ ab color: (Color gray darker darker) ].
 		ab fromRectangle: ((-25 @ a from) corner: (25 @ (a to + 1))).
 		ab translateBy: (a depth * 20) @ 0.
 		c add: ab.
