@@ -91,7 +91,7 @@ SAJModel >> addUnitAsXML: xml [
 		"do nothing"
 		^ self ].
 	
-	u loc: xml asString lines size.
+	u loc: xml rawString lines size.
 	u model: self.
 	u filename: filename.
 	
