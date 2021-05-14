@@ -343,8 +343,8 @@ REGModelTest >> testAddExample [
 	self assert: m numberOfFunctions equals: 2.
 	self assert: m numberOfHeaders equals: 1.
 	
-	self assert: m modules first numberOfLinesOfCode equals: 9.
-	self assert: m numberOfLinesOfCode equals: 30.
+	self assert: m modules first numberOfLinesOfCode equals: 8.
+	self assert: m numberOfLinesOfCode equals: 27.
 	
 	self assert: (m units allSatisfy: [ :u | u model == m ])
 ]

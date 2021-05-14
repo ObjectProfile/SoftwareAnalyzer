@@ -48,7 +48,7 @@ REGModel >> addUnitAsXML: xml [
 	(xml allElementsSelect: [ :x | x name = 'cpp:include' ]) do: [ :iXML |
 		m addInclude: (self createIncludeFromXML: iXML) ].
 	
-	m metrics at: #LOC put: xml printString lines size.
+	m metrics at: #LOC put: xml rawString lines size.
 
 	(xml allElementsSelect: [ :x | x name = 'function' ]) do: [ :fXML |
 		m addFunction: (self createFunctionFromXML: fXML) ].
