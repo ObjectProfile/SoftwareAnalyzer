@@ -14,6 +14,6 @@ set RES = `grep ERROR $FILE`
 if [ -n "$RES" ]; then
 		exit 1
 else
-		echo "ALL TEST PASSED"
+		echo "\x1b[32mALL TEST PASSED"
 		exit 0
 fi
