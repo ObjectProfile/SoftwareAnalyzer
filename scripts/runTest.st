@@ -20,9 +20,9 @@ numberOfTestMethods := 0.
 numberOfErrorOrFailures := 0.
 unitTests do: [ :unitTestClass |
 	res := unitTestClass buildSuite run.
-	(res hasFailures or: [ res hasErrors ]) ifTrue: [ stream nextPutAll: '\x1b[31mERROR: ' ].
+	(res hasFailures or: [ res hasErrors ]) ifTrue: [ stream nextPutAll: 'ERROR: ' ].
 	stream nextPutAll: unitTestClass name, ' ', res asString.
-	stream nextPutAll: '\x1b[0m'; crlf
+	stream crlf
 ].
 
 "We close the stream and quit Pharo"
