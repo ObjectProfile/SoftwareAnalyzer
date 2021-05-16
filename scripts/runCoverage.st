@@ -31,8 +31,8 @@ m nodes: profiler packages forEach: [ :pak |
 ].
 m build.
 
-RSPNGExporter new
+[ RSPNGExporter new
 	canvas: m canvas;
-	exportToFile: 'coverage.png' asFileReference.
+	exportToFile: 'coverage.png' asFileReference ] on: Error do: [:ex | "do nothing" ].
 
 SmalltalkImage current quitPrimitive
