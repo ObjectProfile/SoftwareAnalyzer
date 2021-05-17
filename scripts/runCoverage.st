@@ -30,6 +30,7 @@ m nodes: profiler packages forEach: [ :pak |
 ].
 m build.
 
+m canvas extent: 1000 @ 1000.
 RSPNGExporter new
 	canvas: m canvas;
 	exportToFile: 'coverage.png' asFileReference.
