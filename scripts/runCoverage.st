@@ -30,9 +30,9 @@ m nodes: profiler packages forEach: [ :pak |
 	m layout tidyTree
 ].
 m build.
-
-[ RSPNGExporter new
+m canvas extent: 1000 @ 1000.
+RSPNGExporter new
 	canvas: m canvas;
-	exportToFile: 'coverage.png' asFileReference ] on: Error do: [:ex | "do nothing" ].
+	exportToFile: 'coverage.png' asFileReferences.
 
 SmalltalkImage current quitPrimitive
