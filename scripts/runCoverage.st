@@ -33,6 +33,6 @@ m build.
 m canvas extent: 1000 @ 1000.
 RSPNGExporter new
 	canvas: m canvas;
-	exportToFile: 'coverage.png' asFileReferences.
+	exportToFile: 'coverage.png' asFileReference.
 
 SmalltalkImage current quitPrimitive
