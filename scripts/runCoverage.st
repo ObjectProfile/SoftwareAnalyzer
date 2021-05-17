@@ -1,24 +1,23 @@
-Metacello new 
+[ Metacello new 
 	baseline: 'Spy2'; 
 	repository: 'github://ObjectProfile/Spy2'; 
-	load: 'HapaoCore'.
+	load: 'HapaoCore' ] on: MCMergeOrLoadWarning do: [:warning | warning load ].
 
-[Metacello new
+[ Metacello new
     baseline: 'Roassal3';
     repository: 'github://ObjectProfile/Roassal3';
     load: 'Full' ] on: MCMergeOrLoadWarning do: [:warning | warning load ].
 
-Metacello new
+[ Metacello new
     baseline: 'Roassal3Exporters';
     repository: 'github://ObjectProfile/Roassal3Exporters';
-    load.
-
+    load ] on: MCMergeOrLoadWarning do: [:warning | warning load ].
 
 profiler := 'Hapao2' asClass runTestsForPackagesMatching: 'Roassal3*'.
 
-classSizeScale := NSScale linear range: #(5 30); domain: { 0 . (profiler allClasses max: #numberOfMethods) }.
-classColorCoverage := NSScale linear range: {Color red . Color black}; domain: { 0 . 100 }.
-m := RSMondrian new.
+classSizeScale := 'NSScale' asClass linear range: #(5 30); domain: { 0 . (profiler allClasses max: #numberOfMethods) }.
+classColorCoverage := 'NSScale' asClass linear range: {Color red . Color black}; domain: { 0 . 100 }.
+m := 'RSMondrian' asClass new.
 m shape labeled: #packageName; color: Color white; borderColor: Color gray.
 m nodes: profiler packages forEach: [ :pak |
 	m shape box 
@@ -30,7 +29,7 @@ m nodes: profiler packages forEach: [ :pak |
 	m layout tidyTree
 ].
 m build.
-m canvas extent: 1000 @ 1000.
+
 RSPNGExporter new
 	canvas: m canvas;
 	exportToFile: 'coverage.png' asFileReference.
