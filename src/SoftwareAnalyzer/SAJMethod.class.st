@@ -39,11 +39,22 @@ SAJMethod >> name [
 	^ name
 ]
 
-{ #category : #'public - testing' }
+{ #category : #'public - metrics' }
 SAJMethod >> numberOfAssertions [
 	^ (((xml searchFor: 'name') collect: #rawString) select: [ :rs |
 		'assert*' match: rs
 		 ]) size
+]
+
+{ #category : #'public - metrics' }
+SAJMethod >> numberOfStatements [
+	| r |
+	r := (xml searchForPattern: '*stmt*') size.
+	r > 0 ifTrue: [ ^ r ].
+
+	"A bit hacky"
+	^ ((xml @ { 'block' }) nodes select: [ :e | e class == XMLElement ]) size
+
 ]
 
 { #category : #accessing }

@@ -1006,7 +1006,9 @@ SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotationXML [
 
 	@Test @X public void myTest2() { 
 		assertEquals(42, 40 + 2); 
-		assertNotNil(""blah"");}
+		assertNotNil(""blah"");
+		if (42 > 2) System.out.println(""going well !"");
+	}
 
 
 	public class InnerC { public int bar() { return 2; } }
@@ -1023,7 +1025,9 @@ SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotationXML [
 
 	<function><annotation>@<name>Test</name></annotation> <annotation>@<name>X</name></annotation> <type><specifier>public</specifier> <name>void</name></type> <name>myTest2</name><parameter_list>()</parameter_list> <block>{<block_content> 
 		<expr_stmt><expr><call><name>assertEquals</name><argument_list>(<argument><expr><literal type="number">42</literal></expr></argument>, <argument><expr><literal type="number">40</literal> <operator>+</operator> <literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
-		<expr_stmt><expr><call><name>assertNotNil</name><argument_list>(<argument><expr><literal type="string">"blah"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content>}</block></function>
+		<expr_stmt><expr><call><name>assertNotNil</name><argument_list>(<argument><expr><literal type="string">"blah"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+		<if_stmt><if>if <condition>(<expr><literal type="number">42</literal> <operator>&gt;</operator> <literal type="number">2</literal></expr>)</condition><block type="pseudo"><block_content> <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>out</name><operator>.</operator><name>println</name></name><argument_list>(<argument><expr><literal type="string">"going well !"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+	</block_content>}</block></function>
 
 
 	<class><specifier>public</specifier> class <name>InnerC</name> <block>{ <function><type><specifier>public</specifier> <name>int</name></type> <name>bar</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return <expr><literal type="number">2</literal></expr>;</return> </block_content>}</block></function> }</block></class>
@@ -1463,7 +1467,11 @@ SAJTest >> testMethods03 [
 
 	@Test public void myTest() { assertEquals(42, 40 + 2); }
 
-	@Test @X public void myTest2() { assertEquals(42, 40 + 2); }
+	@Test @X public void myTest2() { 
+		assertEquals(42, 40 + 2); 
+		assertNotNil(""blah"");
+		if (42 > 2) System.out.println(""going well !"");
+	}
 
 
 	public class InnerC { public int bar() { return 2; } }
@@ -1485,20 +1493,26 @@ SAJTest >> testMethods03 [
 	self assert: methodFoo source equals: 'public void foo() { return; }'.
 	self assert: methodFoo annotations isEmpty.
 	self deny: methodFoo isTest.
+	self assert: methodFoo numberOfAssertions equals: 0.
+	self assert: methodFoo numberOfStatements equals: 1.
 	
 	self assert: methodMyTest source equals: '@Test public void myTest() { assertEquals(42, 40 + 2); }'.
 	self assert: methodMyTest name equals: 'myTest'.
 	self assert: methodMyTest isTest.
 	self assert: methodMyTest annotations notEmpty.
 	self assert: methodMyTest numberOfAssertions equals: 1.
+	self assert: methodMyTest numberOfStatements equals: 1.
 	
 	self assert: methodMyTest2 source equals:  ('@Test @X public void myTest2() { 
 		assertEquals(42, 40 + 2); 
-		assertNotNil("blah");}' copy replaceAll: Character cr with: Character lf).
+		assertNotNil("blah");
+		if (42 > 2) System.out.println("going well !");
+	}' copy replaceAll: Character cr with: Character lf).
 	self assert: methodMyTest2 name equals: 'myTest2'.
 	self assert: methodMyTest2 annotations equals: { 'Test' . 'X' }.
 	self assert: methodMyTest2 isTest.
 	self assert: methodMyTest2 numberOfAssertions equals: 2.
+	self assert: methodMyTest2 numberOfStatements equals: 4.
 
 ]
 
