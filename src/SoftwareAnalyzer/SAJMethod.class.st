@@ -29,7 +29,7 @@ SAJMethod >> class: anSAJClass [
 { #category : #'public - testing' }
 SAJMethod >> isTest [
 
-	^ false
+	^ (self name beginsWith: 'test') or: [ self annotations includes: 'Test' ]
 ]
 
 { #category : #accessing }

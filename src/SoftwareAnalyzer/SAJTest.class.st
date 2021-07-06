@@ -1475,12 +1475,17 @@ SAJTest >> testMethods03 [
 	
 	self assert: methodFoo source equals: 'public void foo() { return; }'.
 	self assert: methodFoo annotations isEmpty.
+	self deny: methodFoo isTest.
+	
 	self assert: methodMyTest source equals: '@Test public void myTest() { assertEquals(42, 40 + 2); }'.
 	self assert: methodMyTest name equals: 'myTest'.
+	self assert: methodMyTest isTest.
 	self assert: methodMyTest annotations notEmpty.
+	
 	self assert: methodMyTest2 source equals: '@Test @X public void myTest2() { assertEquals(42, 40 + 2); }'.
 	self assert: methodMyTest2 name equals: 'myTest2'.
 	self assert: methodMyTest2 annotations equals: { 'Test' . 'X' }.
+	self assert: methodMyTest2 isTest.
 
 
 ]
