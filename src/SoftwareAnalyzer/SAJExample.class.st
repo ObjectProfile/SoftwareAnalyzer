@@ -30,7 +30,7 @@ SAJExample >> exampleDSpot [
 	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "
 
 	<script: 'self new exampleDSpot inspect'>
-	| m fr |
+	| m fr answer |
 	m := SAJModel new.
 	m rootFilename:
 		'/Users/alexandrebergel/Desktop/DSPOT_DS/'.
@@ -41,10 +41,11 @@ SAJExample >> exampleDSpot [
 	m build.
 	"m visualizeFeatureInteraction open."
 	
-	"
-| answer |
+
 answer := WriteStream on: String new.
-(self units reject: #isStub) do: [ :unit |
+answer nextPutAll: 'Classname,Number of methods,Number of test methods,NumberOfAssertions,Number of Statements in the tests'.
+answer crlf.
+(m units reject: #isStub) do: [ :unit |
 	answer nextPutAll: unit name.
 	answer nextPutAll: ','.
 	answer nextPutAll: unit numberOfMethods asString.
@@ -56,9 +57,7 @@ answer := WriteStream on: String new.
 	answer nextPutAll: (unit methodTests collect: #numberOfStatements) sumPossiblyEmpty asString.
 	answer crlf.
 ].
-answer contents"
-	
-	^ m
+^ answer contents
 ]
 
 { #category : #examples }

@@ -44,7 +44,7 @@ SAJModel >> addClassAsXML: xml [
 SAJModel >> addEnumAsXML: xml [
 	"PRIVATE METHOD"
 	| enumName anEnum |
-	enumName := ((xml elementAt: 'enum') elementAt: 'name') nodes first asString.
+	enumName := (xml @ { 'enum' . 'name' }) rawString..
 	anEnum := SAJEnum new
 					name: enumName.
 	units add: anEnum.
@@ -55,7 +55,7 @@ SAJModel >> addEnumAsXML: xml [
 SAJModel >> addInterfaceAsXML: xml [
 	"PRIVATE METHOD"
 	| interfaceName anInterface |
-	interfaceName := ((xml elementAt: 'interface') elementAt: 'name') nodes first asString.
+	interfaceName := (xml @ { 'interface' . 'name' }) rawString.
 	anInterface := SAJInterface new
 					name: interfaceName.
 	units add: anInterface.
