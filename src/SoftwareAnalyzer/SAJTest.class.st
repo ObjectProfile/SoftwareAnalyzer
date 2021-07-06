@@ -1436,9 +1436,9 @@ SAJTest >> testMethods02 [
 	methodBar := cClass methods second.
 	
 	self assert: methodFoo source equals: 'public void foo() { return; }'.
-	"self assert: methodFoo name equals: 'foo'."
+	self assert: methodFoo name equals: 'foo'.
 	self assert: methodBar source equals: 'public int bar() { return  42; }'.
-	"self assert: methodBar name equals: 'bar'."
+	self assert: methodBar name equals: 'bar'.
 	
 	
 
@@ -1476,8 +1476,10 @@ SAJTest >> testMethods03 [
 	self assert: methodFoo source equals: 'public void foo() { return; }'.
 	self assert: methodFoo annotations isEmpty.
 	self assert: methodMyTest source equals: '@Test public void myTest() { assertEquals(42, 40 + 2); }'.
+	self assert: methodMyTest name equals: 'myTest'.
 	self assert: methodMyTest annotations notEmpty.
 	self assert: methodMyTest2 source equals: '@Test @X public void myTest2() { assertEquals(42, 40 + 2); }'.
+	self assert: methodMyTest2 name equals: 'myTest2'.
 	self assert: methodMyTest2 annotations equals: { 'Test' . 'X' }.
 
 

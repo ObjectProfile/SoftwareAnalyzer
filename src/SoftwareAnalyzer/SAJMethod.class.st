@@ -34,14 +34,9 @@ SAJMethod >> isTest [
 
 { #category : #accessing }
 SAJMethod >> name [
-
+	name ifNotNil: [ ^ name ].
+	name := (xml @ { 'name'  }) rawString.	
 	^ name
-]
-
-{ #category : #accessing }
-SAJMethod >> name: aString [
-
-	name := aString
 ]
 
 { #category : #accessing }
@@ -51,12 +46,6 @@ SAJMethod >> source [
 		self assert: [ xml notNil ].
 		source := xml rawString ].
 	^ source
-]
-
-{ #category : #accessing }
-SAJMethod >> source: aString [
-
-	source := aString
 ]
 
 { #category : #accessing }

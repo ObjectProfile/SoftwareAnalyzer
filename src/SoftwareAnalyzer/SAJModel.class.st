@@ -34,7 +34,7 @@ SAJModel >> addClassAsXML: xml [
 	"DEFINE METHODS"
 	methodsXML := ((xml @ { 'class' . 'block' }) searchShallowFor: 'function') copy.
 	methods := methodsXML collect: [ :aMethodAsXML | 
-		SAJMethod new name: aMethodAsXML; class: aClass; xml: aMethodAsXML ].
+		SAJMethod new class: aClass; xml: aMethodAsXML ].
 	aClass methods: methods.
 	
 	units add: aClass.
