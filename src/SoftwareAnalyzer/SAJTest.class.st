@@ -965,6 +965,32 @@ SAJTest >> sourceCodeExampleXML [
 ]
 
 { #category : #'code example' }
+SAJTest >> sourceCodeWithInnerClassAndMethods [
+	^ 'public class C {
+	public void foo() { return; }
+
+	public int bar() { return  42; }
+
+	public class InnerC { public int bar() { return 2; } }
+
+}'
+]
+
+{ #category : #'code example' }
+SAJTest >> sourceCodeWithInnerClassAndMethodsXML [
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="Java" filename="C.java"><class><specifier>public</specifier> class <name>C</name> <block>{
+	<function><type><specifier>public</specifier> <name>void</name></type> <name>foo</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return;</return> </block_content>}</block></function>
+
+	<function><type><specifier>public</specifier> <name>int</name></type> <name>bar</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return  <expr><literal type="number">42</literal></expr>;</return> </block_content>}</block></function>
+
+	<class><specifier>public</specifier> class <name>InnerC</name> <block>{ <function><type><specifier>public</specifier> <name>int</name></type> <name>bar</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return <expr><literal type="number">2</literal></expr>;</return> </block_content>}</block></function> }</block></class>
+
+}</block></class></unit>
+'
+]
+
+{ #category : #'code example' }
 SAJTest >> sourceCodeWithPackages [
 "
 package p1;
@@ -1323,6 +1349,52 @@ SAJTest >> testInterfacesNamed [
 	cls := m interfaceNamed: 'Shape'.
 	self assert: cls notNil.
 	self should: [ m interfaceNamed: 'NotExisting' ] raise: Error
+]
+
+{ #category : #'tests - methods' }
+SAJTest >> testMethods01 [
+
+	| cClass colorClass |
+	m := SAJModel new.
+	m addSrcMLXML: self sourceXMLWithImport.
+	self assert: m numberOfUnits equals: 2.
+	
+	colorClass := m units second.
+	self assert: colorClass numberOfMethods equals: 0.
+	
+	
+	cClass := m units first.
+	self assert: cClass name equals: 'C'.	
+	self assert: cClass numberOfMethods equals: 1.
+	m build.
+	
+	
+	
+
+]
+
+{ #category : #'tests - methods' }
+SAJTest >> testMethods02 [
+
+	| cClass methodFoo methodBar |
+	m := SAJModel new.
+	m addSrcMLXML: self sourceCodeWithInnerClassAndMethodsXML.
+	self assert: m numberOfUnits equals: 1.
+		
+	cClass := m units first.
+	self assert: cClass name equals: 'C'.	
+	self assert: cClass numberOfMethods equals: 2.
+	
+	methodFoo := cClass methods first.
+	methodBar := cClass methods second.
+	
+	self assert: methodFoo source equals: 'public void foo() { return; }'.
+	"self assert: methodFoo name equals: 'foo'."
+	self assert: methodBar source equals: 'public int bar() { return  42; }'.
+	"self assert: methodBar name equals: 'bar'."
+	
+	
+
 ]
 
 { #category : #'tests - packages' }

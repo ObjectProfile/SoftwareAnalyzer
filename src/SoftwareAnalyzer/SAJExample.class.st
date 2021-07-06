@@ -25,6 +25,28 @@ SAJExample >> exampleArgoUmlSPL [
 ]
 
 { #category : #examples }
+SAJExample >> exampleDSpot [
+
+	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "
+
+	<script: 'self new exampleDSpot inspect'>
+	| m fr |
+	m := SAJModel new.
+	m rootFilename:
+		'/Users/alexandrebergel/Desktop/DSPOT_DS/'.
+	fr := '/Users/alexandrebergel/Desktop/DSPOT_DS/'
+		      asFileReference.
+	
+	(fr allChildren select: [ :fffr | fffr fullName endsWith: '.xml' ]) do: [ :ffr | m addSrcMLXML: ffr contents ].
+	m build.
+	"m visualizeFeatureInteraction open."
+	
+	
+	
+	^ m
+]
+
+{ #category : #examples }
 SAJExample >> exampleEolian [
 
 	"Source code from: https://bitbucket.org/easelab/datasetbitcoinwallet/src/master/ "

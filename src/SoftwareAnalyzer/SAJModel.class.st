@@ -14,7 +14,7 @@ Class {
 { #category : #private }
 SAJModel >> addClassAsXML: xml [
 	"PRIVATE METHOD"
-	| classname aClass hasSuperclass superclassName isGeneric |
+	| classname aClass hasSuperclass superclassName isGeneric methodsXML methods |
 	classname := ((xml elementAt: 'class') elementAt: 'name') nodes first asString.
 
 	aClass := SAJClass new
@@ -30,7 +30,13 @@ SAJModel >> addClassAsXML: xml [
 				superclassName :=  (xml @ { 'class' . 'super_list' . 'extends' . 'super' }) nodes first nodes first asString ].
 		aClass superclassName: superclassName.
 		 ].	
-					
+	
+	"DEFINE METHODS"
+	methodsXML := ((xml @ { 'class' . 'block' }) searchShallowFor: 'function') copy.
+	methods := methodsXML collect: [ :aMethodAsXML | 
+		SAJMethod new name: aMethodAsXML; class: aClass; xml: aMethodAsXML ].
+	aClass methods: methods.
+	
 	units add: aClass.
 	^ aClass
 ]

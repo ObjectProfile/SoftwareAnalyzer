@@ -114,6 +114,7 @@ SAJUnit >> initialize [
 	outgoingUnits := OrderedCollection new.
 	incomingUnits := OrderedCollection new.
 	isStub := false.
+	methods := OrderedCollection new.
 	self loc: 0
 ]
 
@@ -215,13 +216,13 @@ SAJUnit >> methods [
 ]
 
 { #category : #accessing }
-SAJUnit >> methods: anObject [
-	methods := anObject
+SAJUnit >> methods: someMethods [
+	methods := someMethods
 ]
 
 { #category : #accessing }
-SAJUnit >> name: anObject [
-	name := anObject
+SAJUnit >> name: aString [
+	name := aString
 ]
 
 { #category : #'public - metrics' }
@@ -247,6 +248,11 @@ SAJUnit >> numberOfIncomingUnits [
 { #category : #'public - metrics' }
 SAJUnit >> numberOfLinesOfCode [
 	^ self sourceCode lines size
+]
+
+{ #category : #'public - metrics' }
+SAJUnit >> numberOfMethods [
+	^ methods size
 ]
 
 { #category : #'public - metrics' }
