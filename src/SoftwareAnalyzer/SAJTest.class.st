@@ -977,6 +977,53 @@ SAJTest >> sourceCodeWithInnerClassAndMethods [
 ]
 
 { #category : #'code example' }
+SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotation [
+	^ 'public class C {
+	public void foo() { return; }
+
+	public int bar() { return  42; }
+
+	@Test public void myTest() { assertEquals(42, 40 + 2); }
+
+	public class InnerC { public int bar() { return 2; } }
+
+}'
+]
+
+{ #category : #'code example' }
+SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotationXML [
+	"public class C {
+	public void foo() { return; }
+
+	public int bar() { return  42; }
+
+	@Test public void myTest() { assertEquals(42, 40 + 2); }
+
+	@Test @X public void myTest2() { assertEquals(42, 40 + 2); }
+
+
+	public class InnerC { public int bar() { return 2; } }
+
+}"
+
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="Java" filename="C.java"><class><specifier>public</specifier> class <name>C</name> <block>{
+	<function><type><specifier>public</specifier> <name>void</name></type> <name>foo</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return;</return> </block_content>}</block></function>
+
+	<function><type><specifier>public</specifier> <name>int</name></type> <name>bar</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return  <expr><literal type="number">42</literal></expr>;</return> </block_content>}</block></function>
+
+	<function><annotation>@<name>Test</name></annotation> <type><specifier>public</specifier> <name>void</name></type> <name>myTest</name><parameter_list>()</parameter_list> <block>{<block_content> <expr_stmt><expr><call><name>assertEquals</name><argument_list>(<argument><expr><literal type="number">42</literal></expr></argument>, <argument><expr><literal type="number">40</literal> <operator>+</operator> <literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> </block_content>}</block></function>
+
+	<function><annotation>@<name>Test</name></annotation> <annotation>@<name>X</name></annotation> <type><specifier>public</specifier> <name>void</name></type> <name>myTest2</name><parameter_list>()</parameter_list> <block>{<block_content> <expr_stmt><expr><call><name>assertEquals</name><argument_list>(<argument><expr><literal type="number">42</literal></expr></argument>, <argument><expr><literal type="number">40</literal> <operator>+</operator> <literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> </block_content>}</block></function>
+
+
+	<class><specifier>public</specifier> class <name>InnerC</name> <block>{ <function><type><specifier>public</specifier> <name>int</name></type> <name>bar</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return <expr><literal type="number">2</literal></expr>;</return> </block_content>}</block></function> }</block></class>
+
+}</block></class></unit>
+'
+]
+
+{ #category : #'code example' }
 SAJTest >> sourceCodeWithInnerClassAndMethodsXML [
 	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="Java" filename="C.java"><class><specifier>public</specifier> class <name>C</name> <block>{
@@ -1394,6 +1441,45 @@ SAJTest >> testMethods02 [
 	"self assert: methodBar name equals: 'bar'."
 	
 	
+
+]
+
+{ #category : #'tests - methods' }
+SAJTest >> testMethods03 [
+
+"public class C {
+	public void foo() { return; }
+
+	public int bar() { return  42; }
+
+	@Test public void myTest() { assertEquals(42, 40 + 2); }
+
+	@Test @X public void myTest2() { assertEquals(42, 40 + 2); }
+
+
+	public class InnerC { public int bar() { return 2; } }
+
+}"
+	| cClass methodFoo methodMyTest methodMyTest2 |
+	m := SAJModel new.
+	m addSrcMLXML: self sourceCodeWithInnerClassAndMethodsAndMethodAnnotationXML.
+	self assert: m numberOfUnits equals: 1.
+		
+	cClass := m units first.
+	self assert: cClass name equals: 'C'.	
+	self assert: cClass numberOfMethods equals: 4.
+	
+	methodFoo := cClass methods first.
+	methodMyTest := cClass methods third.
+	methodMyTest2 := cClass methods fourth.
+	
+	self assert: methodFoo source equals: 'public void foo() { return; }'.
+	self assert: methodFoo annotations isEmpty.
+	self assert: methodMyTest source equals: '@Test public void myTest() { assertEquals(42, 40 + 2); }'.
+	self assert: methodMyTest annotations notEmpty.
+	self assert: methodMyTest2 source equals: '@Test @X public void myTest2() { assertEquals(42, 40 + 2); }'.
+	self assert: methodMyTest2 annotations equals: { 'Test' . 'X' }.
+
 
 ]
 

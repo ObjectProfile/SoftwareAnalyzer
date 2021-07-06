@@ -5,15 +5,31 @@ Class {
 		'name',
 		'class',
 		'source',
-		'xml'
+		'xml',
+		'annotations'
 	],
 	#category : #'SoftwareAnalyzer-Java'
 }
 
 { #category : #accessing }
+SAJMethod >> annotations [
+	annotations ifNotNil: [ ^ annotations ].
+	
+	annotations := (xml searchShallowFor: 'annotation') collect: [ :aa | (aa @ { 'name' }) rawString ].
+	annotations := annotations asArray.
+	^ annotations
+]
+
+{ #category : #accessing }
 SAJMethod >> class: anSAJClass [
 
 	class := anSAJClass
+]
+
+{ #category : #'public - testing' }
+SAJMethod >> isTest [
+
+	^ false
 ]
 
 { #category : #accessing }
