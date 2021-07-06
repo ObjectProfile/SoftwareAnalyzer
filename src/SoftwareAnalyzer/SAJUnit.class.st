@@ -210,6 +210,12 @@ SAJUnit >> makeStub [
 	isStub := true
 ]
 
+{ #category : #'as yet unclassified' }
+SAJUnit >> methodTests [
+
+	^ self methods select: #isTest
+]
+
 { #category : #accessing }
 SAJUnit >> methods [
 	^ methods
@@ -228,6 +234,11 @@ SAJUnit >> name: aString [
 { #category : #'public - metrics' }
 SAJUnit >> numberOfAnnotations [
 	^ (self features flatCollect: #annotations) size
+]
+
+{ #category : #'as yet unclassified' }
+SAJUnit >> numberOfAssertions [
+	^ 0
 ]
 
 { #category : #'public - metrics' }
@@ -258,6 +269,11 @@ SAJUnit >> numberOfMethods [
 { #category : #'public - metrics' }
 SAJUnit >> numberOfOutgoingUnits [
 	^ outgoingUnits size
+]
+
+{ #category : #'as yet unclassified' }
+SAJUnit >> numberOfTestMethods [
+	^ 0
 ]
 
 { #category : #accessing }
@@ -412,7 +428,7 @@ SAJUnit >> visualizeButterflyIn: c [
 		RSLocation move: lblIn above: in ]. 
 
 	"BREADCRUMB"
-	breadCrumb := RSLabel text: 'File ', filename.
+	breadCrumb := RSLabel text: 'File ', (filename ifNil: [ '' ]).
 	c add: breadCrumb.
 	breadCrumb setAsFixed.
 	breadCrumb translateTopLeftTo: 5 @ 5.

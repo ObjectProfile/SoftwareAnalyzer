@@ -40,6 +40,21 @@ SAJClass >> isClass [
 	^ true
 ]
 
+{ #category : #'as yet unclassified' }
+SAJClass >> numberOfAssertions [
+
+	| t |
+	t := self methodTests collect: #numberOfAssertions.
+	t ifEmpty: [ ^ 0 ].
+	^ t sum
+]
+
+{ #category : #'as yet unclassified' }
+SAJClass >> numberOfTestMethods [
+
+	^ self methodTests size
+]
+
 { #category : #accessing }
 SAJClass >> superclass [
 	^ superclass

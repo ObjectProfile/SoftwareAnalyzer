@@ -15,8 +15,7 @@ Class {
 SAJModel >> addClassAsXML: xml [
 	"PRIVATE METHOD"
 	| classname aClass hasSuperclass superclassName isGeneric methodsXML methods |
-	classname := ((xml elementAt: 'class') elementAt: 'name') nodes first asString.
-
+	classname := (xml @ { 'class' . 'name' }) rawString.
 	aClass := SAJClass new
 					name: classname.
 					
@@ -96,6 +95,8 @@ SAJModel >> addUnitAsXML: xml [
 	u ifNil: [ "self error: 'Cannot be nil!'" 
 		"do nothing"
 		^ self ].
+	
+	u filename: filename.
 	
 	u loc: xml rawString lines size.
 	u model: self.

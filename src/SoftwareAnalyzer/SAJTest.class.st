@@ -965,6 +965,20 @@ SAJTest >> sourceCodeExampleXML [
 ]
 
 { #category : #'code example' }
+SAJTest >> sourceCodeWithGeneric [
+"public class G<E> extends S<E> {
+
+	public E void (String foo) { return null; }
+}"
+	^ '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="Java" filename="G.java"><class><specifier>public</specifier> class <name><name>G</name><parameter_list>&lt;<parameter><name>E</name></parameter>&gt;</parameter_list></name> <super_list><extends>extends <super><name><name>S</name><argument_list type="generic">&lt;<argument><name>E</name></argument>&gt;</argument_list></name></super></extends></super_list> <block>{
+
+	<function><type><specifier>public</specifier> <name>E</name></type> <name>void</name> <parameter_list>(<parameter><decl><type><name>String</name></type> <name>foo</name></decl></parameter>)</parameter_list> <block>{<block_content> <return>return <expr><literal type="null">null</literal></expr>;</return> </block_content>}</block></function>
+}</block></class></unit>
+'
+]
+
+{ #category : #'code example' }
 SAJTest >> sourceCodeWithInnerClassAndMethods [
 	^ 'public class C {
 	public void foo() { return; }
@@ -1400,6 +1414,18 @@ SAJTest >> testImport01 [
 	self assert: c numberOfOutgoingUnits equals: 1.
 	self assert: c outgoingUnits asArray equals: { color }
 	
+]
+
+{ #category : #'tests - imports' }
+SAJTest >> testImportWithGeneric [
+	| gClass |
+	m := SAJModel new.
+	m addSrcMLXML: self sourceCodeWithGeneric.
+	
+	self assert: m numberOfUnits equals: 1.
+	
+	gClass := m units first.
+	self assert: gClass name equals: 'G<E>' 
 ]
 
 { #category : #'tests - core' }

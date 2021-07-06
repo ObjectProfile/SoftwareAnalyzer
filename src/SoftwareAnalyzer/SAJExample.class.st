@@ -41,7 +41,22 @@ SAJExample >> exampleDSpot [
 	m build.
 	"m visualizeFeatureInteraction open."
 	
-	
+	"
+| answer |
+answer := WriteStream on: String new.
+(self units reject: #isStub) do: [ :unit |
+	answer nextPutAll: unit name.
+	answer nextPutAll: ','.
+	answer nextPutAll: unit numberOfMethods asString.
+	answer nextPutAll: ','.
+	answer nextPutAll: unit numberOfTestMethods asString.
+	answer nextPutAll: ','.
+	answer nextPutAll: unit numberOfAssertions asString.
+	answer nextPutAll: ','.
+	answer nextPutAll: (unit methodTests collect: #numberOfStatements) sumPossiblyEmpty asString.
+	answer crlf.
+].
+answer contents"
 	
 	^ m
 ]
