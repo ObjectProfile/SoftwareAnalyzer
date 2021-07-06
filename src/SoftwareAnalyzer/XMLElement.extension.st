@@ -54,6 +54,25 @@ XMLElement >> searchFor: aName in: result [
 ]
 
 { #category : #'*SoftwareAnalyzer' }
+XMLElement >> searchForPattern: aRegExpAsString [
+	"Recursively look for tags"
+	| result |
+	result := OrderedCollection new.
+	self searchForPattern: aRegExpAsString in: result.
+	^ result
+]
+
+{ #category : #'*SoftwareAnalyzer' }
+XMLElement >> searchForPattern: aRegExpAsString in: result [
+	"PRIVATE"
+	(aRegExpAsString match: self name) ifTrue: [ result add: self ].
+	self nodes do: [ :n | 
+		(#(XMLString) includes: n class name)
+			ifFalse: [ n searchForPattern: aRegExpAsString in: result ] ].
+
+]
+
+{ #category : #'*SoftwareAnalyzer' }
 XMLElement >> searchShallowFor: aName [
 	"Look for tags without going into a recursion. Return all the tags that are directly below me"
 	| result |

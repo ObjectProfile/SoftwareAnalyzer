@@ -39,6 +39,13 @@ SAJMethod >> name [
 	^ name
 ]
 
+{ #category : #'public - testing' }
+SAJMethod >> numberOfAssertions [
+	^ (((xml searchFor: 'name') collect: #rawString) select: [ :rs |
+		'assert*' match: rs
+		 ]) size
+]
+
 { #category : #accessing }
 SAJMethod >> source [
 	"Return the source. Lazily set the source"

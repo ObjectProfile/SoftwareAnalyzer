@@ -985,6 +985,11 @@ SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotation [
 
 	@Test public void myTest() { assertEquals(42, 40 + 2); }
 
+	@Test @X public void myTest2() { 
+		assertEquals(42, 40 + 2); 
+		assertNotNil("blah");}
+
+
 	public class InnerC { public int bar() { return 2; } }
 
 }'
@@ -992,14 +997,16 @@ SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotation [
 
 { #category : #'code example' }
 SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotationXML [
-	"public class C {
+"public class C {
 	public void foo() { return; }
 
 	public int bar() { return  42; }
 
 	@Test public void myTest() { assertEquals(42, 40 + 2); }
 
-	@Test @X public void myTest2() { assertEquals(42, 40 + 2); }
+	@Test @X public void myTest2() { 
+		assertEquals(42, 40 + 2); 
+		assertNotNil(""blah"");}
 
 
 	public class InnerC { public int bar() { return 2; } }
@@ -1014,7 +1021,9 @@ SAJTest >> sourceCodeWithInnerClassAndMethodsAndMethodAnnotationXML [
 
 	<function><annotation>@<name>Test</name></annotation> <type><specifier>public</specifier> <name>void</name></type> <name>myTest</name><parameter_list>()</parameter_list> <block>{<block_content> <expr_stmt><expr><call><name>assertEquals</name><argument_list>(<argument><expr><literal type="number">42</literal></expr></argument>, <argument><expr><literal type="number">40</literal> <operator>+</operator> <literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> </block_content>}</block></function>
 
-	<function><annotation>@<name>Test</name></annotation> <annotation>@<name>X</name></annotation> <type><specifier>public</specifier> <name>void</name></type> <name>myTest2</name><parameter_list>()</parameter_list> <block>{<block_content> <expr_stmt><expr><call><name>assertEquals</name><argument_list>(<argument><expr><literal type="number">42</literal></expr></argument>, <argument><expr><literal type="number">40</literal> <operator>+</operator> <literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> </block_content>}</block></function>
+	<function><annotation>@<name>Test</name></annotation> <annotation>@<name>X</name></annotation> <type><specifier>public</specifier> <name>void</name></type> <name>myTest2</name><parameter_list>()</parameter_list> <block>{<block_content> 
+		<expr_stmt><expr><call><name>assertEquals</name><argument_list>(<argument><expr><literal type="number">42</literal></expr></argument>, <argument><expr><literal type="number">40</literal> <operator>+</operator> <literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> 
+		<expr_stmt><expr><call><name>assertNotNil</name><argument_list>(<argument><expr><literal type="string">"blah"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content>}</block></function>
 
 
 	<class><specifier>public</specifier> class <name>InnerC</name> <block>{ <function><type><specifier>public</specifier> <name>int</name></type> <name>bar</name><parameter_list>()</parameter_list> <block>{<block_content> <return>return <expr><literal type="number">2</literal></expr>;</return> </block_content>}</block></function> }</block></class>
@@ -1481,12 +1490,15 @@ SAJTest >> testMethods03 [
 	self assert: methodMyTest name equals: 'myTest'.
 	self assert: methodMyTest isTest.
 	self assert: methodMyTest annotations notEmpty.
+	self assert: methodMyTest numberOfAssertions equals: 1.
 	
-	self assert: methodMyTest2 source equals: '@Test @X public void myTest2() { assertEquals(42, 40 + 2); }'.
+	self assert: methodMyTest2 source equals:  ('@Test @X public void myTest2() { 
+		assertEquals(42, 40 + 2); 
+		assertNotNil("blah");}' copy replaceAll: Character cr with: Character lf).
 	self assert: methodMyTest2 name equals: 'myTest2'.
 	self assert: methodMyTest2 annotations equals: { 'Test' . 'X' }.
 	self assert: methodMyTest2 isTest.
-
+	self assert: methodMyTest2 numberOfAssertions equals: 2.
 
 ]
 
